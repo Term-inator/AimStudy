@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 # AimStudy
-=======
-# aimstudy
 
 ## Project setup
 ```
@@ -25,4 +22,4 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
->>>>>>> 2bc9b91 (initialize)
+
