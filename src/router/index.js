@@ -38,11 +38,12 @@ export const asyncRoutes = [
     }
   }
 ]
-
+// TODO tmp
+constantRoutes.push(...asyncRoutes)
 const router = createRouter({
   history: createWebHashHistory(),
 //   routes
-  router: constantRoutes
+  routes: constantRoutes
 })
 
 export function resetRouter() {

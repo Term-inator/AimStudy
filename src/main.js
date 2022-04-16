@@ -5,4 +5,6 @@ import store from './store'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
+import '@/permission'
+
 createApp(App).use(store).use(store).use(router).use(Antd).mount('#app')

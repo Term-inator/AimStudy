@@ -1,6 +1,6 @@
 import router from './router'
 import store from './store'
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 // import NProgress from 'nprogress' // progress bar
 // import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
@@ -13,6 +13,8 @@ const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
 // 路由拦截器
 router.beforeEach(async(to, from, next) => {
+  // TODO tmp
+  next()
   // start progress bar
 //   NProgress.start()
 
@@ -65,7 +67,7 @@ router.beforeEach(async(to, from, next) => {
           // remove token and go to login page to re-login
           // 清空token
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
+          // Message.error(error || 'Has Error')
           //跳转登录
           next(`/login?redirect=${to.path}`)
         //   NProgress.done()
