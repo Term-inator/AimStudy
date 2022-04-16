@@ -32,7 +32,10 @@ export const asyncRoutes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+    meta: {
+      roles: ['admin', 'edu_admin', 'teacher']
+    }
   }
 ]
 
@@ -41,5 +44,10 @@ const router = createRouter({
 //   routes
   router: constantRoutes
 })
+
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
 
 export default router
