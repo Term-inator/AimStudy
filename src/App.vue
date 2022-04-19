@@ -4,7 +4,6 @@
     <router-link to="/about">About</router-link>
   </nav> -->
   <nav-bar></nav-bar>
-  <router-view/>
 </template>
 <script>
 import { defineComponent } from 'vue'
@@ -13,7 +12,7 @@ export default defineComponent({
   components: {
     navBar
   },
-  App() {
+  setup() {
     
   },
 })
