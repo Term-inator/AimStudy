@@ -72,25 +72,51 @@ const SubMenu = {
   },
 }
 
-const menuItems = [
+const main_page = {
+  key: "1",
+  title: "首页",
+  icon: "PieChartOutlined"
+}
+
+const admin = [
+  main_page,
   {
-    key: '1',
-    title: "首页",
-    icon: "PieChartOutlined"
-  },
-  {
-    key: '2',
+    key: "2",
     title: "学生管理",
     icon: "PieChartOutlined"
   },
   {
-    key: '3',
+    key: "3",
     title: "教师管理",
     icon: "PieChartOutlined"
   },
   {
-    key: '4',
+    key: "4",
     title: "专业管理",
+    icon: "PieChartOutlined"
+  }
+]
+
+const edu_admin = [
+  main_page,
+  {
+    key: "2",
+    title: "学生信息",
+    icon: "PieChartOutlined"
+  },
+  {
+    key: "3",
+    title: "教师信息",
+    icon: "PieChartOutlined"
+  },
+  {
+    key: "4",
+    title: "课程管理",
+    icon: "PieChartOutlined"
+  },
+  {
+    key: "5",
+    title: "成绩管理",
     icon: "PieChartOutlined"
   }
 ]
@@ -106,13 +132,28 @@ export default defineComponent({
   setup() {
     const state = reactive({
       // role: this.$store.commit("roles")[0],
-      role: "admin",
-      menuItems,
+      role: "",
+      menuItems: admin,
       collapsed: false,
       selectedKeys: ['1'],
       openKeys: [],
       preOpenKeys: [],
     });
+    watch(() => state.role, (_val, oldVal) => {
+      if(_val === "admin") {
+        state.menuItems = admin
+      }
+      else if(_val === "edu_admin") {
+        state.menuItems = edu_admin
+      }
+      else if(_val === "teacher") {
+        state.menuItems = edu_admin
+      }
+      else if(_val === "student") {
+        console.log(oldVal)
+      }
+    })
+    state.role = "edu_admin"
     watch(() => state.openKeys, (_val, oldVal) => {
       state.preOpenKeys = oldVal;
     });
