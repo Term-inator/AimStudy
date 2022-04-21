@@ -5,7 +5,6 @@
       <MenuFoldOutlined v-else />
     </a-button>
     <a-menu
-      v-if="role=='admin'"
       v-model:openKeys="openKeys"
       v-model:selectedKeys="selectedKeys"
       mode="inline"
@@ -14,7 +13,7 @@
       style="width: 256px; height: 100vh; padding: 10vh 0 0 0;"
     >
       <template v-for="item in menuItems" :key=item.key>
-        <template v-if="!item.subItems">
+        <template v-if="!item.children">
           <a-menu-item :key=item.key>
             <template #icon>
               <Icon :icon="item.icon"></Icon>
@@ -73,7 +72,7 @@ const SubMenu = {
 }
 
 const main_page = {
-  key: "1",
+  key: "main_page",
   title: "首页",
   icon: "PieChartOutlined"
 }
@@ -121,6 +120,76 @@ const edu_admin = [
   }
 ]
 
+const course_search = {
+  key: "course_search",
+  title: "全校开课查询",
+  icon: "PieChartOutlined"
+}
+
+const course_table = {
+  key: "course_table",
+  title: "我的课表",
+  icon: "PieChartOutlined"
+}
+
+const teacher = [
+  main_page,
+  {
+    key: "2",
+    title: "课程",
+    icon: "PieChartOutlined",
+    children: [
+      course_search,
+      {
+        key: "2.2",
+        title: "发布课程",
+        icon: "PieChartOutlined"
+      },
+      course_table
+    ]
+  },
+  {
+    key: "3",
+    title: "成绩",
+    icon: "PieChartOutlined"
+  }
+]
+
+const student = [
+  main_page,
+  {
+    key: "2",
+    title: "课程",
+    icon: "PieChartOutlined",
+    children: [
+      course_search,
+      {
+        key: "2.2",
+        title: "选课",
+        icon: "PieChartOutlined"
+      },
+      {
+        key: "2.3",
+        title: "退课",
+        icon: "PieChartOutlined"
+      },
+      course_table
+    ]
+  },
+  {
+    key: "3",
+    title: "成绩",
+    icon: "PieChartOutlined"
+  }
+]
+
+const menus = {
+  "admin": admin,
+  "edu_admin": edu_admin,
+  "teacher": teacher,
+  "student": student
+}
+
 export default defineComponent({
   components: {
     Icon,
@@ -132,38 +201,25 @@ export default defineComponent({
   setup() {
     const state = reactive({
       // role: this.$store.commit("roles")[0],
-      role: "",
-      menuItems: admin,
+      role: "student",
       collapsed: false,
       selectedKeys: ['1'],
       openKeys: [],
       preOpenKeys: [],
-    });
-    watch(() => state.role, (_val, oldVal) => {
-      if(_val === "admin") {
-        state.menuItems = admin
-      }
-      else if(_val === "edu_admin") {
-        state.menuItems = edu_admin
-      }
-      else if(_val === "teacher") {
-        state.menuItems = edu_admin
-      }
-      else if(_val === "student") {
-        console.log(oldVal)
-      }
     })
-    state.role = "edu_admin"
+    
     watch(() => state.openKeys, (_val, oldVal) => {
       state.preOpenKeys = oldVal;
-    });
+    })
 
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed;
       state.openKeys = state.collapsed ? [] : state.preOpenKeys;
-    };
+    }
 
+    const menuItems = menus[state.role]
     return {
+      menuItems,
       ...toRefs(state),
       toggleCollapsed,
     };
