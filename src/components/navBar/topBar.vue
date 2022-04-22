@@ -1,13 +1,13 @@
 <template>
-  <a-row type="flex" justify="space-around" align="middle" class="top-bar">
-    <a-col>
+  <a-row type="flex" justify="space-between" align="middle" class="top-bar">
+    <a-col :span="2" style="padding: 0 0 0 5px">
       <slot name="close_menu"></slot>
     </a-col>
-    <a-col>本科生教学管理系统</a-col>
-    <a-col> {{ date }} </a-col>
-    <a-col> {{ user.name }} {{ user.id }} </a-col>
-    <a-col> {{ user.department }} </a-col>
-    <a-col>
+    <a-col :span="5">本科生教学管理系统</a-col>
+    <a-col :span="5"> {{ date }} </a-col>
+    <a-col :span="5"> {{ user.name }} {{ user.id }} </a-col>
+    <a-col :span="5"> {{ user.department }} </a-col>
+    <a-col :span="2">
       <a-button type="link" @click="logout">注销</a-button>
     </a-col>
   </a-row>

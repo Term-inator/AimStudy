@@ -1,13 +1,13 @@
 <template>
   <div class="page-wrapper">
-    <div class="menu">
+    <div style="width: 256px">
       <a-menu
         v-model:openKeys="openKeys"
         v-model:selectedKeys="selectedKeys"
         mode="inline"
         theme="dark"
         :inline-collapsed="collapsed"
-        style="height: 100%; padding: 10vh 0 0 0;"
+        style="height: 100vh; padding: 10vh 0 0 0; box-shadow: 6px 0 6px #888888;"
       >
         <template v-for="item in menuItems" :key=item.key>
           <template v-if="!item.children">
@@ -28,7 +28,7 @@
     <div class="right-part">
       <top-bar>
         <template #close_menu>
-          <a-button type="primary" @click="toggleCollapsed">
+          <a-button type="text" @click="toggleCollapsed">
             <MenuUnfoldOutlined v-if="collapsed" />
             <MenuFoldOutlined v-else />
           </a-button>
@@ -214,6 +214,10 @@ export default defineComponent({
   setup() {
     const store = useStore()
 
+    const reference = {
+      menu_wrapper: null,
+    }
+
     const state = reactive({
       role: store.state.user.roles[0],
       collapsed: false,
@@ -229,10 +233,12 @@ export default defineComponent({
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
+      // reference.menu_wrapper.style.width = "70px"
     }
 
     const menuItems = menus[state.role]
     return {
+      ...toRefs(reference),
       menuItems,
       ...toRefs(state),
       toggleCollapsed,
@@ -249,14 +255,8 @@ export default defineComponent({
     height: 100%;
   }
 
-  .menu {
-    width: 256px; 
-    height: 100vh; 
-    box-shadow: 6px 0 6px #888888;
-  }
-  
   .right-part {
-    height: 100%;
+    height: 100vh;
     flex: 1;
   }
 
@@ -267,5 +267,7 @@ export default defineComponent({
 
   .content {
     position: relative;
+    height: 90vh;
+    overflow-y: scroll;
   }
 </style>
