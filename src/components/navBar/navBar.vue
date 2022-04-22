@@ -28,7 +28,7 @@
     <div class="right-part">
       <top-bar>
         <template #close_menu>
-          <a-button type="primary" style="margin-bottom: 16px" @click="toggleCollapsed">
+          <a-button type="primary" @click="toggleCollapsed">
             <MenuUnfoldOutlined v-if="collapsed" />
             <MenuFoldOutlined v-else />
           </a-button>
@@ -43,8 +43,9 @@
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from 'vue'
+import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
-// import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
 import topBar from "@/components/navBar/topBar.vue"
 
 const SubMenu = {
@@ -206,14 +207,15 @@ export default defineComponent({
     Icon,
     "sub-menu": SubMenu,
     topBar,
-    // MenuFoldOutlined,
-    // MenuUnfoldOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
   },
 
   setup() {
+    const store = useStore()
+
     const state = reactive({
-      // role: this.$store.commit("roles")[0],
-      role: "admin",
+      role: store.state.user.roles[0],
       collapsed: false,
       selectedKeys: ['main_page'],
       openKeys: [],
@@ -264,6 +266,6 @@ export default defineComponent({
   }
 
   .content {
-    /* flex: 1; */
+    position: relative;
   }
 </style>
