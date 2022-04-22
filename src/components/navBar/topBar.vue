@@ -45,6 +45,6 @@ export default defineComponent({
 <style scoped>
   .top-bar {
     height: 8vh;
-    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.4);
   }
 </style>

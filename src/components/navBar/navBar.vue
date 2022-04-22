@@ -215,7 +215,7 @@ export default defineComponent({
       // role: this.$store.commit("roles")[0],
       role: "admin",
       collapsed: false,
-      selectedKeys: ['1'],
+      selectedKeys: ['main_page'],
       openKeys: [],
       preOpenKeys: [],
     })
@@ -250,7 +250,7 @@ export default defineComponent({
   .menu {
     width: 256px; 
     height: 100vh; 
-    box-shadow: 5px 0 5px #888888;
+    box-shadow: 6px 0 6px #888888;
   }
   
   .right-part {
