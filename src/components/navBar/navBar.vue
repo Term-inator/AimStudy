@@ -1,13 +1,13 @@
 <template>
   <div class="page-wrapper">
-    <div style="width: 256px">
+    <div class="menu-wrapper" ref="menu_wrapper">
       <a-menu
         v-model:openKeys="openKeys"
         v-model:selectedKeys="selectedKeys"
         mode="inline"
         theme="dark"
         :inline-collapsed="collapsed"
-        style="height: 100vh; padding: 10vh 0 0 0; box-shadow: 6px 0 6px #888888;"
+        style="height: 100%; padding: 10vh 0 0 0; box-shadow: 6px 0 6px #888888;"
       >
         <template v-for="item in menuItems" :key=item.key>
           <template v-if="!item.children">
@@ -28,10 +28,8 @@
     <div class="right-part">
       <top-bar>
         <template #close_menu>
-          <a-button type="text" @click="toggleCollapsed">
-            <MenuUnfoldOutlined v-if="collapsed" />
-            <MenuFoldOutlined v-else />
-          </a-button>
+          <MenuUnfoldOutlined v-if="collapsed" class="trigger" @click="toggleCollapsed"/>
+          <MenuFoldOutlined v-else class="trigger" @click="toggleCollapsed"/>
         </template>
       </top-bar>
       <div class="content">
@@ -233,7 +231,7 @@ export default defineComponent({
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
-      // reference.menu_wrapper.style.width = "70px"
+      reference.menu_wrapper.style.width = state.collapsed ? '70px' : '256px'
     }
 
     const menuItems = menus[state.role]
@@ -260,6 +258,12 @@ export default defineComponent({
     flex: 1;
   }
 
+  .menu-wrapper {
+    width: 256px;
+    height: 100vh;
+    transition: width 0.5s;
+  }
+
   .top-bar {
     width: 100%;
     height: 10vh;
@@ -269,5 +273,10 @@ export default defineComponent({
     position: relative;
     height: 90vh;
     overflow-y: scroll;
+  }
+
+  .trigger :hover {
+    color: #1890ff;
+    transition: color 0.3s;
   }
 </style>
