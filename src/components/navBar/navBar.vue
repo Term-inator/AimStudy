@@ -1,41 +1,51 @@
 <template>
-  <div class="pageWrapper">
-    <a-button type="primary" style="display: none; margin-bottom: 16px" @click="toggleCollapsed">
-      <MenuUnfoldOutlined v-if="collapsed" />
-      <MenuFoldOutlined v-else />
-    </a-button>
-    <a-menu
-      v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"
-      mode="inline"
-      theme="dark"
-      :inline-collapsed="collapsed"
-      style="width: 256px; height: 100vh; padding: 10vh 0 0 0;"
-    >
-      <template v-for="item in menuItems" :key=item.key>
-        <template v-if="!item.children">
-          <a-menu-item :key=item.key>
-            <template #icon>
-              <Icon :icon="item.icon"></Icon>
-            </template>
-            <span>{{ item.title }}</span>
-          </a-menu-item>
+  <div class="page-wrapper">
+    <div class="menu">
+      <a-menu
+        v-model:openKeys="openKeys"
+        v-model:selectedKeys="selectedKeys"
+        mode="inline"
+        theme="dark"
+        :inline-collapsed="collapsed"
+        style="height: 100%; padding: 10vh 0 0 0;"
+      >
+        <template v-for="item in menuItems" :key=item.key>
+          <template v-if="!item.children">
+            <a-menu-item :key=item.key>
+              <template #icon>
+                <Icon :icon="item.icon"></Icon>
+              </template>
+              <span>{{ item.title }}</span>
+            </a-menu-item>
+          </template>
+          <template v-else>
+            <sub-menu :key="item.key" :menu-info="item" />
+          </template>
         </template>
-        <template v-else>
-          <sub-menu :key="item.key" :menu-info="item" />
+      </a-menu>
+    </div>
+  
+    <div class="right-part">
+      <top-bar>
+        <template #close_menu>
+          <a-button type="primary" style="margin-bottom: 16px" @click="toggleCollapsed">
+            <MenuUnfoldOutlined v-if="collapsed" />
+            <MenuFoldOutlined v-else />
+          </a-button>
         </template>
-      </template>
-    </a-menu>
-  </div>
-  <div class="content">
-    <router-view/>
+      </top-bar>
+      <div class="content">
+        <router-view/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, watch } from 'vue';
+import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { Icon } from "@/components/icon"
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
+// import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
+import topBar from "@/components/navBar/topBar.vue"
 
 const SubMenu = {
   name: 'SubMenu',
@@ -191,17 +201,19 @@ const menus = {
 }
 
 export default defineComponent({
+  name: "navBar",
   components: {
     Icon,
     "sub-menu": SubMenu,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
+    topBar,
+    // MenuFoldOutlined,
+    // MenuUnfoldOutlined,
   },
 
   setup() {
     const state = reactive({
       // role: this.$store.commit("roles")[0],
-      role: "student",
+      role: "admin",
       collapsed: false,
       selectedKeys: ['1'],
       openKeys: [],
@@ -209,12 +221,12 @@ export default defineComponent({
     })
     
     watch(() => state.openKeys, (_val, oldVal) => {
-      state.preOpenKeys = oldVal;
+      state.preOpenKeys = oldVal
     })
 
     const toggleCollapsed = () => {
-      state.collapsed = !state.collapsed;
-      state.openKeys = state.collapsed ? [] : state.preOpenKeys;
+      state.collapsed = !state.collapsed
+      state.openKeys = state.collapsed ? [] : state.preOpenKeys
     }
 
     const menuItems = menus[state.role]
@@ -222,19 +234,36 @@ export default defineComponent({
       menuItems,
       ...toRefs(state),
       toggleCollapsed,
-    };
+    }
   },
 
-});
+})
 </script>
+
 <style scoped>
-  .pageWrapper {
+  .page-wrapper {
     display: flex;
     width: 100%;
     height: 100%;
   }
+
+  .menu {
+    width: 256px; 
+    height: 100vh; 
+    box-shadow: 5px 0 5px #888888;
+  }
   
-  .content {
+  .right-part {
+    height: 100%;
     flex: 1;
+  }
+
+  .top-bar {
+    width: 100%;
+    height: 10vh;
+  }
+
+  .content {
+    /* flex: 1; */
   }
 </style>

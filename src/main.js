@@ -7,4 +7,11 @@ import 'ant-design-vue/dist/antd.css';
 
 import '@/permission'
 
-createApp(App).use(store).use(store).use(router).use(Antd).mount('#app')
+const app = createApp(App)
+
+// const components = ["topbar"]
+// app.config.compilerOptions.isCustomElement = (tag) => {
+//   return tag.includes('-')
+// }
+
+app.use(store).use(store).use(router).use(Antd).mount('#app')
