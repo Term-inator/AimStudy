@@ -12,13 +12,14 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    
+
     onBeforeMount(() => {
       store.commit('user/setUser', {
         name: '张三',
         id: '123456789',
         department: '计算机科学与技术学院',
         roles: ['admin']
+        // admin edu_admin teacher student
       })
     })
   }
