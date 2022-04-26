@@ -3,6 +3,6 @@ import * as $Icon from '@ant-design/icons-vue'
 
 export const Icon = (props) => {
   const {icon} = props
-  console.log(icon)
+  console.log(props)
   return createVNode($Icon[icon])
 };

@@ -18,7 +18,7 @@ export default defineComponent({
         name: '张三',
         id: '123456789',
         department: '计算机科学与技术学院',
-        roles: ['admin']
+        roles: ['student']
         // admin edu_admin teacher student
       })
     })

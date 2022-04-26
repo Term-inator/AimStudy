@@ -316,9 +316,9 @@ export default defineComponent({
 
   .content {
     position: relative;
-    height: 90vh;
+    height: 89vh;
     margin: 0 0 0 5px;
-    padding: 1vh 0 0 1vw;
+    padding: 0 1vw 1vh 1vw;
     overflow-y: scroll;
   }
 
