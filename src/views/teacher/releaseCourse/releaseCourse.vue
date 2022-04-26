@@ -1,5 +1,5 @@
 <template>
-  open course
+  release course
 </template>
 
 <script>
@@ -7,10 +7,10 @@ import { defineComponent } from 'vue'
 import { onMounted } from '@vue/runtime-core'
 
 export default defineComponent({
-  name: "OpenCourseView",
+  name: "ReleaseCourseView",
   setup() {
     onMounted(() => {
-      console.log('open course')
+      console.log('release course')
     })
   },
 })

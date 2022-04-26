@@ -10,7 +10,7 @@ import StudentManagementView from '../views/admin/studentManagement/studentManag
 import TeacherManagementView from '../views/admin/teacherManagement/teacherManagement.vue'
 
 import CourseScoreView from '../views/eduAdmin/courseScore/courseScore.vue'
-import OpenCourseManagementView from '../views/eduAdmin/openCourseManagement/openCourseManagement.vue'
+import ReleaseCourseManagementView from '../views/eduAdmin/releaseCourseManagement/releaseCourseManagement.vue'
 import SelectCourseManagementView from '../views/eduAdmin/selectCourseManagement/selectCourseManagement.vue'
 import StudentInfoView from '../views/eduAdmin/studentInfo/studentInfo.vue'
 import StudentScoreView from '../views/eduAdmin/studentScore/studentScore.vue'
@@ -20,7 +20,7 @@ import DropCourseView from '../views/student/dropCourse/dropCourse.vue'
 import ScoreQueryView from '../views/student/scoreQuery/scoreQuery.vue'
 import SelectCourseView from '../views/student/selectCourse/selectCourse.vue'
 
-import OpenCourseView from '../views/teacher/openCourse/openCourse.vue'
+import ReleaseCourseView from '../views/teacher/releaseCourse/releaseCourse.vue'
 import PublishScore from '../views/teacher/publishScore/publishScore.vue'
 
 export const constantRoutes = [
@@ -69,7 +69,7 @@ export const asyncRoutes = [
     }
   },
   {
-    path: 'teacherManagement',
+    path: '/teacherManagement',
     name: 'teacherManagement',
     component: TeacherManagementView,
     meta: {
@@ -85,16 +85,16 @@ export const asyncRoutes = [
     }
   },
   {
-    path: '/openCorseManagement',
-    name: 'openCorseManagement',
-    component: OpenCourseManagementView,
+    path: '/releaseCourseManagement',
+    name: 'releaseCourseManagement',
+    component: ReleaseCourseManagementView,
     meta: {
       roles: ['edu_admin']
     }
   },
   {
-    path: '/selectCorseManagement',
-    name: 'selectCorseManagement',
+    path: '/selectCourseManagement',
+    name: 'selectCourseManagement',
     component: SelectCourseManagementView,
     meta: {
       roles: ['edu_admin']
@@ -150,9 +150,9 @@ export const asyncRoutes = [
     }
   },
   {
-    path: '/openCourse',
-    name: 'openCourse',
-    component: OpenCourseView,
+    path: '/releaseCourse',
+    name: 'releaseCourse',
+    component: ReleaseCourseView,
     meta: {
       roles: ['teacher']
     }

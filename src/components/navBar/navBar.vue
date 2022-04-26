@@ -11,7 +11,7 @@
       >
         <template v-for="item in menuItems" :key=item.key>
           <template v-if="!item.children">
-            <a-menu-item :key=item.key>
+            <a-menu-item :key=item.key @click="goto(item.route)">
               <template #icon>
                 <Icon :icon="item.icon"></Icon>
               </template>
@@ -19,7 +19,7 @@
             </a-menu-item>
           </template>
           <template v-else>
-            <sub-menu :key="item.key" :menu-info="item" />
+            <sub-menu :key="item.key" :menu-info="item" @goto="goto" />
           </template>
         </template>
       </a-menu>
@@ -41,6 +41,7 @@
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
@@ -62,7 +63,7 @@ const SubMenu = {
       <template #title>{{ menuInfo.title }}</template>
       <template v-for="item in menuInfo.children" :key="item.key">
         <template v-if="!item.children">
-          <a-menu-item :key="item.key">
+          <a-menu-item :key="item.key" @click="goto(item.route)">
             <template #icon>
               <Icon :icon="item.icon"></Icon>
             </template>
@@ -78,12 +79,21 @@ const SubMenu = {
   components: {
     Icon
   },
+  setup(props, context) {
+    const goto = (route) => {
+      context.emit("goto", route)
+    }
+    return {
+      goto
+    }
+  }
 }
 
 const main_page = {
   key: "main_page",
   title: "首页",
-  icon: "PieChartOutlined"
+  icon: "PieChartOutlined",
+  route: "main"
 }
 
 const admin = [
@@ -91,54 +101,78 @@ const admin = [
   {
     key: "2",
     title: "学生管理",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "studentManagement"
   },
   {
     key: "3",
     title: "教师管理",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "teacherManagement"
   },
   {
     key: "4",
     title: "专业管理",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "majorManagement"
   }
 ]
+
+const course_query = {
+  key: "course_query",
+  title: "全校开课查询",
+  icon: "PieChartOutlined",
+  route: "courseQuery"
+}
 
 const edu_admin = [
   main_page,
   {
     key: "2",
     title: "学生信息",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "studentInfo"
   },
   {
     key: "3",
     title: "教师信息",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "teacherInfo"
   },
   {
     key: "4",
     title: "课程管理",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "releaseCourseManagement",
+    children: [
+      course_query,
+      {
+        key: "4.2",
+        title: "开课管理",
+        icon: "PieChartOutlined",
+        route: "releaseCourseManagement"
+      },
+      {
+        key: "4.3",
+        title: "选课管理",
+        icon: "PieChartOutlined",
+        route: "selectCourseManagement"
+      }
+    ]
   },
   {
     key: "5",
     title: "成绩管理",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "courseScore"
   }
 ]
-
-const course_search = {
-  key: "course_search",
-  title: "全校开课查询",
-  icon: "PieChartOutlined"
-}
 
 const course_table = {
   key: "course_table",
   title: "我的课表",
-  icon: "PieChartOutlined"
+  icon: "PieChartOutlined",
+  route: "courseTable"
 }
 
 const teacher = [
@@ -148,11 +182,12 @@ const teacher = [
     title: "课程",
     icon: "PieChartOutlined",
     children: [
-      course_search,
+      course_query,
       {
         key: "2.2",
         title: "发布课程",
-        icon: "PieChartOutlined"
+        icon: "PieChartOutlined",
+        route: "releaseCourse"
       },
       course_table
     ]
@@ -160,7 +195,8 @@ const teacher = [
   {
     key: "3",
     title: "成绩",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "publishScore"
   }
 ]
 
@@ -171,16 +207,18 @@ const student = [
     title: "课程",
     icon: "PieChartOutlined",
     children: [
-      course_search,
+      course_query,
       {
         key: "2.2",
         title: "选课",
-        icon: "PieChartOutlined"
+        icon: "PieChartOutlined",
+        route: "selectCourse"
       },
       {
         key: "2.3",
         title: "退课",
-        icon: "PieChartOutlined"
+        icon: "PieChartOutlined",
+        route: "dropCourse"
       },
       course_table
     ]
@@ -188,7 +226,8 @@ const student = [
   {
     key: "3",
     title: "成绩",
-    icon: "PieChartOutlined"
+    icon: "PieChartOutlined",
+    route: "scoreQuery"
   }
 ]
 
@@ -210,6 +249,7 @@ export default defineComponent({
   },
 
   setup() {
+    const router = useRouter()
     const store = useStore()
 
     const reference = {
@@ -228,6 +268,10 @@ export default defineComponent({
       state.preOpenKeys = oldVal
     })
 
+    const goto = (route) => {
+      router.push(route)
+    }
+
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
@@ -240,6 +284,7 @@ export default defineComponent({
       menuItems,
       ...toRefs(state),
       toggleCollapsed,
+      goto
     }
   },
 
@@ -272,6 +317,8 @@ export default defineComponent({
   .content {
     position: relative;
     height: 90vh;
+    margin: 0 0 0 5px;
+    padding: 1vh 0 0 1vw;
     overflow-y: scroll;
   }
 
