@@ -92,7 +92,7 @@ const SubMenu = {
 const main_page = {
   key: "main_page",
   title: "首页",
-  icon: "PieChartOutlined",
+  icon: "HomeOutlined",
   route: "main"
 }
 
@@ -101,19 +101,19 @@ const admin = [
   {
     key: "2",
     title: "学生管理",
-    icon: "PieChartOutlined",
+    icon: "TeamOutlined",
     route: "studentManagement"
   },
   {
     key: "3",
     title: "教师管理",
-    icon: "PieChartOutlined",
+    icon: "SolutionOutlined",
     route: "teacherManagement"
   },
   {
     key: "4",
     title: "专业管理",
-    icon: "PieChartOutlined",
+    icon: "ProfileOutlined",
     route: "majorManagement"
   }
 ]
@@ -121,7 +121,7 @@ const admin = [
 const course_query = {
   key: "course_query",
   title: "全校开课查询",
-  icon: "PieChartOutlined",
+  icon: "SearchOutlined",
   route: "courseQuery"
 }
 
@@ -130,32 +130,32 @@ const edu_admin = [
   {
     key: "2",
     title: "学生信息",
-    icon: "PieChartOutlined",
+    icon: "TeamOutlined",
     route: "studentInfo"
   },
   {
     key: "3",
     title: "教师信息",
-    icon: "PieChartOutlined",
+    icon: "SolutionOutlined",
     route: "teacherInfo"
   },
   {
     key: "4",
     title: "课程管理",
-    icon: "PieChartOutlined",
+    icon: "AppstoreOutlined",
     route: "releaseCourseManagement",
     children: [
       course_query,
       {
         key: "4.2",
         title: "开课管理",
-        icon: "PieChartOutlined",
+        icon: "ReadOutlined",
         route: "releaseCourseManagement"
       },
       {
         key: "4.3",
         title: "选课管理",
-        icon: "PieChartOutlined",
+        icon: "SelectOutlined",
         route: "selectCourseManagement"
       }
     ]
@@ -171,7 +171,7 @@ const edu_admin = [
 const course_table = {
   key: "course_table",
   title: "我的课表",
-  icon: "PieChartOutlined",
+  icon: "TableOutlined",
   route: "courseTable"
 }
 
@@ -180,13 +180,13 @@ const teacher = [
   {
     key: "2",
     title: "课程",
-    icon: "PieChartOutlined",
+    icon: "AppstoreOutlined",
     children: [
       course_query,
       {
         key: "2.2",
         title: "发布课程",
-        icon: "PieChartOutlined",
+        icon: "ReadOutlined",
         route: "releaseCourse"
       },
       course_table
@@ -205,19 +205,19 @@ const student = [
   {
     key: "2",
     title: "课程",
-    icon: "PieChartOutlined",
+    icon: "AppstoreOutlined",
     children: [
       course_query,
       {
         key: "2.2",
         title: "选课",
-        icon: "PieChartOutlined",
+        icon: "SelectOutlined",
         route: "selectCourse"
       },
       {
         key: "2.3",
         title: "退课",
-        icon: "PieChartOutlined",
+        icon: "ExportOutlined",
         route: "dropCourse"
       },
       course_table
