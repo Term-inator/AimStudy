@@ -1,5 +1,159 @@
 <template>
-  <div class="page-wrapper">
+<a-layout has-sider>
+    <a-layout-sider
+      v-model:collapsed="collapsed" :trigger="null" collapsible
+      :style="{ position: 'fixed',
+                left: 0, top: 0, bottom: 0,
+                height: '100vh',
+                zIndex: 2, 
+                overflow: 'auto', 
+                boxShadow: '6px 0 6px #888888' ,
+                transition: 'all 0.3s'
+      }"
+    >
+      <div class="logo" />
+      <a-menu
+        v-model:openKeys="openKeys"
+        v-model:selectedKeys="selectedKeys"
+        mode="inline"
+        theme="dark"
+      >
+        <template v-for="item in menuItems" :key=item.key>
+          <template v-if="!item.children">
+            <a-menu-item :key=item.key @click="goto(item.route)">
+              <template #icon>
+                <Icon :icon="item.icon"></Icon>
+              </template>
+              <span>{{ item.title }}</span>
+            </a-menu-item>
+          </template>
+          <template v-else>
+            <sub-menu :key="item.key" :menu-info="item" @goto="goto" />
+          </template>
+        </template>
+      </a-menu>
+    </a-layout-sider>
+    <a-layout :style="right_side_style">
+      <a-layout-header 
+        :style="header_style"
+      >
+        <top-bar>
+          <template #close_menu>
+            <menu-unfold-outlined
+              v-if="collapsed"
+              class="trigger"
+              @click="toggleCollapsed"
+            />
+            <menu-fold-outlined v-else class="trigger" @click="toggleCollapsed" />
+          </template>
+        </top-bar>
+      </a-layout-header>
+      <a-layout-content :style="{ margin: '64px 16px 0 0', overflow: 'initial' }">
+        <router-view/>
+        <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
+          ...
+          <br />
+          Really
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          long
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          ...
+          <br />
+          content
+        </div>
+      </a-layout-content>
+      <a-layout-footer :style="{ textAlign: 'center' }">
+        AimStudy ©2022
+      </a-layout-footer>
+    </a-layout>
+  </a-layout>
+  <!-- <div class="page-wrapper">
     <div class="menu-wrapper" ref="menu_wrapper">
       <a-menu
         v-model:openKeys="openKeys"
@@ -26,7 +180,7 @@
     </div>
   
     <div class="right-part">
-      <top-bar>
+      <top-bar class="top-bar">
         <template #close_menu>
           <MenuUnfoldOutlined v-if="collapsed" class="trigger" @click="toggleCollapsed"/>
           <MenuFoldOutlined v-else class="trigger" @click="toggleCollapsed"/>
@@ -36,7 +190,7 @@
         <router-view/>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -44,7 +198,7 @@ import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import topBar from "@/components/navBar/topBar.vue"
 
 const SubMenu = {
@@ -252,13 +406,23 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
 
-    const reference = {
-      menu_wrapper: null,
-    }
-
     const state = reactive({
       role: store.state.user.roles[0],
       collapsed: false,
+      right_side_style: {
+        width: "100%",
+        margin: " 0 0 0 200px",
+        transition: "margin 0.3s"
+      },
+      header_style: {
+        position: 'fixed', 
+        width: `${window.innerWidth - 200}px`,
+        background: '#fff', 
+        padding: 0, 
+        zIndex: 1, 
+        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.4)',
+        transition: 'width 0.3s'
+      },
       selectedKeys: ['main_page'],
       openKeys: [],
       preOpenKeys: [],
@@ -275,12 +439,12 @@ export default defineComponent({
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
-      reference.menu_wrapper.style.width = state.collapsed ? '70px' : '256px'
+      state.right_side_style.margin = state.collapsed ? "0 0 0 81.9px" : "0 0 0 200px"
+      state.header_style.width = state.collapsed ? `${window.innerWidth - 81.9}px` : `${window.innerWidth - 200}px`
     }
 
     const menuItems = menus[state.role]
     return {
-      ...toRefs(reference),
       menuItems,
       ...toRefs(state),
       toggleCollapsed,
@@ -292,6 +456,32 @@ export default defineComponent({
 </script>
 
 <style scoped>
+  .logo {
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px;
+  }
+
+  .site-layout .site-layout-background {
+    background: #fff;
+  }
+
+  .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .trigger:hover {
+    color: #1890ff;
+  }
+
+  [data-theme='dark'] .site-layout .site-layout-background {
+    background: #141414;
+  }
+  
   .page-wrapper {
     display: flex;
     width: 100%;
@@ -299,27 +489,33 @@ export default defineComponent({
   }
 
   .right-part {
+    width: flex;
     height: 100vh;
+    margin: auto;
     flex: 1;
   }
 
   .menu-wrapper {
-    width: 256px;
+    position: fixed;
+    width: 15vw;
     height: 100vh;
     transition: width 0.5s;
   }
 
   .top-bar {
-    width: 100%;
+    position: fixed;
+    max-width: 85vw;
     height: 10vh;
+    background-color: white;
+    z-index: 999;
   }
 
   .content {
     position: relative;
+    max-width: 85vw;
     height: 89vh;
-    margin: 0 0 0 5px;
-    padding: 0 1vw 1vh 1vw;
-    overflow-y: scroll;
+    margin: 10vh 0 0 0;
+    padding: 1vh 1vw 1vh 1vw;
   }
 
   .trigger :hover {

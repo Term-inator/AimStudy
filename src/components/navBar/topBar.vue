@@ -1,6 +1,6 @@
 <template>
   <a-row type="flex" justify="space-between" align="middle" class="top-bar">
-    <a-col :span="2" style="padding: 0 0 0 5px">
+    <a-col :span="2">
       <slot name="close_menu"></slot>
     </a-col>
     <a-col :span="5">本科生教学管理系统</a-col>
@@ -55,8 +55,7 @@ export default defineComponent({
 
 <style scoped>
   .top-bar {
+    width: inherit;
     height: 8vh;
-    margin: 0 0 1vh 0;
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.4);
   }
 </style>
