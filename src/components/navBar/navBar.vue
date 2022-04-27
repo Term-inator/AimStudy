@@ -48,7 +48,7 @@
           </template>
         </top-bar>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '64px 16px 0 0', overflow: 'initial' }">
+      <a-layout-content :style="{ margin: '64px 16px 0 16px', overflow: 'initial' }">
         <router-view/>
         <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
           ...
@@ -458,7 +458,7 @@ export default defineComponent({
 <style scoped>
   .logo {
     height: 32px;
-    background: rgba(255, 255, 255, 0.2);
+    background: #141414;
     margin: 16px;
   }
 
@@ -474,32 +474,13 @@ export default defineComponent({
     transition: color 0.3s;
   }
 
-  .trigger:hover {
+  .trigger :hover {
     color: #1890ff;
+    transition: color 0.3s;
   }
 
   [data-theme='dark'] .site-layout .site-layout-background {
     background: #141414;
-  }
-  
-  .page-wrapper {
-    display: flex;
-    width: 100%;
-    height: 100%;
-  }
-
-  .right-part {
-    width: flex;
-    height: 100vh;
-    margin: auto;
-    flex: 1;
-  }
-
-  .menu-wrapper {
-    position: fixed;
-    width: 15vw;
-    height: 100vh;
-    transition: width 0.5s;
   }
 
   .top-bar {
@@ -518,8 +499,4 @@ export default defineComponent({
     padding: 1vh 1vw 1vh 1vw;
   }
 
-  .trigger :hover {
-    color: #1890ff;
-    transition: color 0.3s;
-  }
 </style>

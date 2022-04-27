@@ -57,5 +57,6 @@ export default defineComponent({
   .top-bar {
     width: inherit;
     height: 8vh;
+    overflow: hidden;
   }
 </style>

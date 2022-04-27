@@ -1,11 +1,17 @@
 <template>
-  <a-table :columns="columns" :data-source="dataSource" >
-    <template #bodyCell="{ record, column }">
-      <template v-if="column.dataIndex === 'outline'">
-        <a-button type="link" @click="download(record.key)">下载</a-button>
+  <div>
+    全校开课查询
+    <div>
+      search
+    </div>
+    <a-table :columns="columns" :data-source="dataSource" size="small" bordered>
+      <template #bodyCell="{ record, column }">
+        <template v-if="column.dataIndex === 'outline'">
+          <a-button type="link" size="small" class="table-cell-button-font" @click="download(record.key)">下载</a-button>
+        </template>
       </template>
-    </template>
-  </a-table>
+    </a-table>
+  </div>
 </template>
 
 <script>
@@ -72,7 +78,7 @@ export default defineComponent({
         title: '学分',
         dataIndex: 'credit',
         key: 'credit',
-        width: 65
+        width: 80
       },
       {
         title: '校区',
@@ -83,7 +89,8 @@ export default defineComponent({
       {
         title: '大纲',
         dataIndex: 'outline',
-        key: 'outline'
+        key: 'outline',
+        width: 30
       }
     ]
     const dataSource = ref(
@@ -91,7 +98,7 @@ export default defineComponent({
         key: i,
         semester: '2021-2022学年第2学期',
         index: '1',
-        name: '计算机网络',
+        name: `计算机网络${i}`,
         type: '专业必修',
         department: '计算机学院',
         teacher: '张三',
@@ -116,3 +123,10 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+::v-deep .ant-table-cell ,.table-cell-button-font{
+  font-size: 5px;
+  text-align: center;
+}
+</style>
