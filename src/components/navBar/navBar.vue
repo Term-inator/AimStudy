@@ -37,7 +37,7 @@
       <a-layout-header 
         :style="header_style"
       >
-        <top-bar>
+        <top-bar :style="top_bar_style">
           <template #close_menu>
             <menu-unfold-outlined
               v-if="collapsed"
@@ -417,11 +417,19 @@ export default defineComponent({
       header_style: {
         position: 'fixed', 
         width: `${window.innerWidth - 200}px`,
+        height: '64px',
         background: '#fff', 
         padding: 0, 
         zIndex: 1, 
         boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.4)',
         transition: 'width 0.3s'
+      },
+      top_bat_style: {
+        position: 'fixed',
+        left: '200px', 
+        right: 0,
+        height: 'inherit',
+        backgroundColor: 'white'
       },
       selectedKeys: ['main_page'],
       openKeys: [],
@@ -441,6 +449,7 @@ export default defineComponent({
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
       state.right_side_style.margin = state.collapsed ? "0 0 0 81.9px" : "0 0 0 200px"
       state.header_style.width = state.collapsed ? `${window.innerWidth - 81.9}px` : `${window.innerWidth - 200}px`
+      store.top_bat_style.left = state.collapsed ? '81.9px' : '200px'
     }
 
     const menuItems = menus[state.role]
@@ -481,14 +490,6 @@ export default defineComponent({
 
   [data-theme='dark'] .site-layout .site-layout-background {
     background: #141414;
-  }
-
-  .top-bar {
-    position: fixed;
-    max-width: 85vw;
-    height: 10vh;
-    background-color: white;
-    z-index: 999;
   }
 
   .content {
