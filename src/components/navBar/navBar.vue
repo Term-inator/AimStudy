@@ -392,6 +392,9 @@ const menus = {
   "student": student
 }
 
+const menu_expand_width = 200
+const menu_collapse_width = 81.9
+
 export default defineComponent({
   name: "navBar",
   components: {
@@ -447,9 +450,9 @@ export default defineComponent({
     const toggleCollapsed = () => {
       state.collapsed = !state.collapsed
       state.openKeys = state.collapsed ? [] : state.preOpenKeys
-      state.right_side_style.margin = state.collapsed ? "0 0 0 81.9px" : "0 0 0 200px"
-      state.header_style.width = state.collapsed ? `${window.innerWidth - 81.9}px` : `${window.innerWidth - 200}px`
-      store.top_bat_style.left = state.collapsed ? '81.9px' : '200px'
+      state.right_side_style.margin = state.collapsed ? `0 0 0 ${menu_collapse_width}px` : `0 0 0 ${menu_expand_width}px`
+      state.header_style.width = state.collapsed ? `${window.innerWidth - menu_collapse_width}px` : `${window.innerWidth - menu_expand_width}px`
+      store.top_bat_style.left = state.collapsed ? `${menu_collapse_width}px` : `${menu_expand_width}px`
     }
 
     const menuItems = menus[state.role]
