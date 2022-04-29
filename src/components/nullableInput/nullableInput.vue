@@ -13,6 +13,7 @@
 import { defineComponent, ref, watch } from 'vue'
 
 export default defineComponent({
+  name: "NullableInput",
   props: {
     value: {
       type: Object,

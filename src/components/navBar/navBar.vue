@@ -335,7 +335,8 @@ export default defineComponent({
         left: '200px', 
         right: 0,
         height: 'inherit',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        transition: 'left 0.3s'
       },
       selectedKeys: ['main_page'],
       openKeys: [],
