@@ -1,8 +1,43 @@
 <template>
-  <div>
-    全校开课查询
-    <div>
-      search
+  <div class="main">
+    <h1>全校开课查询</h1>
+    <div class="search">
+      <a-form
+        ref="formRef"
+        class="ant-advanced-search-form"
+        :model="formState"
+        @finish="onFinish"
+      >
+        <a-row :gutter="18">
+          <template v-for="(item, index) in search_form" :key="index">
+            <a-col v-show="expand || index < 8" :span="6">
+              <a-form-item
+                :name="item.title"
+                :label="item.title"
+                :rules="`[{ required: ${item.required}, message: 'input something' }]`"
+              >
+                <a-input v-model:value="formState[`${item.title}`]"></a-input>
+              </a-form-item>
+            </a-col>
+          </template>
+        </a-row>
+        <a-row>
+          <a-col :span="24" style="text-align: right">
+            <a-button type="primary" html-type="submit">查询</a-button>
+            <a-button style="margin: 0 8px" @click="() => formRef.resetFields()">重置</a-button>
+            <a style="font-size: 12px" @click="expand = !expand">
+              <template v-if="expand">
+                <Icon :icon="'UpOutlined'"></Icon>
+                收起
+              </template>
+              <template v-else>
+                <Icon :icon="'DownOutlined'"></Icon>
+                展开
+              </template>
+            </a>
+          </a-col>
+        </a-row>
+      </a-form>
     </div>
     <a-table :columns="columns" :data-source="dataSource" size="small" bordered>
       <template #bodyCell="{ record, column }">
@@ -15,9 +50,71 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
+import { Icon } from '@/components/icon'
+
+const search_form = [
+  {
+    title: "课程序号",
+    type: "input",
+    required: false
+  },
+  {
+    title: "课程名称",
+    type: "input",
+    required: false
+  },
+  {
+    title: "课程类别",
+    type: "select",
+    required: false,
+  },
+  {
+    title: "开课院系",
+    type: "select",
+    required: false,
+  },
+  {
+    title: "教师",
+    type: "nullable input",
+    required: false,
+  },
+  {
+    title: "年级",
+    type: "input",
+    required: false
+  },
+  {
+    title: "周数",
+    type: "input",
+    required: false
+  },
+  {
+    title: "起止周",
+    type: "range",
+    required: false
+  },
+  {
+    title: "星期",
+    type: "select",
+    required: false
+  },
+  {
+    title: "小节",
+    type: "select",
+    required: false
+  },
+  {
+    title: "校区",
+    type: "select",
+    required: false
+  }
+]
 
 export default defineComponent({
+  components: {
+    Icon
+  },
   setup() {
     const columns = [
       {
@@ -115,7 +212,23 @@ export default defineComponent({
       console.log(key)
     }
 
+    const expand = ref(false);
+    const formRef = ref();
+    const formState = reactive({});
+
+    const onFinish = values => {
+      console.log('Received values of form: ', values);
+      console.log('formState: ', formState);
+    };
+
     return {
+      search_form,
+
+      formRef,
+      formState,
+      expand,
+      onFinish,
+
       columns,
       dataSource,
       download
@@ -125,6 +238,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.main {
+  padding: 20px 15px 0 15px;
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.search {
+  padding: 0 0 10px 0;
+}
+
 ::v-deep .ant-table-cell ,.table-cell-button-font{
   font-size: 5px;
   text-align: center;
