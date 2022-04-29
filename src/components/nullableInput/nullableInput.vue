@@ -17,10 +17,7 @@ export default defineComponent({
   props: {
     value: {
       type: Object,
-      default: () => ({
-        isEmpty: true,
-        value: ''
-      }),
+      default: () => ({isEmpty: true, value: ''}),
       required: true
     }
   },
