@@ -2,45 +2,37 @@
   <div class="main">
     <h1>全校开课查询</h1>
     <div class="search">
-      <a-form
-        ref="formRef"
-        class="ant-advanced-search-form"
-        :model="formState"
-        @finish="onFinish"
-      >
-        <a-row :gutter="18">
-          <template v-for="(item, index) in search_form" :key="index">
-            <a-col v-show="expand || index < 4" :span="6">
-              <a-form-item
-                :name="item.title"
-                :label="item.title"
-                :rules="item.rules"
-              >
+      <a-row :gutter="18">
+        <template v-for="(item, index) in search_form" :key="index">
+          <a-col v-show="expand || index < 4" :span="6">
+            <a-row style="padding: 5px 0">
+              <a-col :span="8"> {{ item.title }} </a-col>
+              <a-col :span="16">
                 <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
-                <a-select v-else-if="item.type === 'select'" size="small"></a-select>
+                <a-select v-else-if="item.type === 'select'" size="small" style="width: 100%"></a-select>
                 <NullableInput v-else-if="item.type === 'nullable input'" v-model:value="formState[`${item.title}`]"></NullableInput>
                 <RangeInput v-else-if="item.type === 'range input'" v-model:value="formState[`${item.title}`]"></RangeInput>
-              </a-form-item>
-            </a-col>
-          </template>
-        </a-row>
-        <a-row>
-          <a-col :span="24" style="text-align: right">
-            <a-button type="primary" html-type="submit" size="small" style="font-size: 5px">查询</a-button>
-            <a-button size="small" style="margin: 0 8px; font-size: 5px" @click="formReset">重置</a-button>
-            <a style="font-size: 12px" @click="expand = !expand">
-              <template v-if="expand">
-                <Icon :icon="'UpOutlined'"></Icon>
-                收起
-              </template>
-              <template v-else>
-                <Icon :icon="'DownOutlined'"></Icon>
-                展开
-              </template>
-            </a>
+              </a-col>
+            </a-row>
           </a-col>
-        </a-row>
-      </a-form>
+        </template>
+      </a-row>
+      <a-row>
+        <a-col :span="24" style="text-align: right">
+          <a-button type="primary" size="small" style="font-size: 5px" @click="onFinish">查询</a-button>
+          <a-button size="small" style="margin: 0 8px; font-size: 5px" @click="formReset">重置</a-button>
+          <a style="font-size: 12px" @click="expand = !expand">
+            <template v-if="expand">
+              <Icon :icon="'UpOutlined'"></Icon>
+              收起
+            </template>
+            <template v-else>
+              <Icon :icon="'DownOutlined'"></Icon>
+              展开
+            </template>
+          </a>
+        </a-col>
+      </a-row>
     </div>
     <a-table :columns="columns" :data-source="dataSource" size="small" bordered>
       <template #bodyCell="{ record, column }">
@@ -53,7 +45,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { Icon } from '@/components/icon'
 import NullableInput from '@/components/nullableInput/nullableInput.vue'
 import RangeInput from '@/components/rangeInput/rangeInput.vue'
@@ -245,15 +237,16 @@ export default defineComponent({
     const formRef = ref();
     const formState = reactive({});
 
-    const onFinish = values => {
-      console.log('Received values of form: ', values);
-      console.log('formState: ', formState);
+    const onFinish = () => {
+      for(let key in toRefs(formState)) {
+        console.log(key, toRefs(formState)[key].value)
+      }
     }
 
     const formReset = () => {
-      formRef.value.resetFields()
-      formState['教师'] = undefined
-      formState['起止周'] = undefined
+      for(let key in toRefs(formState)) {
+        toRefs(formState)[key].value = ''
+      }
     }
 
     return {

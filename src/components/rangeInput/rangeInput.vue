@@ -1,17 +1,17 @@
 <template>
   <a-row :gutter="10">
     <a-col :span="10">
-      <a-input size="small" v-model:value="state.left" @change="leftValChange(state.left)"></a-input>
+      <a-input size="small" v-model:value="left" @change="leftValChange(left)"></a-input>
     </a-col>
     <a-col :span="4" style="text-align: center;">—</a-col>
     <a-col :span="10">
-      <a-input size="small" v-model:value="state.right" @change="rightValChange(state.right)"></a-input>
+      <a-input size="small" v-model:value="right" @change="rightValChange(right)"></a-input>
     </a-col>
   </a-row>
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, reactive, toRefs, watch } from 'vue'
 
 export default defineComponent({
   props: {
@@ -22,24 +22,23 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    const state = ref(props.value)
+    const state = reactive(props.value)
 
     watch(() => props.value, () => {
-      console.log(props.value)
-      state.value.left = props.value.left
-      state.value.right = props.value.right
+      state.left = props.value.left
+      state.right = props.value.right
     })
 
     const leftValChange = (val) => {
-      emit('update:value', {left: val, right: state.value.right})
+      emit('update:value', {left: val, right: state.right})
     }
 
     const rightValChange = (val) => {
-      emit('update:value', {left: state.value.left, right: val})
+      emit('update:value', {left: state.left, right: val})
     }
 
     return {
-      state,
+      ...toRefs(state),
       leftValChange,
       rightValChange
     }

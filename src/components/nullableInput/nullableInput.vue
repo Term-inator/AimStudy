@@ -1,9 +1,9 @@
 <template>
-  <a-row :gutter="20">
+  <a-row>
     <a-col :span="4">
       <a-switch v-model:checked="isNotEmpty" size="small" @change="toggleSwitch"/>
     </a-col>
-    <a-col :span="20">
+    <a-col :span="18" :offset="2">
       <a-input size="small" v-model:value="state.value" :disabled="!isNotEmpty" @input="valChange(state.value)"></a-input>
     </a-col>
   </a-row>
@@ -41,6 +41,8 @@ export default defineComponent({
         emit('update:value', {isEmpty: true, value: ''})
       }
     }
+
+    // TODO reset switch
 
     return {
       isNotEmpty,
