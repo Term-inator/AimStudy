@@ -14,17 +14,19 @@
               <a-form-item
                 :name="item.title"
                 :label="item.title"
-                :rules="`[{ required: ${item.required}, message: 'input something' }]`"
+                :rules="item.rules"
               >
-                <a-input v-model:value="formState[`${item.title}`]"></a-input>
+                <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
+                <nullable-input v-else-if="item.type === 'nullable input'" v-model:value="formState[`${item.title}`]"></nullable-input>
+                <a-select v-else-if="item.type === 'select'" size="small"></a-select>
               </a-form-item>
             </a-col>
           </template>
         </a-row>
         <a-row>
           <a-col :span="24" style="text-align: right">
-            <a-button type="primary" html-type="submit">查询</a-button>
-            <a-button style="margin: 0 8px" @click="() => formRef.resetFields()">重置</a-button>
+            <a-button type="primary" html-type="submit" size="small" style="font-size: 5px">查询</a-button>
+            <a-button size="small" style="margin: 0 8px; font-size: 5px" @click="() => formRef.resetFields()">重置</a-button>
             <a style="font-size: 12px" @click="expand = !expand">
               <template v-if="expand">
                 <Icon :icon="'UpOutlined'"></Icon>
@@ -52,37 +54,50 @@
 <script>
 import { defineComponent, reactive, ref } from 'vue'
 import { Icon } from '@/components/icon'
+import NullableInput from '@/components/nullableInput/nullableInput.vue'
 
 const search_form = [
   {
     title: "课程序号",
     type: "input",
-    required: false
+    rules: {
+      required: false
+    }
   },
   {
     title: "课程名称",
     type: "input",
-    required: false
+    rules: {
+      required: false
+    }
   },
   {
     title: "课程类别",
     type: "select",
-    required: false,
+    rules: {
+      required: false
+    }
   },
   {
     title: "开课院系",
     type: "select",
-    required: false,
+    rules: {
+      required: false
+    }
   },
   {
-    title: "教师",
+    title: "教师", // 教师可以为空，表示查询未指定教师的课程
     type: "nullable input",
-    required: false,
+    rules: {
+      required: false
+    }
   },
   {
     title: "年级",
     type: "input",
-    required: false
+    rules: {
+      required: false
+    }
   },
   {
     title: "周数",
@@ -91,29 +106,38 @@ const search_form = [
   },
   {
     title: "起止周",
-    type: "range",
-    required: false
+    type: "range input",
+    rules: {
+      required: false
+    }
   },
   {
     title: "星期",
     type: "select",
-    required: false
+    rules: {
+      required: false
+    }
   },
   {
     title: "小节",
     type: "select",
-    required: false
+    rules: {
+      required: false
+    }
   },
   {
     title: "校区",
     type: "select",
-    required: false
+    rules: {
+      required: false
+    }
   }
 ]
 
 export default defineComponent({
   components: {
-    Icon
+    Icon,
+    NullableInput
   },
   setup() {
     const columns = [
