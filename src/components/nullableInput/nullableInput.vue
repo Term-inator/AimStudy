@@ -21,7 +21,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props, { emit }) {
+  setup(props, { emit, expose }) {
     const isNotEmpty = ref(true)
     const state = ref(props.value)
 
@@ -42,13 +42,18 @@ export default defineComponent({
       }
     }
 
-    // TODO reset switch
+    const reset = () => {
+      isNotEmpty.value = true
+    }
+    expose({
+      reset
+    })
 
     return {
       isNotEmpty,
       toggleSwitch,
       state,
-      valChange
+      valChange,
     }
   },
 })

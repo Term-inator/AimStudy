@@ -7,7 +7,7 @@
           <a-col :span="16">
             <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
             <a-select v-else-if="item.type === 'select'" size="small" style="width: 100%"></a-select>
-            <NullableInput v-else-if="item.type === 'nullable input'" v-model:value="formState[`${item.title}`]"></NullableInput>
+            <NullableInput v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.title}`]"></NullableInput>
             <RangeInput v-else-if="item.type === 'range input'" v-model:value="formState[`${item.title}`]"></RangeInput>
           </a-col>
         </a-row>
@@ -62,10 +62,15 @@ export default defineComponent({
       emit('conditions', formState)
     }
 
+    const nullable_input = ref(null)
+
     const formReset = () => {
       for(let key in toRefs(formState)) {
         toRefs(formState)[key].value = ''
       }
+      nullable_input.value.forEach(e => {
+        e.reset()
+      })
     }
 
     return {
@@ -75,6 +80,8 @@ export default defineComponent({
       formReset,
       expand,
       onFinish,
+
+      nullable_input
     }
   },
 })
