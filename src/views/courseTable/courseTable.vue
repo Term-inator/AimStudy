@@ -38,15 +38,13 @@ export default defineComponent({
     CourseTable
   },
   setup() {
-    
-
     const course_table = [
       [
         { state: 0, span: 1 },
         { state: 0, span: 1 },
         { state: 1, teacher: "张三", course_name: "计算机网络", room: "A101", span: 2 },
         {},
-        { state: 1, teacher: "李四", course_name: "计算机系统", room: "A102", span:2 },
+        { state: 1, teacher: "李四", course_name: "计算机系统", room: "A102", span: 2 },
         {},
         { state: 1, teacher: "王五", course_name: "高等数学", room: "A103", span: 3 },
         {},

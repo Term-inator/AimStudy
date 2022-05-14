@@ -10,7 +10,7 @@ export default defineComponent({
   name: "CourseQueryView",
   setup() {
     onMounted(() => {
-      console.log('course query')
+      console.log('score query')
     })
   },
 })

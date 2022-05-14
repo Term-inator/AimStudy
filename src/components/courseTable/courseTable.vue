@@ -11,7 +11,7 @@
       <th>星期日</th>
     </tr>
       <tr v-for="i in 14" :key="i">
-        <td>
+        <td class="time-column">
           <div> {{ time_slot[i-1].title }} </div>
           <div> {{ time_slot[i-1].time }} </div>
         </td>
@@ -75,11 +75,14 @@ export default defineComponent({
   }
 
   th {
-    background-color: lightcyan;
+    background-color: rgba(64, 104, 224, 0.3);
+  }
+
+  .time-column {
+    background-color: rgba(224, 255, 255, 0.3);
   }
 
   .section {
     padding: 0 5px 0 5px;
-    background-color: rgba(64, 104, 224, 0.3);
   }
 </style>
