@@ -4,7 +4,7 @@
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="columns" :data-source="dataSource" size="small" bordered>
+    <a-table :columns="columns" :data-source="courses" size="small" bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'action'">
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
@@ -177,7 +177,7 @@ export default defineComponent({
         width: 30
       }
     ]
-    const dataSource = ref(
+    const courses = ref(
       [...Array(100)].map((_, i) => ({
         key: i,
         semester: '2021-2022学年第2学期',
@@ -211,7 +211,7 @@ export default defineComponent({
       getConditions,
 
       columns,
-      dataSource,
+      courses,
       download
     }
   },

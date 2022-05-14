@@ -64,13 +64,13 @@ export default defineComponent({
 
 <style scoped>
   table {
-    border: 2px solid royalblue;
+    border: 2px solid rgba(64, 104, 224, 0.8);
   }
 
   th, td {
     min-width: 100px;
     background-color: white;
-    border: 1px solid royalblue;
+    border: 1px solid rgba(64, 104, 224, 0.7);
     text-align: center;
   }
 
