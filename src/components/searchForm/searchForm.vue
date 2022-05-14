@@ -1,7 +1,7 @@
 <template>
   <a-row :gutter="18">
     <template v-for="(item, index) in search_form" :key="index">
-      <a-col v-show="expand || index < 4" :span="6">
+      <a-col v-show="expand || index < col_num" :span="6">
         <a-row style="padding: 5px 0">
           <a-col :span="8"> {{ item.title }} </a-col>
           <a-col :span="16">
@@ -18,7 +18,7 @@
     <a-col :span="24" style="text-align: right">
       <a-button type="primary" size="small" style="font-size: 5px" @click="onFinish">查询</a-button>
       <a-button size="small" style="margin: 0 8px; font-size: 5px" @click="formReset">重置</a-button>
-      <a style="font-size: 12px" @click="expand = !expand">
+      <a v-if="search_form.length >= col_num" style="font-size: 12px" @click="expand = !expand">
         <template v-if="expand">
           <Icon :icon="'UpOutlined'"></Icon>
           收起
@@ -55,8 +55,10 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(props.items)
 
-    const expand = ref(false);
-    const formState = reactive({});
+    const expand = ref(false)
+    const formState = reactive({})
+
+    const col_num = 4 // 一行 4 个
 
     const onFinish = () => {
       emit('conditions', formState)
@@ -80,6 +82,7 @@ export default defineComponent({
       formReset,
       expand,
       onFinish,
+      col_num,
 
       nullable_input
     }
