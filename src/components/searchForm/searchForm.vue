@@ -1,14 +1,15 @@
 <template>
   <a-row :gutter="18">
     <template v-for="(item, index) in search_form" :key="index">
-      <a-col v-show="expand || index < col_num" :span="6">
+      <a-col v-show="expand || index < col_num" :span="col_span">
         <a-row style="padding: 5px 0">
-          <a-col :span="8"> {{ item.title }} </a-col>
-          <a-col :span="16">
+          <a-col :span="6"> {{ item.title }} </a-col>
+          <a-col :span="18">
             <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
-            <a-select v-else-if="item.type === 'select'" size="small" style="width: 100%"></a-select>
-            <NullableInput v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.title}`]"></NullableInput>
-            <RangeInput v-else-if="item.type === 'range input'" v-model:value="formState[`${item.title}`]"></RangeInput>
+            <a-select v-else-if="item.type === 'select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%"></a-select>
+            <a-cascader v-else-if="item.type === 'cascade select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%" changeOnSelect></a-cascader>
+            <nullable-input v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.title}`]"></nullable-input>
+            <range-input v-else-if="item.type === 'range input'" v-model:value="formState[`${item.title}`]"></range-input>
           </a-col>
         </a-row>
       </a-col>
@@ -33,7 +34,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive, toRefs } from 'vue'
+import { defineComponent, ref, reactive, toRefs, computed } from 'vue'
 import { Icon } from '@/components/icon'
 import NullableInput from '@/components/nullableInput/nullableInput.vue'
 import RangeInput from '@/components/rangeInput/rangeInput.vue'
@@ -41,6 +42,11 @@ import RangeInput from '@/components/rangeInput/rangeInput.vue'
 export default defineComponent({
   name: 'SearchForm',
   props: {
+    col_num: {
+      type: Number,
+      default: 4,
+      required: false
+    },
     items: {
       type: Array,
       default: () => [],
@@ -53,12 +59,10 @@ export default defineComponent({
     RangeInput
   },
   setup(props, { emit }) {
-    console.log(props.items)
+    const col_span = computed(() => 24 / props.col_num)
 
     const expand = ref(false)
     const formState = reactive({})
-
-    const col_num = 4 // 一行 4 个
 
     const onFinish = () => {
       emit('conditions', formState)
@@ -76,13 +80,13 @@ export default defineComponent({
     }
 
     return {
+      col_span,
       search_form: props.items,
 
       formState,
       formReset,
       expand,
       onFinish,
-      col_num,
 
       nullable_input
     }

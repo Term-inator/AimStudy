@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="search">
-      <search-form :items="search_form"></search-form>
+      <search-form :items="search_form" :col_num="3"></search-form>
     </div>
     <div class="course-list">
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
@@ -22,7 +22,23 @@ import SearchForm from '@/components/searchForm/searchForm.vue'
 const search_form = [
   {
     title: "学年学期",
-    type: "select", // TODO cascade select
+    type: "cascade select",
+    options: [
+      {
+        value: (2021, 2022),
+        label: "2021-2022学年",
+        children: [
+          {
+            value: 1,
+            label: "第一学期"
+          },
+          {
+            value: 2,
+            label: "第二学期"
+          }
+        ]
+      }
+    ],
     rules: {
       required: false
     }
