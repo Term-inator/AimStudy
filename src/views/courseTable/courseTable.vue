@@ -4,7 +4,7 @@
       <search-form :items="search_form" :col_num="3"></search-form>
     </div>
     <div class="course-table">
-      <course-table :course_table="course_table"></course-table>
+      <course-table :course_table="course_table" combine></course-table>
     </div>
     <div class="course-list">
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>

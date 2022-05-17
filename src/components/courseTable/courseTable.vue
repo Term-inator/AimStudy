@@ -10,16 +10,36 @@
       <th>星期六</th>
       <th>星期日</th>
     </tr>
-      <tr v-for="i in 14" :key="i">
-        <td class="time-column">
-          <div> {{ time_slot[i-1].title }} </div>
-          <div> {{ time_slot[i-1].time }} </div>
+      <tr v-for="sec in 14" :key="sec">
+        <td class="time-column" :ref="time_slot[sec-1].ref">
+          <div> {{ time_slot[sec-1].title }} </div>
+          <div> {{ time_slot[sec-1].time }} </div>
         </td>
-        <template v-for="(sections, j) in course_table" :key="j">
-          <td v-if="sections[i-1].state === 1" :rowspan="sections[i-1].span" class="section">
-            {{ `${sections[i-1].teacher} ${sections[i-1].course_name} ${sections[i-1].room}` }}
+        <template v-for="(sections, day) in course_table" :key="day">
+          <td v-if="sections[sec-1].state === 0" 
+            :rowspan="combine ? sections[sec-1].span : 1"
+            @click="clickCell($event, sec-1, day)"
+            >
           </td>
-          <td v-else-if="sections[i-1].state === 0" :rowspan="sections[i-1].span"></td>
+          <td v-else-if="sections[sec-1].state === 1" 
+            :rowspan="combine ? sections[sec-1].span : 1" 
+            class="section" 
+            @click="clickCell($event, sec-1, day)"
+            >
+            {{ `${sections[course_table_pre[day][sec-1]].teacher} 
+            ${sections[course_table_pre[day][sec-1]].course_name} 
+            ${sections[course_table_pre[day][sec-1]].room}` }}
+          </td>
+          <template v-else>
+            <td v-if="!combine"
+              class="section" 
+              @click="clickCell($event, sec-1, day)"
+              >
+              {{ `${sections[course_table_pre[day][sec-1]].teacher} 
+              ${sections[course_table_pre[day][sec-1]].course_name} 
+              ${sections[course_table_pre[day][sec-1]].room}` }}
+            </td>
+          </template>
         </template>
       </tr>
   </table>
@@ -48,15 +68,55 @@ const time_slot = [
 export default defineComponent({
   name: 'CourseTable',
   props: {
+    combine: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
     course_table: {
       type: Array,
       default: () => [],
       required: true
     }
   },
-  setup() {
+  setup(props) {
+    const generatePre = () => {
+      const res = new Array(7).fill(0).map(() => new Array(14).fill(0))
+      for(let day = 0; day < 7; ++day) {
+        let tmp
+        for(let sec = 0; sec < 14; ++sec) {
+          if(props.course_table[day][sec].state === 1) {
+            tmp = sec
+            res[day][sec] = sec
+          }
+          else if(props.course_table[day][sec].state === 0) {
+            res[day][sec] = sec
+          }
+          else {
+            res[day][sec] = tmp
+          }
+        }
+      }
+      return res
+    }
+
+    const course_table_pre = generatePre()
+    console.log(course_table_pre)
+
+    // table cell 点击事件 sec in [0, 14), day in [0, 7)
+    const clickCell = (event, sec, day) => {
+      // for(let item in time_slot) {
+
+      // }
+      console.log(time_slot[sec].ref.value[0].offsetTop)
+      console.log(event.x)
+      console.log(sec, day)
+    }
+
     return {
-      time_slot
+      time_slot,
+      course_table_pre,
+      clickCell
     }
   },
 })
@@ -69,9 +129,12 @@ export default defineComponent({
 
   th, td {
     min-width: 100px;
+    max-width: 150px;
     background-color: white;
     border: 1px solid rgba(64, 104, 224, 0.7);
     text-align: center;
+    /* word-break: break-all; */
+    word-wrap: break-word;
   }
 
   th {
