@@ -16,37 +16,53 @@
           <div> {{ time_slot[sec-1].time }} </div>
         </td>
         <template v-for="(sections, day) in course_table" :key="day">
-          <td v-if="sections[sec-1].state === 0" 
-            :rowspan="combine ? sections[sec-1].span : 1"
-            @click="clickCell($event, sec-1, day)"
-            >
-          </td>
-          <td v-else-if="sections[sec-1].state === 1" 
-            :rowspan="combine ? sections[sec-1].span : 1" 
-            class="section" 
-            @click="clickCell($event, sec-1, day)"
-            >
-            {{ `${sections[course_table_pre[day][sec-1]].teacher} 
-            ${sections[course_table_pre[day][sec-1]].course_name} 
-            ${sections[course_table_pre[day][sec-1]].room}` }}
-          </td>
-          <template v-else>
-            <td v-if="!combine"
+          <template v-if="mode === 'course table'">
+            <td v-if="sections[sec-1].state === 0" 
+              :rowspan="combine ? sections[sec-1].span : 1"
               class="section" 
-              @click="clickCell($event, sec-1, day)"
+              >
+            </td>
+            <td v-else-if="sections[sec-1].state === 1 || (sections[sec-1].state === undefined && !combine)"
+              :rowspan="combine ? sections[sec-1].span : 1" 
+              class="section" 
               >
               {{ `${sections[course_table_pre[day][sec-1]].teacher} 
               ${sections[course_table_pre[day][sec-1]].course_name} 
               ${sections[course_table_pre[day][sec-1]].room}` }}
             </td>
           </template>
+          <a-popover v-else-if="mode === 'select course'" trigger="click" placement="rightTop">
+            <template #content>
+              <a-table :columns="availableCourseColumn" 
+                :data-source="getAvailableCourses()" size="small" bordered>
+                <template #bodyCell="{ column, record }">
+                  <template v-if="column.dataIndex === 'action'">
+                    <a-button type="link" size="small" @click="select(record.key)">选课</a-button>
+                  </template>
+                </template>
+              </a-table>
+            </template>
+            <td v-if="sections[sec-1].state === 0" 
+              :rowspan="combine ? sections[sec-1].span : 1"
+              class="section" 
+              >
+            </td>
+            <td v-else-if="sections[sec-1].state === 1 || (sections[sec-1].state === undefined && !combine)"
+              :rowspan="combine ? sections[sec-1].span : 1" 
+              class="section" 
+              >
+              {{ `${sections[course_table_pre[day][sec-1]].teacher} 
+              ${sections[course_table_pre[day][sec-1]].course_name} 
+              ${sections[course_table_pre[day][sec-1]].room}` }}
+            </td>
+          </a-popover>
         </template>
       </tr>
   </table>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 const time_slot = [
       { title: "第一节", time: "8:00 - 8:45" },
@@ -77,6 +93,11 @@ export default defineComponent({
       type: Array,
       default: () => [],
       required: true
+    },
+    mode: {
+      type: String,
+      default: "course table",
+      required: false
     }
   },
   setup(props) {
@@ -100,23 +121,80 @@ export default defineComponent({
       return res
     }
 
-    const course_table_pre = generatePre()
-    console.log(course_table_pre)
+    const course_table_pre = ref(generatePre())
 
-    // table cell 点击事件 sec in [0, 14), day in [0, 7)
-    const clickCell = (event, sec, day) => {
-      // for(let item in time_slot) {
+    const availableCourseColumn = [
+      {
+        title: '序号',
+        dataIndex: 'key',
+        key: 'key',
+        width: 30
+      },
+      {
+        title: '课程名称',
+        dataIndex: 'name',
+        key: 'name',
+        width: 120
+      },
+      {
+        title: '课程类型',
+        dataIndex: 'type',
+        key: 'type',
+        width: 100
+      },
+      {
+        title: '教师',
+        dataIndex: 'teacher',
+        key: 'teacher',
+        width: 80
+      },
+      {
+        title: '学分',
+        dataIndex: 'credit',
+        key: 'credit',
+        width: 80
+      },
+      {
+        title: '人数',
+        dataIndex: 'ratio',
+        key: 'ratio',
+        width: 80
+      },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        key: 'action',
+        width: 30
+      }
+    ]
 
-      // }
-      console.log(time_slot[sec].ref.value[0].offsetTop)
-      console.log(event.x)
-      console.log(sec, day)
+    // 选课
+    const select = (key) => {
+      console.log(key)
+    }
+
+    const getAvailableCourses = (day, sec) => {
+      console.log(day, sec)
+      return [...Array(100)].map((_, i) => ({
+        key: i,
+        name: `计算机网络${i}`,
+        type: '专业必修',
+        teacher: '张三',
+        actual_num: '20',
+        credit: '3.0',
+        'ratio': '20/30',
+        campus: '中山北路校区',
+        }
+      ))
     }
 
     return {
       time_slot,
       course_table_pre,
-      clickCell
+
+      availableCourseColumn,
+      getAvailableCourses,
+      select
     }
   },
 })
@@ -130,6 +208,7 @@ export default defineComponent({
   th, td {
     min-width: 100px;
     max-width: 150px;
+    min-height: 50px;
     background-color: white;
     border: 1px solid rgba(64, 104, 224, 0.7);
     text-align: center;
@@ -142,10 +221,15 @@ export default defineComponent({
   }
 
   .time-column {
-    background-color: rgba(224, 255, 255, 0.3);
+    background-color: rgba(224, 255, 255, 0.5);
   }
 
   .section {
     padding: 0 5px 0 5px;
+  }
+
+  .section:hover {
+    background-color: rgba(144, 238, 144, 0.3);
+    transition: background-color 0.5s;
   }
 </style>

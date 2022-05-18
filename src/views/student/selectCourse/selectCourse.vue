@@ -1,7 +1,9 @@
 <template>
   <div class="main">
     <div class="course-table">
-      <course-table :course_table="course_table"></course-table>
+      <course-table :mode="'select course'" 
+        :course_table="course_table" >
+      </course-table>
     </div>
     <div class="course-list">
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
