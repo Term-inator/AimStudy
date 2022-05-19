@@ -128,7 +128,7 @@ export default defineComponent({
         title: '序号',
         dataIndex: 'key',
         key: 'key',
-        width: 30
+        width: 50
       },
       {
         title: '课程名称',
@@ -231,5 +231,10 @@ export default defineComponent({
   .section:hover {
     background-color: rgba(144, 238, 144, 0.3);
     transition: background-color 0.5s;
+  }
+
+  ::v-deep .ant-table-cell ,.table-cell-button-font{
+    font-size: 5px;
+    text-align: center;
   }
 </style>
