@@ -1,27 +1,27 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import MainView from '../views/mainPage/mainPage.vue'
-import LoginView from '../views/login/login.vue'
-import CourseQueryView from '../views/courseQuery/courseQuery.vue'
-import CourseTableView from '../views/courseTable/courseTable.vue'
+const HomeView = () => import('../views/HomeView.vue')
+const MainView = () => import('../views/mainPage/mainPage.vue')
+const LoginView = () => import('../views/login/login.vue')
+const CourseQueryView = () => import('../views/courseQuery/courseQuery.vue')
+const CourseTableView = () => import('../views/courseTable/courseTable.vue')
 
-import MajorManagementView from '../views/admin/majorManagement/majorManagement.vue'
-import StudentManagementView from '../views/admin/studentManagement/studentManagement.vue'
-import TeacherManagementView from '../views/admin/teacherManagement/teacherManagement.vue'
+const MajorManagementView = () => import('../views/admin/majorManagement/majorManagement.vue')
+const StudentManagementView = () => import('../views/admin/studentManagement/studentManagement.vue')
+const TeacherManagementView = () => import('../views/admin/teacherManagement/teacherManagement.vue')
 
-import CourseScoreView from '../views/eduAdmin/courseScore/courseScore.vue'
-import ReleaseCourseManagementView from '../views/eduAdmin/releaseCourseManagement/releaseCourseManagement.vue'
-import SelectCourseManagementView from '../views/eduAdmin/selectCourseManagement/selectCourseManagement.vue'
-import StudentInfoView from '../views/eduAdmin/studentInfo/studentInfo.vue'
-import StudentScoreView from '../views/eduAdmin/studentScore/studentScore.vue'
-import TeacherInfoView from '../views/eduAdmin/teacherInfo/teacherInfo.vue'
+const CourseScoreView = () => import('../views/eduAdmin/courseScore/courseScore.vue')
+const ReleaseCourseManagementView = () => import('../views/eduAdmin/releaseCourseManagement/releaseCourseManagement.vue')
+const SelectCourseManagementView = () => import('../views/eduAdmin/selectCourseManagement/selectCourseManagement.vue')
+const StudentInfoView = () => import('../views/eduAdmin/studentInfo/studentInfo.vue')
+const StudentScoreView = () => import('../views/eduAdmin/studentScore/studentScore.vue')
+const TeacherInfoView = () => import('../views/eduAdmin/teacherInfo/teacherInfo.vue')
 
-import DropCourseView from '../views/student/dropCourse/dropCourse.vue'
-import ScoreQueryView from '../views/student/scoreQuery/scoreQuery.vue'
-import SelectCourseView from '../views/student/selectCourse/selectCourse.vue'
+const DropCourseView = () => import('../views/student/dropCourse/dropCourse.vue')
+const ScoreQueryView = () => import('../views/student/scoreQuery/scoreQuery.vue')
+const SelectCourseView = () => import('../views/student/selectCourse/selectCourse.vue')
 
-import ReleaseCourseView from '../views/teacher/releaseCourse/releaseCourse.vue'
-import PublishScore from '../views/teacher/publishScore/publishScore.vue'
+const ReleaseCourseView = () => import('../views/teacher/releaseCourse/releaseCourse.vue')
+const PublishScore = () => import('../views/teacher/publishScore/publishScore.vue')
 
 export const constantRoutes = [
   {

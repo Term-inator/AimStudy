@@ -5,8 +5,8 @@
     </a-col>
     <a-col :span="5">本科生教学管理系统</a-col>
     <a-col :span="5"> {{ date }} </a-col>
-    <a-col :span="5"> {{ user.name }} {{ user.id }} </a-col>
-    <a-col :span="5"> {{ user.department }} </a-col>
+    <a-col :span="5"> {{ $store.state.user.name }} {{ $store.state.user.id }} </a-col>
+    <a-col :span="5"> {{ $store.state.user.department }} </a-col>
     <a-col :span="2">
       <a-button type="link" @click="logout">注销</a-button>
     </a-col>
@@ -35,13 +35,12 @@ export default defineComponent({
       "7": "日"
     }
     const state = reactive({
-      date: `${today.getFullYear()}年${today.getMonth()}月${today.getDate()}日 星期${dayMap[today.getDay()]}`,
-      user: store.state.user
+      date: `${today.getFullYear()}年${today.getMonth()}月${today.getDate()}日 星期${dayMap[today.getDay()]}`
     })
 
     const logout = () => {
       store.dispatch("user/logout")
-      router.push("login")
+      router.push("/login")
     }
     
     return {

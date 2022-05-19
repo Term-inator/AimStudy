@@ -2,27 +2,15 @@
   <nav-bar></nav-bar>
 </template>
 <script>
-import { defineComponent, onBeforeMount } from 'vue'
+import { defineComponent } from 'vue'
 import navBar from '@/components/navBar/navBar.vue'
-import { useStore } from 'vuex'
 
 export default defineComponent({
   components: {
     navBar
   },
   setup() {
-    const store = useStore()
 
-    onBeforeMount(() => {
-      store.commit('user/SET_TOKEN', 111)
-      store.commit('user/setUser', {
-        name: '张三',
-        id: '123456789',
-        department: '计算机科学与技术学院',
-        roles: ['student']
-        // admin edu_admin teacher student
-      })
-    })
   }
 })
 </script>

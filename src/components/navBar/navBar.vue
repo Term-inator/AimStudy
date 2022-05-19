@@ -1,67 +1,72 @@
 <template>
-  <a-layout has-sider v-if="$store.state.user.token !== ''">
-    <a-layout-sider
-      v-model:collapsed="collapsed" :trigger="null" collapsible
-      :style="{ position: 'fixed',
-                left: 0, top: 0, bottom: 0,
-                height: '100vh',
-                zIndex: 2, 
-                overflow: 'auto', 
-                boxShadow: '6px 0 6px #888888' ,
-                transition: 'all 0.3s'
-      }"
-    >
-      <div class="logo"></div>
-      <a-menu
-        v-model:openKeys="openKeys"
-        v-model:selectedKeys="selectedKeys"
-        mode="inline"
-        theme="dark"
+  <template v-if="$store.state.user.token !== ''">
+    <a-layout has-sider>
+      <a-layout-sider
+        v-model:collapsed="collapsed" :trigger="null" collapsible
+        :style="{ position: 'fixed',
+                  left: 0, top: 0, bottom: 0,
+                  height: '100vh',
+                  zIndex: 2, 
+                  overflow: 'auto', 
+                  boxShadow: '6px 0 6px #888888' ,
+                  transition: 'all 0.3s'
+        }"
       >
-        <template v-for="item in menuItems" :key=item.key>
-          <template v-if="!item.children">
-            <a-menu-item :key=item.key @click="goto(item.route)">
-              <template #icon>
-                <Icon :icon="item.icon"></Icon>
-              </template>
-              <span>{{ item.title }}</span>
-            </a-menu-item>
+        <div class="logo"></div>
+        <a-menu
+          v-model:openKeys="openKeys"
+          v-model:selectedKeys="selectedKeys"
+          mode="inline"
+          theme="dark"
+        >
+          <template v-for="item in menuItems" :key=item.key>
+            <template v-if="!item.children">
+              <a-menu-item :key=item.key @click="goto(item.route)">
+                <template #icon>
+                  <Icon :icon="item.icon"></Icon>
+                </template>
+                <span>{{ item.title }}</span>
+              </a-menu-item>
+            </template>
+            <template v-else>
+              <sub-menu :key="item.key" :menu-info="item" @goto="goto" />
+            </template>
           </template>
-          <template v-else>
-            <sub-menu :key="item.key" :menu-info="item" @goto="goto" />
-          </template>
-        </template>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout :style="right_side_style">
-      <a-layout-header 
-        :style="header_style"
-      >
-        <top-bar :style="top_bar_style">
-          <template #close_menu>
-            <menu-unfold-outlined
-              v-if="collapsed"
-              class="trigger"
-              @click="toggleCollapsed"
-            />
-            <menu-fold-outlined v-else class="trigger" @click="toggleCollapsed" />
-          </template>
-        </top-bar>
-      </a-layout-header>
-      <a-layout-content :style="{ margin: '64px 16px 0 16px', overflow: 'initial' }">
-        <router-view/>
-      </a-layout-content>
-      <a-layout-footer :style="{ textAlign: 'center' }">
-        AimStudy ©2022
-      </a-layout-footer>
+        </a-menu>
+      </a-layout-sider>
+      <a-layout :style="right_side_style">
+        <a-layout-header 
+          :style="header_style"
+        >
+          <top-bar :style="top_bar_style">
+            <template #close_menu>
+              <menu-unfold-outlined
+                v-if="collapsed"
+                class="trigger"
+                @click="toggleCollapsed"
+              />
+              <menu-fold-outlined v-else class="trigger" @click="toggleCollapsed" />
+            </template>
+          </top-bar>
+        </a-layout-header>
+        <a-layout-content :style="{ margin: '64px 16px 0 16px', overflow: 'initial' }">
+          <router-view/>
+        </a-layout-content>
+        <a-layout-footer :style="{ textAlign: 'center' }">
+          AimStudy ©2022
+        </a-layout-footer>
+      </a-layout>
     </a-layout>
-  </a-layout>
+  </template>
+  <template v-else>
+    <router-view/>
+  </template>
 </template>
 
 <script>
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+// import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import topBar from "@/components/navBar/topBar.vue"
@@ -267,15 +272,14 @@ export default defineComponent({
     "sub-menu": SubMenu,
     topBar,
     MenuFoldOutlined,
-    MenuUnfoldOutlined,
+    MenuUnfoldOutlined
   },
 
   setup() {
     const router = useRouter()
-    const store = useStore()
+    // const store = useStore()
 
     const state = reactive({
-      role: store.state.user.roles[0],
       collapsed: false,
       right_side_style: {
         width: "100%",
@@ -321,7 +325,11 @@ export default defineComponent({
       state.top_bar_style.left = state.collapsed ? `${menu_collapse_width}px` : `${menu_expand_width}px`
     }
 
-    const menuItems = menus[state.role]
+    const menuItems = menus['student']
+    // watch(() => store.state.user.roles, () => {
+    //   menuItems.value = menus[store.state.user.roles[0]]
+    // })
+
     return {
       menuItems,
       ...toRefs(state),
