@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, watch } from 'vue'
+import { defineComponent, reactive, toRefs, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import topBar from "@/components/navBar/topBar.vue"
@@ -277,7 +277,7 @@ export default defineComponent({
 
   setup() {
     const router = useRouter()
-    // const store = useStore()
+    const store = useStore()
 
     const state = reactive({
       collapsed: false,
@@ -325,10 +325,10 @@ export default defineComponent({
       state.top_bar_style.left = state.collapsed ? `${menu_collapse_width}px` : `${menu_expand_width}px`
     }
 
-    const menuItems = menus['student']
-    // watch(() => store.state.user.roles, () => {
-    //   menuItems.value = menus[store.state.user.roles[0]]
-    // })
+    const menuItems = ref([])
+    watch(() => store.state.user.roles, () => {
+      menuItems.value = menus[store.state.user.roles[0]]
+    })
 
     return {
       menuItems,
