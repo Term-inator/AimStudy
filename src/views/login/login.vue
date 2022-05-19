@@ -1,17 +1,26 @@
 <template>
-  login
+  <div class="main">
+    <a-card title="Card title" :bordered="false" style="width: 300px">
+      <p>Card content</p>
+      <p>Card content</p>
+      <p>Card content</p>
+    </a-card>
+  </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import { onMounted } from '@vue/runtime-core'
 
 export default defineComponent({
   name: "LoginView",
   setup() {
-    onMounted(() => {
-      console.log('login')
-    })
+    
   },
 })
 </script>
+
+<style scoped>
+ .main {
+   height: 100vh;
+ }
+</style>

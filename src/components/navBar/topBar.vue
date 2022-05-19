@@ -40,7 +40,7 @@ export default defineComponent({
     })
 
     const logout = () => {
-      // this.$store.dispatch("logout")
+      store.dispatch("user/logout")
       router.push("login")
     }
     

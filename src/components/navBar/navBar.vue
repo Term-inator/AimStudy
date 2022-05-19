@@ -1,5 +1,5 @@
 <template>
-<a-layout has-sider>
+  <a-layout has-sider v-if="$store.state.user.token !== ''">
     <a-layout-sider
       v-model:collapsed="collapsed" :trigger="null" collapsible
       :style="{ position: 'fixed',
@@ -11,7 +11,7 @@
                 transition: 'all 0.3s'
       }"
     >
-      <div class="logo" />
+      <div class="logo"></div>
       <a-menu
         v-model:openKeys="openKeys"
         v-model:selectedKeys="selectedKeys"
@@ -56,44 +56,6 @@
       </a-layout-footer>
     </a-layout>
   </a-layout>
-  <!-- <div class="page-wrapper">
-    <div class="menu-wrapper" ref="menu_wrapper">
-      <a-menu
-        v-model:openKeys="openKeys"
-        v-model:selectedKeys="selectedKeys"
-        mode="inline"
-        theme="dark"
-        :inline-collapsed="collapsed"
-        style="height: 100%; padding: 10vh 0 0 0; box-shadow: 6px 0 6px #888888;"
-      >
-        <template v-for="item in menuItems" :key=item.key>
-          <template v-if="!item.children">
-            <a-menu-item :key=item.key @click="goto(item.route)">
-              <template #icon>
-                <Icon :icon="item.icon"></Icon>
-              </template>
-              <span>{{ item.title }}</span>
-            </a-menu-item>
-          </template>
-          <template v-else>
-            <sub-menu :key="item.key" :menu-info="item" @goto="goto" />
-          </template>
-        </template>
-      </a-menu>
-    </div>
-  
-    <div class="right-part">
-      <top-bar class="top-bar">
-        <template #close_menu>
-          <MenuUnfoldOutlined v-if="collapsed" class="trigger" @click="toggleCollapsed"/>
-          <MenuFoldOutlined v-else class="trigger" @click="toggleCollapsed"/>
-        </template>
-      </top-bar>
-      <div class="content">
-        <router-view/>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>

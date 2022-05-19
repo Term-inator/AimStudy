@@ -166,16 +166,20 @@ export const asyncRoutes = [
     }
   }
 ]
+
 // TODO tmp
 constantRoutes.push(...asyncRoutes)
-const router = createRouter({
-  history: createWebHashHistory(),
-//   routes
-  routes: constantRoutes
-})
+const createMyRouter = () => {
+  return createRouter({
+      history: createWebHashHistory(),
+      routes: constantRoutes
+    })
+}
+
+const router = createMyRouter()
 
 export function resetRouter() {
-  const newRouter = createRouter()
+  const newRouter = createMyRouter()
   router.matcher = newRouter.matcher // reset router
 }
 

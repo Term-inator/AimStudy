@@ -14,6 +14,7 @@ export default defineComponent({
     const store = useStore()
 
     onBeforeMount(() => {
+      store.commit('user/SET_TOKEN', 111)
       store.commit('user/setUser', {
         name: '张三',
         id: '123456789',
