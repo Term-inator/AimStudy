@@ -8,7 +8,7 @@
                   height: '100vh',
                   zIndex: 2, 
                   overflow: 'auto', 
-                  boxShadow: '6px 0 6px #888888' ,
+                  boxShadow: '6px 0 6px #888888',
                   transition: 'all 0.3s'
         }"
       >
@@ -64,12 +64,13 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, ref, watch } from 'vue'
+import { defineComponent, reactive, toRefs, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Icon } from "@/components/icon"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import topBar from "@/components/navBar/topBar.vue"
+import { getToken } from '@/utils/auth'
 
 const SubMenu = {
   name: 'SubMenu',
@@ -279,6 +280,8 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
 
+    const token = computed(() => getToken())
+
     const state = reactive({
       collapsed: false,
       right_side_style: {
@@ -331,6 +334,7 @@ export default defineComponent({
     })
 
     return {
+      token,
       menuItems,
       ...toRefs(state),
       toggleCollapsed,

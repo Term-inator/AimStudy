@@ -77,6 +77,9 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
+    // remove token and go to login page to re-login
+    // 清空token
+    await store.dispatch('user/resetToken')
     //如果token不存在，判断是否存在白名单中
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
