@@ -1,5 +1,5 @@
 <template>
-  <template v-if="$store.state.user.token !== ''">
+  <template v-if="$store.state.user.token !== undefined && $store.state.user.token !== ''">
     <a-layout has-sider>
       <a-layout-sider
         v-model:collapsed="collapsed" :trigger="null" collapsible

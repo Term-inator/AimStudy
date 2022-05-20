@@ -4,9 +4,17 @@ const usersInfo = {
     name: 'admin',
     roles: ['admin']
   },
+  edu_admin: {
+    name: 'edu_admin',
+    roles: ['edu_admin']
+  },
   teacher: {
     name: 'teacher',
     roles: ['teacher']
+  },
+  student: {
+    name: 'student',
+    roles: ['student']
   }
 }
 

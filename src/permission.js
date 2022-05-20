@@ -9,12 +9,11 @@ import getPageTitle from '@/utils/get-page-title'
 // NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 //白名单
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login'] // no redirect whitelist
 
 // 路由拦截器
 router.beforeEach(async(to, from, next) => {
-  // TODO tmp
-  next()
+  console.log(to.path)
   // start progress bar
 //   NProgress.start()
 
@@ -34,12 +33,12 @@ router.beforeEach(async(to, from, next) => {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       // 如果有登录，并且目标路径是 /login，路由到首页
-      next({ path: '/' })
+      next({ path: '/main' })
     //   NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       // 从vuex中获取权限
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      const hasRoles = store.state.user.roles && store.state.user.roles.length > 0
       // 如果存在就放行
       if (hasRoles) {
         next()

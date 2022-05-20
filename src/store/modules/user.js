@@ -19,7 +19,7 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
-    console.log(token)
+    console.log('token: ' + token)
     state.token = token
   },
   SET_NAME: (state, name) => {

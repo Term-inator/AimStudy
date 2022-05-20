@@ -36,8 +36,8 @@
 
 <script>
 import { defineComponent, reactive } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: "LoginView",
@@ -52,7 +52,6 @@ export default defineComponent({
 
     const onFinish = values => {
       console.log('Success:', values)
-      store.commit('user/SET_TOKEN', 111)
       store.commit('user/setUser', {
         name: '张三',
         id: '123456789',
@@ -60,7 +59,10 @@ export default defineComponent({
         roles: ['student']
         // admin edu_admin teacher student
       })
-      router.push('/main')
+      store.dispatch('user/login', values)
+      .then(() => {
+        router.push('main')
+      })
     }
 
     const onFinishFailed = errorInfo => {
