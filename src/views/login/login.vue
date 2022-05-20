@@ -52,13 +52,6 @@ export default defineComponent({
 
     const onFinish = values => {
       console.log('Success:', values)
-      store.commit('user/setUser', {
-        name: '张三',
-        id: '123456789',
-        department: '计算机科学与技术学院',
-        roles: ['student']
-        // admin edu_admin teacher student
-      })
       store.dispatch('user/login', values)
       .then(() => {
         router.push('main')

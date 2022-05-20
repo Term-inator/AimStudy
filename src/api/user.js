@@ -2,18 +2,26 @@
 const usersInfo = {
   admin: {
     name: 'admin',
+    id: '123456789',
+    department: '计算机科学与技术学院',
     roles: ['admin']
   },
   edu_admin: {
     name: 'edu_admin',
+    id: '123456789',
+    department: '计算机科学与技术学院',
     roles: ['edu_admin']
   },
   teacher: {
     name: 'teacher',
+    id: '123456789',
+    department: '计算机科学与技术学院',
     roles: ['teacher']
   },
   student: {
     name: 'student',
+    id: '123456789',
+    department: '计算机科学与技术学院',
     roles: ['student']
   }
 }

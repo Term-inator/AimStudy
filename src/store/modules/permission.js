@@ -60,10 +60,6 @@ const actions = {
       if (roles.includes('admin')) {
         // admin角色的话左右路由都可以看
         accessedRoutes = asyncRoutes || []
-        // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      } else if(roles.includes('doctor')){
-        //通过所属的角色去过滤路由，生成新的路由表
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }

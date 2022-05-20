@@ -33,25 +33,35 @@ export const constantRoutes = [
     path: "/login",
     name: "login",
     component: LoginView
-  },
-  {
-    path: '/main',
-    name: 'main',
-    component: MainView,
-  },
-  {
-    path: "/courseQuery",
-    name: "courseQuery",
-    component: CourseQueryView
-  },
-  {
-    path: "/courseTable",
-    name: "courseTable",
-    component: CourseTableView
   }
 ]
 
 export const asyncRoutes = [
+  {
+    path: '/main',
+    name: 'main',
+    component: MainView,
+    meta: {
+      roles: ['admin', 'edu_admin', 'teacher', 'student']
+    }
+  },
+  {
+    path: "/courseQuery",
+    name: "courseQuery",
+    component: CourseQueryView,
+    meta: {
+      roles: ['admin', 'edu_admin', 'teacher', 'student']
+    }
+  },
+  {
+    path: "/courseTable",
+    name: "courseTable",
+    component: CourseTableView,
+    meta: {
+      roles: ['admin', 'edu_admin', 'teacher', 'student']
+    }
+  },
+  
   {
     path: '/majorManagement',
     name: 'majorManagement',
@@ -167,8 +177,6 @@ export const asyncRoutes = [
   }
 ]
 
-// TODO tmp
-constantRoutes.push(...asyncRoutes)
 const createMyRouter = () => {
   return createRouter({
       history: createWebHashHistory(),
