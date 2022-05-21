@@ -6,7 +6,7 @@
     </div>
     <a-table :columns="columns" :data-source="courses" size="small" bordered>
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'action'">
+        <template v-if="column.dataIndex === 'syllabus'">
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
         </template>
       </template>
@@ -98,85 +98,86 @@ const search_form = [
   }
 ]
 
+const columns = [
+  {
+    title: '学年学期',
+    dataIndex: 'semester',
+    key: 'semester',
+    width: 100
+  },
+  {
+    title: '课程序号',
+    dataIndex: 'index',
+    key: 'index',
+    width: 100
+  },
+  {
+    title: '课程名称',
+    dataIndex: 'name',
+    key: 'name',
+    width: 120
+  },
+  {
+    title: '课程类型',
+    dataIndex: 'type',
+    key: 'type',
+    width: 100
+  },
+  {
+    title: '开课院系',
+    dataIndex: 'department',
+    key: 'department',
+    width: 100
+  },
+  {
+    title: '教师',
+    dataIndex: 'teacher',
+    key: 'teacher',
+    width: 80
+  },
+  {
+    title: '年级',
+    dataIndex: 'grade',
+    key: 'grade',
+    width: 65
+  },
+  {
+    title: '排课安排(周几 节次[周次] 教室)',
+    dataIndex: 'arrangement',
+    key: 'arrangement',
+    width: 200
+  },
+  {
+    title: '实际上课人数',
+    dataIndex: 'actual_num',
+    key: 'actual_num',
+    width: 80
+  },
+  {
+    title: '学分',
+    dataIndex: 'credit',
+    key: 'credit',
+    width: 80
+  },
+  {
+    title: '校区',
+    dataIndex: 'campus',
+    key: 'campus',
+    width: 80
+  },
+  {
+    title: '大纲',
+    dataIndex: 'syllabus',
+    key: 'syllabus',
+    width: 30
+  }
+]
+
 export default defineComponent({
   components: {
     SearchForm
   },
   setup() {
-    const columns = [
-      {
-        title: '学年学期',
-        dataIndex: 'semester',
-        key: 'semester',
-        width: 100
-      },
-      {
-        title: '课程序号',
-        dataIndex: 'index',
-        key: 'index',
-        width: 100
-      },
-      {
-        title: '课程名称',
-        dataIndex: 'name',
-        key: 'name',
-        width: 120
-      },
-      {
-        title: '课程类型',
-        dataIndex: 'type',
-        key: 'type',
-        width: 100
-      },
-      {
-        title: '开课院系',
-        dataIndex: 'department',
-        key: 'department',
-        width: 100
-      },
-      {
-        title: '教师',
-        dataIndex: 'teacher',
-        key: 'teacher',
-        width: 80
-      },
-      {
-        title: '年级',
-        dataIndex: 'grade',
-        key: 'grade',
-        width: 65
-      },
-      {
-        title: '排课安排(周几 节次[周次] 教室)',
-        dataIndex: 'arrangement',
-        key: 'arrangement',
-        width: 200
-      },
-      {
-        title: '实际上课人数',
-        dataIndex: 'actual_num',
-        key: 'actual_num',
-        width: 80
-      },
-      {
-        title: '学分',
-        dataIndex: 'credit',
-        key: 'credit',
-        width: 80
-      },
-      {
-        title: '校区',
-        dataIndex: 'campus',
-        key: 'campus',
-        width: 80
-      },
-      {
-        title: '大纲',
-        dataIndex: 'action',
-        key: 'outline',
-        width: 30
-      }
-    ]
     const courses = ref(
       [...Array(100)].map((_, i) => ({
         key: i,
@@ -219,21 +220,21 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.main {
-  padding: 20px 15px 0 15px;
-}
+  .main {
+    padding: 20px 15px 0 15px;
+  }
 
-h1 {
-  font-size: 16px;
-  font-weight: 500;
-}
+  h1 {
+    font-size: 16px;
+    font-weight: 500;
+  }
 
-.search {
-  padding: 0 0 10px 0;
-}
+  .search {
+    padding: 0 0 10px 0;
+  }
 
-::v-deep .ant-table-cell ,.table-cell-button-font{
-  font-size: 5px;
-  text-align: center;
-}
+  ::v-deep .ant-table-cell ,.table-cell-button-font{
+    font-size: 5px;
+    text-align: center;
+  }
 </style>

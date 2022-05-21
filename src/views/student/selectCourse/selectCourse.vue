@@ -8,7 +8,7 @@
     <div class="course-list">
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'action'">
+          <template v-if="column.dataIndex === 'syllabus'">
             <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
           </template>
         </template>
@@ -66,8 +66,8 @@ const columns = [
   },
   {
     title: '大纲',
-    dataIndex: 'action',
-    key: 'outline',
+    dataIndex: 'syllabus',
+    key: 'syllabus',
     width: 30
   }
 ]

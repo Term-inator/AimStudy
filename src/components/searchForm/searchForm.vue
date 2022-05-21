@@ -19,7 +19,7 @@
     <a-col :span="24" style="text-align: right">
       <a-button type="primary" size="small" style="font-size: 5px" @click="onFinish">查询</a-button>
       <a-button size="small" style="margin: 0 8px; font-size: 5px" @click="formReset">重置</a-button>
-      <a v-if="search_form.length >= col_num" style="font-size: 12px" @click="expand = !expand">
+      <a v-if="search_form.length > col_num" style="font-size: 12px" @click="expand = !expand">
         <template v-if="expand">
           <Icon :icon="'UpOutlined'"></Icon>
           收起
