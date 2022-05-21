@@ -21,6 +21,7 @@ const ScoreQueryView = () => import('../views/student/scoreQuery/scoreQuery.vue'
 const SelectCourseView = () => import('../views/student/selectCourse/selectCourse.vue')
 
 const ReleaseCourseView = () => import('../views/teacher/releaseCourse/releaseCourse.vue')
+const OpenCourseView = () => import('../views/teacher/openCourse/openCourse.vue')
 const PublishScore = () => import('../views/teacher/publishScore/publishScore.vue')
 
 export const constantRoutes = [
@@ -163,6 +164,14 @@ export const asyncRoutes = [
     path: '/releaseCourse',
     name: 'releaseCourse',
     component: ReleaseCourseView,
+    meta: {
+      roles: ['teacher']
+    }
+  },
+  {
+    path: '/openCourse',
+    name: 'openCourse',
+    component: OpenCourseView,
     meta: {
       roles: ['teacher']
     }

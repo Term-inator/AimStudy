@@ -3,8 +3,8 @@
     <template v-for="(item, index) in search_form" :key="index">
       <a-col v-show="expand || index < col_num" :span="col_span">
         <a-row style="padding: 5px 0">
-          <a-col :span="6"> {{ item.title }} </a-col>
-          <a-col :span="18">
+          <a-col :span="8"> {{ item.title }} </a-col>
+          <a-col :span="16">
             <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
             <a-select v-else-if="item.type === 'select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%"></a-select>
             <a-cascader v-else-if="item.type === 'cascade select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%" changeOnSelect></a-cascader>

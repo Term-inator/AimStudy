@@ -211,8 +211,14 @@ const teacher = [
       {
         key: "2.2",
         title: "发布课程",
-        icon: "ReadOutlined",
+        icon: "BulbOutlined",
         route: "releaseCourse"
+      },
+      {
+        key: "2.3",
+        title: "开设课程",
+        icon: "ReadOutlined",
+        route: "openCourse"
       },
       course_table
     ]
