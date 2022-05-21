@@ -20,6 +20,29 @@ import SearchForm from '@/components/searchForm/searchForm.vue'
 
 const search_form = [
   {
+    title: "学年学期",
+    type: "cascade select",
+    options: [
+      {
+        value: (2021, 2022),
+        label: "2021-2022学年",
+        children: [
+          {
+            value: 1,
+            label: "第一学期"
+          },
+          {
+            value: 2,
+            label: "第二学期"
+          }
+        ]
+      }
+    ],
+    rules: {
+      required: false
+    }
+  },
+  {
     title: "课程序号",
     type: "input",
     rules: {
