@@ -83,6 +83,6 @@ export default defineComponent({
 
   .login {
     width: 40vw;
-    height: 40vh;
+    height: flex;
   }
 </style>
