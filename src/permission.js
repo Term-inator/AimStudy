@@ -1,12 +1,12 @@
 import router from './router'
 import store from './store'
 // import { Message } from 'element-ui'
-// import NProgress from 'nprogress' // progress bar
-// import 'nprogress/nprogress.css' // progress bar style
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
-// NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 //白名单
 const whiteList = ['/login'] // no redirect whitelist
@@ -15,7 +15,7 @@ const whiteList = ['/login'] // no redirect whitelist
 router.beforeEach(async(to, from, next) => {
   console.log(to.path)
   // start progress bar
-//   NProgress.start()
+  NProgress.start()
 
   // set page title
   // 设置目标页面的title(从目标路由的meta中获取title)
@@ -34,7 +34,7 @@ router.beforeEach(async(to, from, next) => {
       // if is logged in, redirect to the home page
       // 如果有登录，并且目标路径是 /login，路由到首页
       next({ path: '/main' })
-    //   NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
+      NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       // 从vuex中获取权限
@@ -71,7 +71,7 @@ router.beforeEach(async(to, from, next) => {
           // Message.error(error || 'Has Error')
           //跳转登录
           next(`/login?redirect=${to.path}`)
-        //   NProgress.done()
+          NProgress.done()
         }
       }
     }
@@ -87,12 +87,12 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
-    //   NProgress.done()
+      NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
   // finish progress bar
-//   NProgress.done()
+  NProgress.done()
 })
