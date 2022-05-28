@@ -38,7 +38,13 @@
           <a-select v-model:value="formState.department" size="small"></a-select>
         </a-form-item>
         <a-form-item label="学分" name="credit">
-          <a-input v-model:value="formState.credit" size="small" />
+          <a-input-number
+            v-model:value="formState.credit"
+            :min="0.5" :step="0.5" size="small" string-mode
+            @change="(val) => {
+              editableData[record.key][column.dataIndex] = Math.floor(val * 2) / 2
+            }"
+          />
         </a-form-item>
         <a-form-item label="课程大纲" name="syllabus">
           <a-upload-dragger

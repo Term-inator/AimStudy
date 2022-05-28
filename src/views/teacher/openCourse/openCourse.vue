@@ -261,12 +261,6 @@ const pool_search_form = [
 
 const pool_columns = [
   {
-    title: '序号',
-    dataIndex: 'key',
-    key: 'key',
-    width: 30,
-  },
-  {
     title: '课程序号',
     dataIndex: 'index',
     key: 'index',
@@ -318,7 +312,6 @@ export default defineComponent({
   setup() {
     const pool_courses = ref(
       [...Array(15)].map((_, i) => ({
-        key: i,
         index: '1',
         name: `计算机网络${i}`,
         type: '专业必修',
@@ -425,5 +418,9 @@ export default defineComponent({
   ::v-deep .ant-table-cell ,.table-cell-button-font{
     font-size: 5px;
     text-align: center;
+  }
+
+  .course-pool {
+    padding: 10px 0 0 0;
   }
 </style>
