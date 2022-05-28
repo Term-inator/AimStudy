@@ -173,12 +173,24 @@ const edu_admin = [
       course_query,
       {
         key: "4.2",
-        title: "开课管理",
+        title: "学院课程",
+        icon: "AppstoreOutlined",
+        route: "coursePool"
+      },
+      {
+        key: "4.3",
+        title: "开设课程管理",
         icon: "ReadOutlined",
         route: "releaseCourseManagement"
       },
       {
-        key: "4.3",
+        key: "4.4",
+        title: "发布课程管理",
+        icon: "ReadOutlined",
+        route: "openCourseManagement"
+      },
+      {
+        key: "4.5",
         title: "选课管理",
         icon: "SelectOutlined",
         route: "selectCourseManagement"
