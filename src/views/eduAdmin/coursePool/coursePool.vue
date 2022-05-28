@@ -53,23 +53,21 @@
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
         </template>
         <template v-else-if="column.dataIndex === 'action'">
-          <div class="editable-row-operations">
-            <span v-if="editableData[record.key]">
-              <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.key)">
-                <a-button type="link" size="small">保存</a-button>
-              </a-popconfirm>
-              <a-button type="link" @click="cancel(record.key)" size="small">取消</a-button>
-            </span>
-            <span v-else>
-              <a-button type="link" @click="edit(record.key)" size="small">修改</a-button>
-            </span>
+          <span v-if="editableData[record.key]">
+            <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.key)">
+              <a-button type="link" size="small">保存</a-button>
+            </a-popconfirm>
+            <a-button type="link" @click="cancel(record.key)" size="small">取消</a-button>
+          </span>
+          <span v-else>
+            <a-button type="link" @click="edit(record.key)" size="small">修改</a-button>
+          </span>
 
-            <span>
-              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="remove(record.key)">
-                <a-button type="link" size="small">删除</a-button>
-              </a-popconfirm>
-            </span>
-          </div>
+          <span>
+            <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="remove(record.key)">
+              <a-button type="link" size="small">删除</a-button>
+            </a-popconfirm>
+          </span>
         </template>
       </template>
     </a-table>
@@ -213,9 +211,5 @@ export default defineComponent({
   ::v-deep .ant-table-cell ,.table-cell-button-font{
     font-size: 5px;
     text-align: center;
-  }
-
-  .editable-row-operations a {
-    margin-right: 8px;
   }
 </style>

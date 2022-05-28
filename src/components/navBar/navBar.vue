@@ -179,13 +179,13 @@ const edu_admin = [
       },
       {
         key: "4.3",
-        title: "开设课程管理",
+        title: "发布课程管理",
         icon: "ReadOutlined",
         route: "releaseCourseManagement"
       },
       {
         key: "4.4",
-        title: "发布课程管理",
+        title: "开设课程管理",
         icon: "ReadOutlined",
         route: "openCourseManagement"
       },
