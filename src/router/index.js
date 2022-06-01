@@ -13,7 +13,6 @@ const CourseScoreView = () => import('../views/eduAdmin/courseScore/courseScore.
 const CoursePoolView = () => import('../views/eduAdmin/coursePool/coursePool.vue')
 const OpenCourseManagementView = () => import('../views/eduAdmin/openCourseManagement/openCourseManagement.vue')
 const ReleaseCourseManagementView = () => import('../views/eduAdmin/releaseCourseManagement/releaseCourseManagement.vue')
-const SelectCourseManagementView = () => import('../views/eduAdmin/selectCourseManagement/selectCourseManagement.vue')
 const StudentInfoView = () => import('../views/eduAdmin/studentInfo/studentInfo.vue')
 const StudentScoreView = () => import('../views/eduAdmin/studentScore/studentScore.vue')
 const TeacherInfoView = () => import('../views/eduAdmin/teacherInfo/teacherInfo.vue')
@@ -117,14 +116,6 @@ export const asyncRoutes = [
     path: '/releaseCourseManagement',
     name: 'releaseCourseManagement',
     component: ReleaseCourseManagementView,
-    meta: {
-      roles: ['edu_admin']
-    }
-  },
-  {
-    path: '/selectCourseManagement',
-    name: 'selectCourseManagement',
-    component: SelectCourseManagementView,
     meta: {
       roles: ['edu_admin']
     }

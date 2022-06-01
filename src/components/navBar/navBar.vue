@@ -188,12 +188,6 @@ const edu_admin = [
         title: "开设课程管理",
         icon: "ReadOutlined",
         route: "openCourseManagement"
-      },
-      {
-        key: "4.5",
-        title: "选课管理",
-        icon: "SelectOutlined",
-        route: "selectCourseManagement"
       }
     ]
   },
