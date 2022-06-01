@@ -25,7 +25,9 @@
     </div>
     <div class="passed-course">
       <h1>过审课程</h1>
-      <search-form :items="passed_search_form" @conditions="getConditions"></search-form>
+      <div class="search">
+        <search-form :items="passed_search_form" @conditions="getConditions"></search-form>
+      </div>
       <a-table :columns="passed_columns" :data-source="passed_courses" :scroll="{ x: 1000 }" size="small" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'syllabus'">
@@ -131,6 +133,22 @@ const passed_search_form = [
   {
     title: "学年学期",
     type: "cascade select",
+    options: [
+      {
+        value: (2021, 2022),
+        label: "2021-2022学年",
+        children: [
+          {
+            value: 1,
+            label: "第一学期"
+          },
+          {
+            value: 2,
+            label: "第二学期"
+          }
+        ]
+      }
+    ],
     rules: {
       required: false
     }
@@ -151,6 +169,48 @@ const passed_search_form = [
   },
   {
     title: "课程类型",
+    type: "select",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "教师", // 教师可以为空，表示查询未指定教师的课程
+    type: "nullable input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "年级",
+    type: "input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "周数",
+    type: "input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "起止周",
+    type: "range input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "星期",
+    type: "select",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "小节",
     type: "select",
     rules: {
       required: false
@@ -320,6 +380,10 @@ export default defineComponent({
     font-size: 5px;
     text-align: center;
     z-index: 1;
+  }
+
+  .search {
+    margin: 0 0 4px 0;
   }
 
   .passed-course {
