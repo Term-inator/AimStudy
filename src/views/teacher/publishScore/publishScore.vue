@@ -4,7 +4,7 @@
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="columns" :data-source="scores" size="small" bordered>
+    <a-table :columns="columns" :data-source="scores" size="small" :pagination="false" bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'action'">
           <a-button type="link" size="small" @click="modify(record)">修改</a-button>
@@ -18,6 +18,7 @@
 import { defineComponent, ref } from 'vue'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 
+// TODO 本地保存 一键提交 
 const search_form = [
   {
     title: "课程名称",

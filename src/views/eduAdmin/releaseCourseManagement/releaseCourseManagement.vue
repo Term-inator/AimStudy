@@ -51,13 +51,13 @@ const columns = [
     title: '课程类型',
     dataIndex: 'type',
     key: 'type',
-    width: 100
+    width: 50
   },
   {
     title: '学分',
     dataIndex: 'credit',
     key: 'credit',
-    width: 80
+    width: 30
   },
   {
     title: '大纲',

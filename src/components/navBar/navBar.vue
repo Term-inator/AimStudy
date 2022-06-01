@@ -6,7 +6,7 @@
         :style="{ position: 'fixed',
                   left: 0, top: 0, bottom: 0,
                   height: '100vh',
-                  zIndex: 2, 
+                  zIndex: 20, 
                   overflow: 'auto', 
                   boxShadow: '6px 0 6px #888888',
                   transition: 'all 0.3s'
@@ -313,7 +313,7 @@ export default defineComponent({
         height: '64px',
         background: '#fff', 
         padding: 0, 
-        zIndex: 1, 
+        zIndex: 10, 
         boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.4)',
         transition: 'width 0.3s'
       },
