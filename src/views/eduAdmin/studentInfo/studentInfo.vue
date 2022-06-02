@@ -1,16 +1,10 @@
 <template>
   <div class="main">
-    <h1>{{ $store.state.user.department }}学生信息</h1>
+    <h1> {{ $store.state.user.department }} 学生信息</h1>
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="columns" :data-source="students" size="small" bordered>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
-        </template>
-      </template>
-    </a-table>
+    <a-table :columns="columns" :data-source="students" size="small" bordered></a-table>
   </div>
 </template>
 
