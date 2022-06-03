@@ -195,7 +195,7 @@ const edu_admin = [
     key: "5",
     title: "成绩管理",
     icon: "PieChartOutlined",
-    route: "courseScore"
+    route: "scoreManagement"
   }
 ]
 

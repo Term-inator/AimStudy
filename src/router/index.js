@@ -14,7 +14,7 @@ const CoursePoolView = () => import('../views/eduAdmin/coursePool/coursePool.vue
 const OpenCourseManagementView = () => import('../views/eduAdmin/openCourseManagement/openCourseManagement.vue')
 const ReleaseCourseManagementView = () => import('../views/eduAdmin/releaseCourseManagement/releaseCourseManagement.vue')
 const StudentInfoView = () => import('../views/eduAdmin/studentInfo/studentInfo.vue')
-const StudentScoreView = () => import('../views/eduAdmin/studentScore/studentScore.vue')
+const ScoreManagementView = () => import('../views/eduAdmin/scoreManagement/scoreManagement.vue')
 const TeacherInfoView = () => import('../views/eduAdmin/teacherInfo/teacherInfo.vue')
 
 const DropCourseView = () => import('../views/student/dropCourse/dropCourse.vue')
@@ -129,9 +129,9 @@ export const asyncRoutes = [
     }
   },
   {
-    path: '/studentScore',
-    name: 'studentScore',
-    component: StudentScoreView,
+    path: '/scoreManagement',
+    name: 'scoreManagement',
+    component: ScoreManagementView,
     meta: {
       roles: ['edu_admin']
     }
