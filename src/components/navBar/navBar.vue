@@ -140,6 +140,12 @@ const admin = [
     title: "专业管理",
     icon: "ProfileOutlined",
     route: "majorManagement"
+  },
+  {
+    key: "5",
+    title: "校区管理",
+    icon: "ApartmentOutlined",
+    route: "campusManagement"
   }
 ]
 
