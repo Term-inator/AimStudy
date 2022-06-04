@@ -62,14 +62,14 @@ export default defineComponent({
     const formState = reactive({
       username: '',
       password: '',
-      captcha: ''
+      captcha: '1234'
     })
 
     const onFinish = values => {
-      console.log('Success:', values)
       store.dispatch('user/login', values)
       .then(() => {
         router.push('main')
+        console.log('Success:', values)
       })
     }
 

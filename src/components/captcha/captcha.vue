@@ -134,7 +134,6 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      console.log(canvas.value)
       drawPic()
     })
 

@@ -19,7 +19,7 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
-    console.log('token: ' + token)
+    console.log('set token: ' + token)
     state.token = token
   },
   SET_NAME: (state, name) => {
@@ -44,12 +44,12 @@ const mutations = {
 
 const actions = {
   // user login
-  login(userInfo) {
+  login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        if (response.token) {
-          // commit('SET_TOKEN', response.token)
+      login({ username: username.trim(), password: password }).then(() => {
+        if (getToken()) {
+          commit('SET_TOKEN', getToken())
           // setToken(response.token)
           resolve()
         } else {
@@ -67,15 +67,32 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
       //调用api/user 里面的getInfo方法获取用户信息和权限信息
-      getInfo(state.token).then(response => {
-        if (!response.userInfo) {
+      getInfo().then(response => {
+        if (!response) {
           return reject('验证失败，请重新登录')
         }
 
-        const { name, id, department, roles } = response.userInfo
+        const { realName, userId, departmentName, role } = response
+        let roles = []
+        switch (role) {
+          case 1:
+            roles = ['admin']
+            break
+          case 2:
+            roles = ['edu_admin']
+            break
+          case 3:
+            roles = ['teacher']
+            break
+          case 4:
+            roles = ['student']
+            break
+          default:
+            roles = []
+        }
 
         // roles must be a non-empty array
         // roles必须是一个数组
@@ -85,10 +102,13 @@ const actions = {
 
         //把roles存入到store
         commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_ID', id)
-        commit('SET_DEPARTMENT', department)
-        resolve(response.userInfo)
+        commit('SET_NAME', realName)
+        commit('SET_ID', userId)
+        commit('SET_DEPARTMENT', departmentName)
+
+        // 适配接口返回的数据
+        response.roles = roles
+        resolve(response)
       }).catch(error => {
         reject(error)
       })

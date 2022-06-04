@@ -1,30 +1,30 @@
 // 模拟数据用户信息
-const usersInfo = {
-  admin: {
-    name: 'admin',
-    id: '123456789',
-    department: '计算机科学与技术学院',
-    roles: ['admin']
-  },
-  edu_admin: {
-    name: 'edu_admin',
-    id: '123456789',
-    department: '计算机科学与技术学院',
-    roles: ['edu_admin']
-  },
-  teacher: {
-    name: 'teacher',
-    id: '123456789',
-    department: '计算机科学与技术学院',
-    roles: ['teacher']
-  },
-  student: {
-    name: 'student',
-    id: '123456789',
-    department: '计算机科学与技术学院',
-    roles: ['student']
-  }
-}
+// const usersInfo = {
+//   admin: {
+//     name: 'admin',
+//     id: '123456789',
+//     department: '计算机科学与技术学院',
+//     roles: ['admin']
+//   },
+//   edu_admin: {
+//     name: 'edu_admin',
+//     id: '123456789',
+//     department: '计算机科学与技术学院',
+//     roles: ['edu_admin']
+//   },
+//   teacher: {
+//     name: 'teacher',
+//     id: '123456789',
+//     department: '计算机科学与技术学院',
+//     roles: ['teacher']
+//   },
+//   student: {
+//     name: 'student',
+//     id: '123456789',
+//     department: '计算机科学与技术学院',
+//     roles: ['student']
+//   }
+// }
 
 import axios from '@/utils/axios'
 
@@ -48,17 +48,17 @@ export function login(data) {
   })
 }
 
-export function getInfo(username) {
+export function getInfo() {
   // 模拟后台返回数据
-  return new Promise(resolve => resolve(
-    {
-      userInfo: usersInfo[username]
-    }
-  ));
-  // return request({
-  //   url: '/users/userinfo',
-  //   method: 'get'
-  // })
+  // return new Promise(resolve => resolve(
+  //   {
+  //     userInfo: usersInfo[username]
+  //   }
+  // ));
+  return axios({
+    url: '/user/info',
+    method: 'get'
+  })
 }
 
 export function logout() {

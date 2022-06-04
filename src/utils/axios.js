@@ -39,10 +39,9 @@ function checkToken(response){
 // 响应拦截器
 _axios.interceptors.response.use(
   function success(response) {
-    checkToken(response);
+    checkToken(response)
     const data = response.data
-    console.log(data)
-    return data.data || data;
+    return data.data || data
   },
   function fail(error) {
     const resp = error.response

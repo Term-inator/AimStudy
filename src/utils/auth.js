@@ -7,6 +7,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
+  console.log('auth: ' + token)
   return Cookies.set(TokenKey, token, { expires: 1/(24) })
 }
 
