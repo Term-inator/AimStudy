@@ -13,7 +13,7 @@
         <a-form-item
           label="用户名"
           name="username"
-          :rules="[{ required: true, message: '请输入用户名!' }]"
+          :rules="[{ required: true, message: '请输入用户名' }]"
         >
           <a-input v-model:value="formState.username" />
         </a-form-item>
@@ -25,6 +25,15 @@
         >
           <a-input-password v-model:value="formState.password" />
         </a-form-item>
+
+        <a-form-item
+          label="验证码"
+          name="captcha"
+          :rules="[{ required: true, message: '请输入验证码' }]"
+        >
+          <a-input v-model:value="formState.captcha" />
+        </a-form-item>
+        <my-captcha style="margin: 0 0 0 160px;"></my-captcha>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button type="primary" html-type="submit">登录</a-button>
@@ -38,17 +47,22 @@
 import { defineComponent, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import MyCaptcha from '@/components/captcha/captcha.vue'
 
 export default defineComponent({
   // TODO 忘记密码
   name: "LoginView",
+  components: {
+    MyCaptcha
+  },
   setup() {
     const store = useStore()
     const router = useRouter()
 
     const formState = reactive({
       username: '',
-      password: ''
+      password: '',
+      captcha: ''
     })
 
     const onFinish = values => {

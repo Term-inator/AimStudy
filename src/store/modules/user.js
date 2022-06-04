@@ -44,13 +44,13 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  login(userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         if (response.token) {
-          commit('SET_TOKEN', response.token)
-          setToken(response.token)
+          // commit('SET_TOKEN', response.token)
+          // setToken(response.token)
           resolve()
         } else {
           // Message({

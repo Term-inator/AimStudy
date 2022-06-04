@@ -1,18 +1,18 @@
 import axios from 'axios'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
 
 const TOKEN_HEADER = 'x-auth-token'
 
 const _axios = axios.create({
-  baseURL: 'aimstudy.neptu.cn/api/',
+  baseURL: 'https://aimstudy.neptu.cn/api/',
   // baseURL: 'http://localhost/api/',
   headers: {
     'Content-Type': 'application/json'
   },
 });
-_axios.defaults.adapter = adapter
+// _axios.defaults.adapter = adapter
 
-const getParamsSerializer = params => qs.stringify(params,{indices:false})
+// const getParamsSerializer = params => qs.stringify(params,{indices:false})
 // 请求拦截器
 _axios.interceptors.request.use(
   function success(config) {
@@ -20,9 +20,9 @@ _axios.interceptors.request.use(
     // 添加用户token
     config.headers[TOKEN_HEADER] = token
     // get请求格式化(具体根据后端接口参数要求)
-    if(config.method.toLowerCase() === 'get'){
-      config.paramsSerializer = getParamsSerializer
-    }
+    // if(config.method.toLowerCase() === 'get'){
+    //   config.paramsSerializer = getParamsSerializer
+    // }
     return config
   },
   function fail(error) {
@@ -31,20 +31,17 @@ _axios.interceptors.request.use(
   }
 )
 
-// function checkToken(response){
-//   const token = response.headers[TOKEN_HEADER]
-//   // 不过期
-//   token && wx.setStorage({
-//     key: 'token',
-//     data: token
-//   })
-// }
+function checkToken(response){
+  const token = response.headers[TOKEN_HEADER]
+  setToken(token)
+}
 
 // 响应拦截器
 _axios.interceptors.response.use(
   function success(response) {
-    // checkToken(response);
+    checkToken(response);
     const data = response.data
+    console.log(data)
     return data.data || data;
   },
   function fail(error) {
@@ -52,7 +49,8 @@ _axios.interceptors.response.use(
     if(!resp){
       console.log('网络请求失败')
       return Promise.reject(error)
-    } else {
+    } 
+    else {
       checkToken(resp)
     }
     if(resp.status === 401){

@@ -42,7 +42,7 @@ export function login(data) {
   //   data
   // })
   return axios({
-    url: '/users/login-password',
+    url: '/user/login-password',
     method: 'post',
     data
   })
