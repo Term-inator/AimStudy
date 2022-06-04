@@ -39,8 +39,9 @@ export default defineComponent({
     })
 
     const logout = () => {
-      store.dispatch("user/logout")
-      router.push("/login")
+      store.dispatch("user/logout").then(() => {
+        router.push("/login")
+      })
     }
     
     return {
