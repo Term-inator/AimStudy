@@ -61,7 +61,7 @@ const add_modal = [
 ]
 
 export default defineComponent({
-  name: "TeacherManagementView",
+  name: "MajorManagementView",
   components: {
     AdminManagement
   },
