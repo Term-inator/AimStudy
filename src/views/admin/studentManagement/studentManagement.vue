@@ -56,8 +56,8 @@ const columns = [
   },
   {
     title: '学号',
-    dataIndex: 'student_id',
-    key: 'student_id',
+    dataIndex: 'user_id',
+    key: 'user_id',
     width: 120
   },
   {
@@ -116,7 +116,7 @@ export default defineComponent({
     const students = ref(
       [...Array(15)].map((_, i) => ({
         key: i,
-        student_id: '20180001',
+        user_id: '20180001',
         name: `学生${i}`,
         major: '计算机科学与技术',
         year: '2019',
