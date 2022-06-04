@@ -52,43 +52,43 @@ const columns = [
     title: '序号',
     dataIndex: 'key',
     key: 'key',
-    width: 30,
+    width: '10%',
   },
   {
     title: '学号',
     dataIndex: 'user_id',
     key: 'user_id',
-    width: 120
+    width: '20%'
   },
   {
     title: '姓名',
     dataIndex: 'name',
     key: 'name',
-    width: 100
+    width: '10%'
   },
   {
     title: '专业',
     dataIndex: 'major',
     key: 'major',
-    width: 100
+    width: '20%'
   },
   {
     title: '入学年份',
     dataIndex: 'year',
     key: 'year',
-    width: 100
+    width: '10%'
   },
   {
     title: '联系电话',
     dataIndex: 'phone',
     key: 'phone',
-    width: 100
+    width: '20%'
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    width: 60
+    width: '10%'
   }
 ]
 

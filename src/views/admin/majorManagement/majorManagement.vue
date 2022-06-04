@@ -31,25 +31,25 @@ const columns = [
     title: '序号',
     dataIndex: 'key',
     key: 'key',
-    width: 30,
+    width: '10%',
   },
   {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
-    width: 100
+    width: '40%'
   },
   {
     title: '人数',
     dataIndex: 'amount',
     key: 'amount',
-    width: 100
+    width: '40%'
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    width: 60
+    width: '10%'
   }
 ]
 
