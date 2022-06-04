@@ -26,19 +26,26 @@ const usersInfo = {
   }
 }
 
+import axios from '@/utils/axios'
+
 export function login(data) {
   // 模拟后台返回数据
-  return new Promise(resolve => resolve(
-    {
-      msg: 'ok',
-      token: usersInfo[data.username] && data.username
-    }
-  ));
+  // return new Promise(resolve => resolve(
+  //   {
+  //     msg: 'ok',
+  //     token: usersInfo[data.username] && data.username
+  //   }
+  // ));
   // return request({
   //   url: '/users/login',
   //   method: 'post',
   //   data
   // })
+  return axios({
+    url: '/users/login-password',
+    method: 'post',
+    data
+  })
 }
 
 export function getInfo(username) {
