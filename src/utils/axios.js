@@ -4,7 +4,7 @@ import { getToken, setToken } from '@/utils/auth'
 const TOKEN_HEADER = 'x-auth-token'
 
 const _axios = axios.create({
-  baseURL: 'https://aimstudy.neptu.cn/api/',
+  baseURL: 'https://aimstudy.neptu.cn',
   // baseURL: 'http://localhost/api/',
   headers: {
     'Content-Type': 'application/json'
@@ -39,7 +39,10 @@ function checkToken(response){
 // 响应拦截器
 _axios.interceptors.response.use(
   function success(response) {
-    checkToken(response)
+    if(!getToken()) {
+      checkToken(response)
+    }
+    console.log(response)
     const data = response.data
     return data.data || data
   },

@@ -25,6 +25,7 @@ router.beforeEach(async(to, from, next) => {
   // 获取store里面的登录令牌，有令牌，表示可以登录
   //从cookies中获取token
   const hasToken = getToken()
+  console.log(hasToken)
 
   //判断token是否存在
   if (hasToken) {
@@ -81,6 +82,7 @@ router.beforeEach(async(to, from, next) => {
     // remove token and go to login page to re-login
     // 清空token
     await store.dispatch('user/resetToken')
+    console.log(to.path)
     //如果token不存在，判断是否存在白名单中
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly

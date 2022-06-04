@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { loginPassword, logout, getCurrentUserInfo } from '@/api/user-controller'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -47,7 +47,7 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(() => {
+      loginPassword({ username: username.trim(), password: password }).then(() => {
         if (getToken()) {
           commit('SET_TOKEN', getToken())
           // setToken(response.token)
@@ -70,7 +70,7 @@ const actions = {
   getInfo({ commit }) {
     return new Promise((resolve, reject) => {
       //调用api/user 里面的getInfo方法获取用户信息和权限信息
-      getInfo().then(response => {
+      getCurrentUserInfo().then(response => {
         if (!response) {
           return reject('验证失败，请重新登录')
         }
@@ -116,9 +116,9 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout().then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
