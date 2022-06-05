@@ -21,21 +21,21 @@
           {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
         <template v-else-if="column.dataIndex === 'action'">
-          <span v-if="editableData[record.key]">
-            <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.key)">
+          <span v-if="editableData[record.id]">
+            <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.id)">
               <a-button type="link" size="small">保存</a-button>
             </a-popconfirm>
-            <a-button type="link" @click="cancel(record.key)" size="small">取消</a-button>
+            <a-button type="link" @click="cancel(record.id)" size="small">取消</a-button>
           </span>
           <span v-else>
-            <a-button type="link" @click="edit(record.key)" size="small">修改</a-button>
+            <a-button type="link" @click="edit(record.id)" size="small">修改</a-button>
           </span>
         </template>
         <template v-else>
           <div>
             <a-input
-              v-if="editableData[record.key]"
-              v-model:value="editableData[record.key][column.dataIndex]"
+              v-if="editableData[record.id]"
+              v-model:value="editableData[record.id][column.dataIndex]"
               size="small"
             />
             <template v-else>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, toRaw } from 'vue'
+import { defineComponent, reactive, ref, toRefs, toRaw } from 'vue'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { cloneDeep } from 'lodash-es';
 
@@ -178,7 +178,7 @@ export default defineComponent({
     return {
       handleTableChange,
 
-      state,
+      ...toRefs(state),
       onSelectChange,
       add,
       remove,

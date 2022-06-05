@@ -71,10 +71,14 @@ export default defineComponent({
       run,
       loading,
       current,
-      pageSize
+      pageSize,
+      reload
     } = usePagination(listDepartment, {
       formatResult: res => {
         total.value = res.total
+        res.data.map((item) => {
+          item.key = item.id
+        })
         return res.data
       },
       pagination: {
@@ -90,37 +94,34 @@ export default defineComponent({
     }))
 
     const handleTableChange = ({ pag }) => {
-      console.log(pag)
-      run({
-        pageSize: pag.pageSize,
-        current: pag?.current,
-        total: pag?.total
-      })
-    }
-
-    const add = (data) => {
-      addDepartment(data).then(() => {
-        majors.value.push(data)
-        majors.value[majors.value.length - 1].key = majors.value.length
-      })
-    }
-
-    const remove = (selectedRowKeys) => {
-      for(let i = 0; i < selectedRowKeys.length; ++i) {
-        deleteDepartment(majors.value[selectedRowKeys[i] - 1].id).then(() => {
-          majors.value.splice(selectedRowKeys[i] - 1, 1)
+      if(pag) {
+        run({
+          pageSize: pag.pageSize,
+          current: pag.current,
+          total: pag.total
         })
       }
     }
 
-    const update = (formState) => {
-      updateDepartment(formState).then(res => {
-        for(let i = 0; i < majors.value.length; ++i) {
-          if(majors.value[i].id === res.data.id) {
-            majors.value[i] = res.data
-          }
-        }
+    const add = (data) => {
+      addDepartment(data).then(() => {
+        reload()
       })
+    }
+
+    const remove = (selectedRowKeys) => {
+      new Promise(resolve => {
+        for(let key in selectedRowKeys) {
+          deleteDepartment(key)
+        }
+        resolve()
+      }).then(() => {
+        reload()
+      })
+    }
+
+    const update = (formState) => {
+      updateDepartment(formState)
     }
 
     return {
