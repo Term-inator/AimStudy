@@ -4,17 +4,22 @@
     :search_form="search_form"
     :columns="columns"
     :data_source="majors"
-    :add_api="add_api"
-    :remove_api="remove_api"
-    :update_api="update_api"
+    :pagination="pagination"
+    :loading="loading"
+    @change="handleTableChange"
+    @add="add"
+    @remove="remove"
+    @update="update"
     :add_modal="add_modal"
     >
   </admin-management>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
+import { listDepartment, addDepartment, deleteDepartment, updateDepartment } from '@/api/admin-department-controller'
 
 const search_form = [
   {
@@ -37,13 +42,7 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
-    width: '40%'
-  },
-  {
-    title: '人数',
-    dataIndex: 'amount',
-    key: 'amount',
-    width: '40%'
+    width: '80%'
   },
   {
     title: '操作',
@@ -66,18 +65,76 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
-    const majors = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        name: `专业${i}`,
-        amount: '20',
+    const total = ref(0)
+    const {
+      data: majors,
+      run,
+      loading,
+      current,
+      pageSize
+    } = usePagination(listDepartment, {
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value
+    }))
+
+    const handleTableChange = ({ pag }) => {
+      console.log(pag)
+      run({
+        pageSize: pag.pageSize,
+        current: pag?.current,
+        total: pag?.total
+      })
+    }
+
+    const add = (data) => {
+      addDepartment(data).then(() => {
+        majors.value.push(data)
+        majors.value[majors.value.length - 1].key = majors.value.length
+      })
+    }
+
+    const remove = (selectedRowKeys) => {
+      for(let i = 0; i < selectedRowKeys.length; ++i) {
+        deleteDepartment(majors.value[selectedRowKeys[i] - 1].id).then(() => {
+          majors.value.splice(selectedRowKeys[i] - 1, 1)
+        })
+      }
+    }
+
+    const update = (formState) => {
+      updateDepartment(formState).then(res => {
+        for(let i = 0; i < majors.value.length; ++i) {
+          if(majors.value[i].id === res.data.id) {
+            majors.value[i] = res.data
+          }
         }
-      )))
+      })
+    }
+
     return {
       search_form,
       columns,
       majors,
-      add_modal
+      pagination,
+      loading,
+      handleTableChange,
+
+      add_modal,
+      add,
+      remove,
+      update
     }
   },
 })

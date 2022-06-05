@@ -10,12 +10,15 @@
     </div>
     <a-table 
       :columns="columns" 
-      :data-source="data_source" 
+      :data-source="data_source"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" 
       size="small" bordered>
-      <template #bodyCell="{ column, text, record }">
+      <template #bodyCell="{ column, text, record, index }">
         <template v-if="column.dataIndex === 'key'">
-          {{ text }}
+          {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
         <template v-else-if="column.dataIndex === 'action'">
           <span v-if="editableData[record.key]">
@@ -82,16 +85,12 @@ export default defineComponent({
       type: Array,
       required: true
     },
-    add_api: {
-      type: String,
+    pagination: {
+      type: Object,
       required: true
     },
-    remove_api: {
-      type: String,
-      required: true
-    },
-    update_api: {
-      type: String,
+    loading: {
+      type: Boolean,
       required: true
     },
     add_modal: {
@@ -102,7 +101,11 @@ export default defineComponent({
   components: {
     SearchForm
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const handleTableChange = (pag) => {
+      emit('change', { pag })
+    }
+
     const state = reactive({
       selectedRowKeys: []
     })
@@ -126,12 +129,12 @@ export default defineComponent({
           console.log('Received values of form: ', values)
           console.log('formState: ', toRaw(formState))
 
-          const formData = new FormData()
+          const formData = {}
           for(const prop in formState) {
-            formData.append(prop, formState[prop])
+            formData[prop] = formState[prop]
           }
 
-          // TODO 提交 api
+          emit('add', formData)
 
           add_loading.value = false
           add_visible.value = false
@@ -153,6 +156,7 @@ export default defineComponent({
 
     const remove = () => {
       console.log('selectedRowKeys: ', state.selectedRowKeys)
+      emit('remove', state.selectedRowKeys)
     }
 
     const editableData = reactive({})
@@ -163,6 +167,7 @@ export default defineComponent({
 
     const save = key => {
       Object.assign(props.data_source.filter(item => key === item.key)[0], editableData[key])
+      emit('update', editableData[key])
       delete editableData[key]
     }
 
@@ -171,6 +176,8 @@ export default defineComponent({
     }
 
     return {
+      handleTableChange,
+
       state,
       onSelectChange,
       add,

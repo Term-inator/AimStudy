@@ -52,9 +52,9 @@ _axios.interceptors.response.use(
       console.log('网络请求失败')
       return Promise.reject(error)
     } 
-    else {
-      checkToken(resp)
-    }
+    // else {
+    //   checkToken(resp)
+    // }
     if(resp.status === 401){
       // todo login
       console.log('请先登录')
