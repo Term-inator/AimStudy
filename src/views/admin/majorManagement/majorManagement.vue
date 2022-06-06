@@ -57,7 +57,9 @@ const columns = [
 const add_modal = [
   {
     title: '名称',
-    name: 'name'
+    name: 'name',
+    key: 'name',
+    type: 'input',
   }
 ]
 

@@ -32,7 +32,21 @@
           </span>
         </template>
         <template v-else>
-          <div>
+          <template v-if="column.dataIndex === 'id'">
+            {{ text }}
+          </template>
+          <div v-else-if="column.dataIndex === 'departmentName'">
+            <a-select
+              v-if="editableData[record.id]"
+              v-model:value="editableData[record.id][column.dataIndex]"
+              size="small"
+            >
+            </a-select>
+            <template v-else>
+              {{ text }}
+            </template>
+          </div>
+          <div v-else>
             <a-input
               v-if="editableData[record.id]"
               v-model:value="editableData[record.id][column.dataIndex]"
@@ -53,7 +67,12 @@
       </template>
       <a-form ref="formRef" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
         <a-form-item v-for="(item, index) in add_modal" :key="index" :label="item.title" :name="item.name">
-          <a-input v-model:value="formState[item.name]" size="small" />
+          <a-input v-if="item.type === 'input'" v-model:value="formState[item.key]" size="small" />
+          <a-select v-else-if="item.type === 'select'" 
+            :options="item.options" 
+            v-model:value="formState[item.key]" 
+            size="small">
+          </a-select>
         </a-form-item>
       </a-form>
     </a-modal>

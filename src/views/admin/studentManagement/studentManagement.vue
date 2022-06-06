@@ -22,6 +22,41 @@ import { defineComponent, ref, computed } from 'vue'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
 
+const search_form = ref([
+  {
+    title: "姓名",
+    key: "realName",
+    type: "input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "学号",
+    key: "userId",
+    type: "input",
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "专业",
+    key: "departmentId",
+    type: "select",
+    options: JSON.parse(sessionStorage.getItem('majors')),
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "入学年份",
+    key: "enrollmentYear",
+    type: "input",
+    rules: {
+      required: false
+    }
+  }
+])
 
 const columns = [
   {
@@ -71,15 +106,28 @@ const columns = [
 const add_modal = [
   {
     title: '姓名',
-    name: 'name'
+    name: 'realName',
+    key: 'realName',
+    type: 'input'
   },
   {
     title: '专业',
-    name: 'major'
+    name: 'departmentId',
+    key: 'departmentId',
+    type: 'select',
+    options: JSON.parse(sessionStorage.getItem('majors'))
   },
   {
     title: '联系电话',
-    name: 'phone'
+    name: 'phone',
+    key: 'phone',
+    type: 'input'
+  },
+  {
+    title: '入学年份',
+    name: 'enrollmentYear',
+    key: 'enrollmentYear',
+    type: 'input'
   }
 ]
 
@@ -89,42 +137,6 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
-    const search_form = ref([
-      {
-        title: "姓名",
-        key: "realName",
-        type: "input",
-        rules: {
-          required: false
-        }
-      },
-      {
-        title: "学号",
-        key: "userId",
-        type: "input",
-        rules: {
-          required: false
-        }
-      },
-      {
-        title: "专业",
-        key: "departmentId",
-        type: "select",
-        options: JSON.parse(sessionStorage.getItem('majors')),
-        rules: {
-          required: false
-        }
-      },
-      {
-        title: "入学年份",
-        key: "enrollmentYear",
-        type: "input",
-        rules: {
-          required: false
-        }
-      }
-    ])
-
     const total = ref(0)
     const {
       data: students,
@@ -142,6 +154,7 @@ export default defineComponent({
       formatResult: res => {
         total.value = res.total
         res.data.map((item) => {
+          item.id = item.userId
           item.key = item.id
         })
         return res.data
@@ -170,7 +183,10 @@ export default defineComponent({
     }
 
     const add = (data) => {
-      addUser(data).then(() => {
+      addUser({
+        ...data,
+        role: 4
+      }).then(() => {
         reload()
       })
     }
