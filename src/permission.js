@@ -25,7 +25,6 @@ router.beforeEach(async(to, from, next) => {
   // 获取store里面的登录令牌，有令牌，表示可以登录
   //从cookies中获取token
   const hasToken = getToken()
-  console.log(hasToken)
 
   //判断token是否存在
   if (hasToken) {
@@ -50,7 +49,6 @@ router.beforeEach(async(to, from, next) => {
           // roles 必须是一个数组
           // 获取用户的权限信息 存到vuex里面
           const { roles } = await store.dispatch('user/getInfo')
-          console.log(roles)
 
           // generate accessible routes map based on roles
           //根据用户的角色信息，派发到permission/generateRoutes action. 生成动态路由表

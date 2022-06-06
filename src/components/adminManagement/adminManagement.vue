@@ -189,7 +189,7 @@ export default defineComponent({
     }
 
     const save = key => {
-      console.log(editableData[key])
+      // 因为表格需要 departmentName，接口需要 departmentId，所以需要转换
       if(Object.prototype.hasOwnProperty.call(editableData[key], 'departmentId')) {
         editableData[key].departmentName = store.getters.getDepartmentById(editableData[key].departmentId).name
       }
