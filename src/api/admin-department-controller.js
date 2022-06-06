@@ -4,7 +4,6 @@ import axios from '@/utils/axios.js'
  * listDepartment
  */
 export function listDepartment(data){
-  console.log(data)
   return axios({
     url: '/api/admin/department',
     method: 'get',

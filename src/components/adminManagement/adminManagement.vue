@@ -102,8 +102,10 @@ export default defineComponent({
     SearchForm
   },
   setup(props, { emit }) {
+    // SearchForm 筛选条件
+    let filters = {}
     const handleTableChange = (pag) => {
-      emit('change', { pag })
+      emit('change', { pag, filters })
     }
 
     const state = reactive({
@@ -176,6 +178,7 @@ export default defineComponent({
     }
 
     const getConditions = (formState) => {
+      filters = formState
       emit('search', formState)
     }
 

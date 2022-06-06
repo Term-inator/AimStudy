@@ -10,6 +10,7 @@
     @add="add"
     @remove="remove"
     @update="update"
+    @search="search"
     :add_modal="add_modal"
     >
   </admin-management>
@@ -20,10 +21,12 @@ import { usePagination } from 'vue-request'
 import { defineComponent, ref, computed } from 'vue'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
+import { listDepartment } from '@/api/department-controller'
 
-const search_form = [
+const search_form = ref([
   {
     title: "姓名",
+    key: "realName",
     type: "input",
     rules: {
       required: false
@@ -31,6 +34,7 @@ const search_form = [
   },
   {
     title: "学号",
+    key: "userId",
     type: "input",
     rules: {
       required: false
@@ -38,19 +42,36 @@ const search_form = [
   },
   {
     title: "专业",
+    key: "departmentId",
     type: "select",
+    options: [],
     rules: {
       required: false
     }
   },
   {
     title: "入学年份",
+    key: "enrollmentYear",
     type: "input",
     rules: {
       required: false
     }
   }
-]
+])
+
+search_form.value.forEach(e => {
+  if(e.key === 'departmentId') {
+    listDepartment({size: Number.MAX_SAFE_INTEGER}).then(res => {
+      e.options = res.data.map(item => {
+        return {
+          value: item.id,
+          label: item.name
+        }
+      })
+    })
+    console.log(e)
+  }
+})
 
 const columns = [
   {
@@ -151,12 +172,13 @@ export default defineComponent({
       pageSize: pageSize.value
     }))
 
-    const handleTableChange = ({ pag }) => {
+    const handleTableChange = ({ pag, filters }) => {
       if(pag) {
         run({
           pageSize: pag.pageSize,
           current: pag.current,
-          total: pag.total
+          total: pag.total,
+          ...filters
         })
       }
     }
@@ -182,6 +204,16 @@ export default defineComponent({
       updateUser(formState)
     }
 
+    const search = (formState) => {
+      run({
+        pageSize: pageSize.value,
+        current: current.value,
+        total: total.value,
+        role: 4,
+        ...formState
+      })
+    }
+
     return {
       search_form,
       columns,
@@ -193,7 +225,8 @@ export default defineComponent({
       add_modal,
       add,
       remove,
-      update
+      update,
+      search
     }
   },
 })

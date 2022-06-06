@@ -74,9 +74,11 @@ export default defineComponent({
       for(let key in toRefs(formState)) {
         toRefs(formState)[key].value = ''
       }
-      nullable_input.value.forEach(e => {
-        e.reset()
-      })
+      if(nullable_input.value) {
+        nullable_input.value.forEach(e => {
+          e.reset()
+        })
+      }
     }
 
     return {
