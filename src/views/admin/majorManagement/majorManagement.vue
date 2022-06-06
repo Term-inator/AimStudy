@@ -10,6 +10,7 @@
     @add="add"
     @remove="remove"
     @update="update"
+    @search="search"
     :add_modal="add_modal"
     >
   </admin-management>
@@ -24,6 +25,7 @@ import { listDepartment, addDepartment, deleteDepartment, updateDepartment } fro
 const search_form = [
   {
     title: "名称",
+    key: "name",
     type: "input",
     rules: {
       required: false
@@ -124,6 +126,15 @@ export default defineComponent({
       updateDepartment(formState)
     }
 
+    const search = (formState) => {
+      run({
+        pageSize: pageSize.value,
+        current: current.value,
+        total: total.value,
+        ...formState
+      })
+    }
+
     return {
       search_form,
       columns,
@@ -135,7 +146,8 @@ export default defineComponent({
       add_modal,
       add,
       remove,
-      update
+      update,
+      search
     }
   },
 })

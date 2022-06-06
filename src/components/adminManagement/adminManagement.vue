@@ -175,6 +175,10 @@ export default defineComponent({
       delete editableData[key]
     }
 
+    const getConditions = (formState) => {
+      emit('search', formState)
+    }
+
     return {
       handleTableChange,
 
@@ -182,7 +186,8 @@ export default defineComponent({
       onSelectChange,
       add,
       remove,
-      edit, save, cancel,
+      edit, save, cancel, 
+      getConditions,
 
       editableData,
 

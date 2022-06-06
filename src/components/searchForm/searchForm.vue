@@ -5,11 +5,11 @@
         <a-row style="padding: 5px 0">
           <a-col :span="8"> {{ item.title }} </a-col>
           <a-col :span="16">
-            <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.title}`]" size="small"></a-input>
-            <a-select v-else-if="item.type === 'select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%"></a-select>
-            <a-cascader v-else-if="item.type === 'cascade select'" :options="item.options" v-model:value="formState[`${item.title}`]" size="small" style="width: 100%" changeOnSelect></a-cascader>
-            <nullable-input v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.title}`]"></nullable-input>
-            <range-input v-else-if="item.type === 'range input'" v-model:value="formState[`${item.title}`]"></range-input>
+            <a-input v-if="item.type === 'input'" v-model:value="formState[`${item.key}`]" size="small"></a-input>
+            <a-select v-else-if="item.type === 'select'" :options="item.options" v-model:value="formState[`${item.key}`]" size="small" style="width: 100%"></a-select>
+            <a-cascader v-else-if="item.type === 'cascade select'" :options="item.options" v-model:value="formState[`${item.key}`]" size="small" style="width: 100%" changeOnSelect></a-cascader>
+            <nullable-input v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.key}`]"></nullable-input>
+            <range-input v-else-if="item.type === 'range input'" v-model:value="formState[`${item.key}`]"></range-input>
           </a-col>
         </a-row>
       </a-col>
