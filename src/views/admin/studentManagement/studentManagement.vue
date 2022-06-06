@@ -19,44 +19,9 @@
 <script>
 import { usePagination } from 'vue-request'
 import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
-
-const search_form = ref([
-  {
-    title: "姓名",
-    key: "realName",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "学号",
-    key: "userId",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "专业",
-    key: "departmentId",
-    type: "select",
-    options: JSON.parse(sessionStorage.getItem('majors')),
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "入学年份",
-    key: "enrollmentYear",
-    type: "input",
-    rules: {
-      required: false
-    }
-  }
-])
 
 const columns = [
   {
@@ -103,7 +68,51 @@ const columns = [
   }
 ]
 
-const add_modal = [
+export default defineComponent({
+  name: "StudentManagementView",
+  components: {
+    AdminManagement
+  },
+  setup() {
+    const store = useStore()
+
+    const search_form = ref([
+      {
+        title: "姓名",
+        key: "realName",
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "学号",
+        key: "userId",
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "专业",
+        key: "departmentId",
+        type: "select",
+        options: store.state.constant.departments,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "入学年份",
+        key: "enrollmentYear",
+        type: "input",
+        rules: {
+          required: false
+        }
+      }
+    ])
+
+    const add_modal = ref([
   {
     title: '姓名',
     name: 'realName',
@@ -115,7 +124,7 @@ const add_modal = [
     name: 'departmentId',
     key: 'departmentId',
     type: 'select',
-    options: JSON.parse(sessionStorage.getItem('majors'))
+    options: store.state.constant.departments
   },
   {
     title: '联系电话',
@@ -129,14 +138,9 @@ const add_modal = [
     key: 'enrollmentYear',
     type: 'input'
   }
-]
+])
 
-export default defineComponent({
-  name: "StudentManagementView",
-  components: {
-    AdminManagement
-  },
-  setup() {
+    // 总页数
     const total = ref(0)
     const {
       data: students,
