@@ -4,17 +4,22 @@
     :search_form="search_form"
     :columns="columns"
     :data_source="students"
-    :add_api="add_api"
-    :remove_api="remove_api"
-    :update_api="update_api"
+    :pagination="pagination"
+    :loading="loading"
+    @change="handleTableChange"
+    @add="add"
+    @remove="remove"
+    @update="update"
     :add_modal="add_modal"
     >
   </admin-management>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
+import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
 
 const search_form = [
   {
@@ -56,26 +61,26 @@ const columns = [
   },
   {
     title: '学号',
-    dataIndex: 'user_id',
-    key: 'user_id',
+    dataIndex: 'userId',
+    key: 'userId',
     width: '20%'
   },
   {
     title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'realName',
+    key: 'realName',
     width: '10%'
   },
   {
     title: '专业',
-    dataIndex: 'major',
-    key: 'major',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
     width: '20%'
   },
   {
     title: '入学年份',
-    dataIndex: 'year',
-    key: 'year',
+    dataIndex: 'enrollmentYear',
+    key: 'enrollmentYear',
     width: '10%'
   },
   {
@@ -113,21 +118,82 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
-    const students = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        user_id: '20180001',
-        name: `学生${i}`,
-        major: '计算机科学与技术',
-        year: '2019',
-        phone: '123456789'
+    const total = ref(0)
+    const {
+      data: students,
+      run,
+      loading,
+      current,
+      pageSize,
+      reload
+    } = usePagination(listUser, {
+      defaultParams: [
+        {
+          role: 4,
+        },
+      ],
+      formatResult: res => {
+        total.value = res.total
+        res.data.map((item) => {
+          item.key = item.id
+        })
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value
+    }))
+
+    const handleTableChange = ({ pag }) => {
+      if(pag) {
+        run({
+          pageSize: pag.pageSize,
+          current: pag.current,
+          total: pag.total
+        })
+      }
+    }
+
+    const add = (data) => {
+      addUser(data).then(() => {
+        reload()
+      })
+    }
+
+    const remove = (selectedRowKeys) => {
+      new Promise(resolve => {
+        for(let key in selectedRowKeys) {
+          deleteUser(key)
         }
-      )))
+        resolve()
+      }).then(() => {
+        reload()
+      })
+    }
+
+    const update = (formState) => {
+      updateUser(formState)
+    }
+
     return {
       search_form,
       columns,
       students,
-      add_modal
+      pagination,
+      loading,
+      handleTableChange,
+
+      add_modal,
+      add,
+      remove,
+      update
     }
   },
 })
