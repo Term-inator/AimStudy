@@ -21,57 +21,7 @@ import { usePagination } from 'vue-request'
 import { defineComponent, ref, computed } from 'vue'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
-import { listDepartment } from '@/api/department-controller'
 
-const search_form = ref([
-  {
-    title: "姓名",
-    key: "realName",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "学号",
-    key: "userId",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "专业",
-    key: "departmentId",
-    type: "select",
-    options: [],
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "入学年份",
-    key: "enrollmentYear",
-    type: "input",
-    rules: {
-      required: false
-    }
-  }
-])
-
-search_form.value.forEach(e => {
-  if(e.key === 'departmentId') {
-    listDepartment({size: Number.MAX_SAFE_INTEGER}).then(res => {
-      e.options = res.data.map(item => {
-        return {
-          value: item.id,
-          label: item.name
-        }
-      })
-    })
-    console.log(e)
-  }
-})
 
 const columns = [
   {
@@ -139,6 +89,42 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
+    const search_form = ref([
+      {
+        title: "姓名",
+        key: "realName",
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "学号",
+        key: "userId",
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "专业",
+        key: "departmentId",
+        type: "select",
+        options: JSON.parse(sessionStorage.getItem('majors')),
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "入学年份",
+        key: "enrollmentYear",
+        type: "input",
+        rules: {
+          required: false
+        }
+      }
+    ])
+
     const total = ref(0)
     const {
       data: students,
