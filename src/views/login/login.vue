@@ -33,7 +33,7 @@
         >
           <a-input v-model:value="formState.captcha" />
         </a-form-item>
-        <my-captcha style="margin: 0 0 0 160px;"></my-captcha>
+        <my-captcha :identifyCode="captcha" @click="nextCaptcha" style="margin: 0 0 0 32%; cursor: pointer;"></my-captcha>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button type="primary" html-type="submit">登录</a-button>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import MyCaptcha from '@/components/captcha/captcha.vue'
@@ -65,6 +65,12 @@ export default defineComponent({
       captcha: '1234'
     })
 
+    const captcha = ref('1234')
+    const nextCaptcha = () => {
+      const rand_num = Math.random()
+      captcha.value = parseInt(rand_num * 9000 + 1000).toString()
+    }
+
     const onFinish = values => {
       store.dispatch('user/login', values)
       .then(() => {
@@ -78,6 +84,8 @@ export default defineComponent({
     }
 
     return {
+      captcha,
+      nextCaptcha,
       formState,
       onFinish,
       onFinishFailed,

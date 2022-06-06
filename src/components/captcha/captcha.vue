@@ -129,7 +129,7 @@ export default defineComponent({
       }
     }
 
-    watch(props.identifyCode, () => {
+    watch(() => props.identifyCode, () => {
       drawPic()
     })
 
