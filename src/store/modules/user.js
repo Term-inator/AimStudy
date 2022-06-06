@@ -123,6 +123,7 @@ const actions = {
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
+        commit('RESET_STATE')
 
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
