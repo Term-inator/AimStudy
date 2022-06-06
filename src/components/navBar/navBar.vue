@@ -49,7 +49,7 @@
             </template>
           </top-bar>
         </a-layout-header>
-        <a-layout-content :style="{ margin: '64px 16px 0 16px', overflow: 'initial' }">
+        <a-layout-content class="content">
           <router-view/>
         </a-layout-content>
         <a-layout-footer :style="{ textAlign: 'center' }">
@@ -394,9 +394,10 @@ export default defineComponent({
   .content {
     position: relative;
     max-width: 85vw;
-    height: 89vh;
-    margin: 10vh 0 0 0;
+    min-height: 79vh;
+    margin: 64px 16px 0 16px;
     padding: 1vh 1vw 1vh 1vw;
+    overflow: initial;
   }
 
 </style>

@@ -206,6 +206,7 @@ export default defineComponent({
 <style scoped>
   .main {
     padding: 20px 15px 0 15px;
+    height: 100%;
   }
 
   h1 {
