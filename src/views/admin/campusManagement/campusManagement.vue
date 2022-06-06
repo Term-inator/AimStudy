@@ -1,7 +1,6 @@
 <template>
   <admin-management 
     :title="'校区管理'" 
-    :search_form="search_form"
     :columns="columns"
     :data_source="campus"
     :pagination="pagination"
@@ -10,7 +9,6 @@
     @add="add"
     @remove="remove"
     @update="update"
-    @search="search"
     :add_modal="add_modal"
     >
   </admin-management>
@@ -22,17 +20,6 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listCampusLocation, addCampusLocation, updateCampusLocation, deleteCampusLocation } from '@/api/admin-campus-location-controller'
-
-const search_form = [
-  {
-    title: "名称",
-    key: "name",
-    type: "input",
-    rules: {
-      required: false
-    }
-  }
-]
 
 const columns = [
   {
@@ -137,18 +124,7 @@ export default defineComponent({
       store.dispatch('constant/queryConstant')
     }
 
-    const search = (formState) => {
-      console.log(formState)
-      run({
-        pageSize: pageSize.value,
-        current: current.value,
-        total: total.value,
-        ...formState
-      })
-    }
-
     return {
-      search_form,
       columns,
       campus,
       pagination,
@@ -158,8 +134,7 @@ export default defineComponent({
       add_modal,
       add,
       remove,
-      update,
-      search
+      update
     }
   },
 })

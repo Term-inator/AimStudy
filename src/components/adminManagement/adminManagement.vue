@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <h1> {{ title }} </h1>
-    <div class="search">
+    <div v-if="search_form" class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
     <div class="tool-bar">
@@ -96,7 +96,7 @@ export default defineComponent({
     },
     search_form: {
       type: Array,
-      required: true
+      required: false
     },
     columns: {
       type: Array,
