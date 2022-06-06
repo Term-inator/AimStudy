@@ -4,48 +4,24 @@
     :search_form="search_form"
     :columns="columns"
     :data_source="teachers"
-    :add_api="add_api"
-    :remove_api="remove_api"
-    :update_api="update_api"
+    :pagination="pagination"
+    :loading="loading"
+    @change="handleTableChange"
+    @add="add"
+    @remove="remove"
+    @update="update"
+    @search="search"
     :add_modal="add_modal"
     >
   </admin-management>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
-
-const search_form = [
-  {
-    title: "姓名",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "工号",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "专业",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "入职年份",
-    type: "input",
-    rules: {
-      required: false
-    }
-  }
-]
+import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
 
 const columns = [
   {
@@ -56,26 +32,26 @@ const columns = [
   },
   {
     title: '工号',
-    dataIndex: 'user_id',
-    key: 'user_id',
+    dataIndex: 'id',
+    key: 'userId',
     width: '20%'
   },
   {
     title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'realName',
+    key: 'realName',
     width: '10%'
   },
   {
     title: '专业',
-    dataIndex: 'major',
-    key: 'major',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
     width: '20%'
   },
   {
-    title: '入学年份',
-    dataIndex: 'year',
-    key: 'year',
+    title: '入职年份',
+    dataIndex: 'enrollmentYear',
+    key: 'enrollmentYear',
     width: '10%'
   },
   {
@@ -92,42 +68,172 @@ const columns = [
   }
 ]
 
-const add_modal = [
-  {
-    title: '姓名',
-    name: 'name'
-  },
-  {
-    title: '专业',
-    name: 'major'
-  },
-  {
-    title: '联系电话',
-    name: 'phone'
-  }
-]
-
 export default defineComponent({
   name: "TeacherManagementView",
   components: {
     AdminManagement
   },
   setup() {
-    const teachers = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        user_id: '20180001',
-        name: `教师${i}`,
-        major: '计算机科学与技术',
-        year: '2019',
-        phone: '123456789'
+    const store = useStore()
+
+    const search_form = ref([
+      {
+        title: "姓名",
+        key: "realName",
+        type: "input",
+        rules: {
+          required: false
         }
-      )))
+      },
+      {
+        title: "工号",
+        key: "userId",
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "专业",
+        key: "departmentId",
+        type: "select",
+        options: store.state.constant.departments_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "入职年份",
+        key: "enrollmentYear",
+        type: "input",
+        rules: {
+          required: false
+        }
+      }
+    ])
+
+    const add_modal = ref([
+      {
+        title: '姓名',
+        name: 'realName',
+        key: 'realName',
+        type: 'input'
+      },
+      {
+        title: '专业',
+        name: 'departmentId',
+        key: 'departmentId',
+        type: 'select',
+        options: store.state.constant.departments_select
+      },
+      {
+        title: '联系电话',
+        name: 'phone',
+        key: 'phone',
+        type: 'input'
+      },
+      {
+        title: '入职年份',
+        name: 'enrollmentYear',
+        key: 'enrollmentYear',
+        type: 'input'
+      }
+    ])
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: teachers,
+      run,
+      loading,
+      current,
+      pageSize,
+      reload
+    } = usePagination(listUser, {
+      defaultParams: [
+        {
+          role: 3,
+        },
+      ],
+      formatResult: res => {
+        total.value = res.total
+        res.data.map((item) => {
+          item.id = item.userId
+          item.key = item.id
+        })
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value
+    }))
+
+    const handleTableChange = ({ pag, filters }) => {
+      if(pag) {
+        run({
+          pageSize: pag.pageSize,
+          current: pag.current,
+          total: pag.total,
+          role: 3,
+          ...filters
+        })
+      }
+    }
+
+    const add = (data) => {
+      addUser({
+        ...data,
+        role: 3
+      }).then(() => {
+        reload()
+      })
+    }
+
+    const remove = (selectedRowKeys) => {
+      new Promise(resolve => {
+        for(let key in selectedRowKeys) {
+          deleteUser(key)
+        }
+        resolve()
+      }).then(() => {
+        reload()
+      })
+    }
+
+    const update = (formState) => {
+      updateUser(formState)
+    }
+
+    const search = (formState) => {
+      run({
+        pageSize: pageSize.value,
+        current: current.value,
+        total: total.value,
+        role: 3,
+        ...formState
+      })
+    }
+    
     return {
       search_form,
       columns,
       teachers,
-      add_modal
+      pagination,
+      loading,
+      handleTableChange,
+
+      add_modal,
+      add,
+      remove,
+      update,
+      search
     }
   },
 })
