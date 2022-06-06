@@ -32,7 +32,7 @@ const columns = [
   },
   {
     title: '学号',
-    dataIndex: 'userId',
+    dataIndex: 'id',
     key: 'userId',
     width: '20%'
   },
@@ -97,7 +97,7 @@ export default defineComponent({
         title: "专业",
         key: "departmentId",
         type: "select",
-        options: store.state.constant.departments,
+        options: store.state.constant.departments_select,
         rules: {
           required: false
         }
@@ -113,32 +113,32 @@ export default defineComponent({
     ])
 
     const add_modal = ref([
-  {
-    title: '姓名',
-    name: 'realName',
-    key: 'realName',
-    type: 'input'
-  },
-  {
-    title: '专业',
-    name: 'departmentId',
-    key: 'departmentId',
-    type: 'select',
-    options: store.state.constant.departments
-  },
-  {
-    title: '联系电话',
-    name: 'phone',
-    key: 'phone',
-    type: 'input'
-  },
-  {
-    title: '入学年份',
-    name: 'enrollmentYear',
-    key: 'enrollmentYear',
-    type: 'input'
-  }
-])
+      {
+        title: '姓名',
+        name: 'realName',
+        key: 'realName',
+        type: 'input'
+      },
+      {
+        title: '专业',
+        name: 'departmentId',
+        key: 'departmentId',
+        type: 'select',
+        options: store.state.constant.departments_select
+      },
+      {
+        title: '联系电话',
+        name: 'phone',
+        key: 'phone',
+        type: 'input'
+      },
+      {
+        title: '入学年份',
+        name: 'enrollmentYear',
+        key: 'enrollmentYear',
+        type: 'input'
+      }
+    ])
 
     // 总页数
     const total = ref(0)
@@ -181,6 +181,7 @@ export default defineComponent({
           pageSize: pag.pageSize,
           current: pag.current,
           total: pag.total,
+          role: 4,
           ...filters
         })
       }

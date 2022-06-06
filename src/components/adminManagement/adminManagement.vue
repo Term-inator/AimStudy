@@ -38,7 +38,8 @@
           <div v-else-if="column.dataIndex === 'departmentName'">
             <a-select
               v-if="editableData[record.id]"
-              v-model:value="editableData[record.id][column.dataIndex]"
+              :options="$store.state.constant.departments_select"
+              v-model:value="editableData[record.id]['departmentId']"
               size="small"
             >
             </a-select>
@@ -81,6 +82,7 @@
 
 <script>
 import { defineComponent, reactive, ref, toRefs, toRaw } from 'vue'
+import { useStore } from 'vuex'; 
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { cloneDeep } from 'lodash-es';
 
@@ -121,6 +123,8 @@ export default defineComponent({
     SearchForm
   },
   setup(props, { emit }) {
+    const store = useStore()
+
     // SearchForm 筛选条件
     let filters = {}
     const handleTableChange = (pag) => {
@@ -187,6 +191,10 @@ export default defineComponent({
     }
 
     const save = key => {
+      console.log(editableData[key])
+      if(Object.prototype.hasOwnProperty.call(editableData[key], 'departmentId')) {
+        editableData[key].departmentName = store.getters.getDepartmentById(editableData[key].departmentId).name
+      }
       Object.assign(props.data_source.filter(item => key === item.key)[0], editableData[key])
       emit('update', editableData[key])
       delete editableData[key]
@@ -211,6 +219,7 @@ export default defineComponent({
       edit, save, cancel, 
       getConditions,
 
+      getDepartment: store.getters.getDepartment,
       editableData,
 
       formRef,
