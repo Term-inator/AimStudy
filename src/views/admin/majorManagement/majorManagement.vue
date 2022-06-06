@@ -114,7 +114,7 @@ export default defineComponent({
       addDepartment(data).then(() => {
         reload()
         // 重新获取专业列表
-        store.dispatch('constant/queryConstant')
+        store.dispatch('constant/queryDepartment')
       })
     }
 
@@ -127,14 +127,14 @@ export default defineComponent({
       }).then(() => {
         reload()
         // 重新获取专业列表
-        store.dispatch('constant/queryConstant')
+        store.dispatch('constant/queryDepartment')
       })
     }
 
     const update = (formState) => {
       updateDepartment(formState)
       // 重新获取专业列表
-      store.dispatch('constant/queryConstant')
+      store.dispatch('constant/queryDepartment')
     }
 
     const search = (formState) => {

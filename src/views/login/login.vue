@@ -74,6 +74,7 @@ export default defineComponent({
     const onFinish = values => {
       store.dispatch('user/login', values)
       .then(() => {
+        store.dispatch('constant/queryConstant')
         router.push('main')
         console.log('Success:', values)
       })

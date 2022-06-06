@@ -3,7 +3,6 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
-import { useStore } from 'vuex'
 import navBar from '@/components/navBar/navBar.vue'
 
 export default defineComponent({
@@ -11,8 +10,6 @@ export default defineComponent({
     navBar
   },
   setup() {
-    const store = useStore()
-    store.dispatch('constant/queryConstant')
   }
 })
 </script>

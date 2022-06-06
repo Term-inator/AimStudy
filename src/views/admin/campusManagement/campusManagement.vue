@@ -101,7 +101,7 @@ export default defineComponent({
       addCampusLocation(data).then(() => {
         reload()
         // 重新获取校区列表
-        store.dispatch('constant/queryConstant')
+        store.dispatch('constant/queryCampusLocation')
       })
     }
 
@@ -114,14 +114,14 @@ export default defineComponent({
       }).then(() => {
         reload()
         // 重新获取专业列表
-        store.dispatch('constant/queryConstant')
+        store.dispatch('constant/queryCampusLocation')
       })
     }
 
     const update = (formState) => {
       updateCampusLocation(formState)
       // 重新获取专业列表
-      store.dispatch('constant/queryConstant')
+      store.dispatch('constant/queryCampusLocation')
     }
 
     return {
