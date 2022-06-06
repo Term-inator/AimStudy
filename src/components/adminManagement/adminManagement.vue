@@ -149,26 +149,24 @@ export default defineComponent({
 
     const addOkHandle = () => {
       add_loading.value = true
-      setTimeout(() => {
-        formRef.value.validateFields().then(values => {
-          console.log('Received values of form: ', values)
-          console.log('formState: ', toRaw(formState))
+      formRef.value.validateFields().then(values => {
+        console.log('Received values of form: ', values)
+        console.log('formState: ', toRaw(formState))
 
-          const formData = {}
-          for(const prop in formState) {
-            formData[prop] = formState[prop]
-          }
+        const formData = {}
+        for(const prop in formState) {
+          formData[prop] = formState[prop]
+        }
 
-          emit('add', formData)
+        emit('add', formData)
 
-          add_loading.value = false
-          add_visible.value = false
-          formRef.value.resetFields()
-          console.log('reset formState: ', toRaw(formState))
-        }).catch(info => {
-          console.log('Validate Failed:', info)
-        });
-      }, 2000)
+        add_loading.value = false
+        add_visible.value = false
+        formRef.value.resetFields()
+        console.log('reset formState: ', toRaw(formState))
+      }).catch(info => {
+        console.log('Validate Failed:', info)
+      })
     }
 
     const addCancelHandle = () => {

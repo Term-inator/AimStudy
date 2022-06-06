@@ -4,21 +4,29 @@
     :search_form="search_form"
     :columns="columns"
     :data_source="campus"
-    :add_api="add_api"
-    :remove_api="remove_api"
-    :update_api="update_api"
+    :pagination="pagination"
+    :loading="loading"
+    @change="handleTableChange"
+    @add="add"
+    @remove="remove"
+    @update="update"
+    @search="search"
     :add_modal="add_modal"
     >
   </admin-management>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
+import { listCampusLocation, addCampusLocation, updateCampusLocation, deleteCampusLocation } from '@/api/admin-campus-location-controller'
 
 const search_form = [
   {
     title: "名称",
+    key: "name",
     type: "input",
     rules: {
       required: false
@@ -50,7 +58,9 @@ const columns = [
 const add_modal = [
   {
     title: '名称',
-    name: 'name'
+    name: 'name',
+    key: 'name',
+    type: 'input'
   }
 ]
 
@@ -60,18 +70,96 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
-    const campus = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        name: `校区${i}`,
-        amount: '20',
-        }
-      )))
+    const store = useStore()
+    
+    const total = ref(0)
+    const {
+      data: campus,
+      run,
+      loading,
+      current,
+      pageSize,
+      reload
+    } = usePagination(listCampusLocation, {
+      formatResult: res => {
+        total.value = res.total
+        res.map((item) => {
+          item.key = item.id
+        })
+        return res
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value
+    }))
+
+    const handleTableChange = ({ pag }) => {
+      if(pag) {
+        run({
+          pageSize: pag.pageSize,
+          current: pag.current,
+          total: pag.total
+        })
+      }
+    }
+
+    const add = (data) => {
+      addCampusLocation(data).then(() => {
+        reload()
+        // 重新获取校区列表
+        store.dispatch('constant/queryConstant')
+      })
+    }
+
+    const remove = (selectedRowKeys) => {
+      new Promise(resolve => {
+        selectedRowKeys.forEach(key => {
+          deleteCampusLocation(key)
+        })
+        resolve()
+      }).then(() => {
+        reload()
+        // 重新获取专业列表
+        store.dispatch('constant/queryConstant')
+      })
+    }
+
+    const update = (formState) => {
+      updateCampusLocation(formState)
+      // 重新获取专业列表
+      store.dispatch('constant/queryConstant')
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        pageSize: pageSize.value,
+        current: current.value,
+        total: total.value,
+        ...formState
+      })
+    }
+
     return {
       search_form,
       columns,
       campus,
-      add_modal
+      pagination,
+      loading,
+      handleTableChange,
+
+      add_modal,
+      add,
+      remove,
+      update,
+      search
     }
   },
 })

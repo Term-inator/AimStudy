@@ -60,7 +60,7 @@ const add_modal = [
     title: '名称',
     name: 'name',
     key: 'name',
-    type: 'input',
+    type: 'input'
   }
 ]
 
