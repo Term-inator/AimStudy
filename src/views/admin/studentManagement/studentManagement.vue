@@ -198,9 +198,9 @@ export default defineComponent({
 
     const remove = (selectedRowKeys) => {
       new Promise(resolve => {
-        for(let key in selectedRowKeys) {
+        selectedRowKeys.forEach(key => {
           deleteUser(key)
-        }
+        })
         resolve()
       }).then(() => {
         reload()

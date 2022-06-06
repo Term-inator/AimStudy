@@ -120,9 +120,9 @@ export default defineComponent({
 
     const remove = (selectedRowKeys) => {
       new Promise(resolve => {
-        for(let key in selectedRowKeys) {
+        selectedRowKeys.forEach(key => {
           deleteDepartment(key)
-        }
+        })
         resolve()
       }).then(() => {
         reload()
