@@ -19,7 +19,6 @@ const mutations = {
 
 const actions = {
   queryDepartment({ commit }) {
-    console.log(111)
     return new Promise((resolve, reject) => {
       listDepartment({ size: 10000 }).then(response => {
         let departments =  response.data.map(item => {

@@ -19,6 +19,7 @@
 <script>
 import { usePagination } from 'vue-request'
 import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listDepartment, addDepartment, deleteDepartment, updateDepartment } from '@/api/admin-department-controller'
 
@@ -69,6 +70,8 @@ export default defineComponent({
     AdminManagement
   },
   setup() {
+    const store = useStore()
+
     const total = ref(0)
     const {
       data: majors,
@@ -110,6 +113,8 @@ export default defineComponent({
     const add = (data) => {
       addDepartment(data).then(() => {
         reload()
+        // 重新获取专业列表
+        store.dispatch('constant/queryConstant')
       })
     }
 
@@ -121,11 +126,15 @@ export default defineComponent({
         resolve()
       }).then(() => {
         reload()
+        // 重新获取专业列表
+        store.dispatch('constant/queryConstant')
       })
     }
 
     const update = (formState) => {
       updateDepartment(formState)
+      // 重新获取专业列表
+      store.dispatch('constant/queryConstant')
     }
 
     const search = (formState) => {
