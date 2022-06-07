@@ -3,13 +3,22 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
+import { onMounted } from '@vue/runtime-core'
+import { useStore } from 'vuex'
 import navBar from '@/components/navBar/navBar.vue'
+import { getToken } from './utils/auth'
 
 export default defineComponent({
   components: {
     navBar
   },
   setup() {
+    const store = useStore()
+    onMounted(() => {
+      if(getToken) {
+        store.dispatch('constant/queryConstant')
+      }
+    })
   }
 })
 </script>

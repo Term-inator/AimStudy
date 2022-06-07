@@ -23,10 +23,10 @@ const mutations = {
     state.departments_select = departments_select
   },
   setCampusLocations: (state, campus_locations) => {
-    state.campus = campus_locations
+    state.campus_locations = campus_locations
   },
   setCampusLocationsSelect: (state, campus_locations_select) => {
-    state.campus_select = campus_locations_select
+    state.campus_locations_select = campus_locations_select
   }
 }
 
