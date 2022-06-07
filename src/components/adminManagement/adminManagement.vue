@@ -32,7 +32,7 @@
           </span>
         </template>
         <template v-else>
-          <template v-if="column.dataIndex === 'id'">
+          <template v-if="['id', 'roleName'].includes(column.dataIndex)">
             {{ text }}
           </template>
           <div v-else-if="column.dataIndex === 'departmentName'">
@@ -84,7 +84,8 @@
 import { defineComponent, reactive, ref, toRefs, toRaw } from 'vue'
 import { useStore } from 'vuex'; 
 import SearchForm from '@/components/searchForm/searchForm.vue'
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash-es'
+// import { getRoleIdByName, getRoleNameById } from '@/utils/constant'
 
 
 export default defineComponent({
