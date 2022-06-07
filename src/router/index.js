@@ -7,8 +7,7 @@ const CourseTableView = () => import('../views/courseTable/courseTable.vue')
 
 const CampusManagementView = () => import('../views/admin/campusManagement/campusManagement.vue')
 const MajorManagementView = () => import('../views/admin/majorManagement/majorManagement.vue')
-const StudentManagementView = () => import('../views/admin/studentManagement/studentManagement.vue')
-const TeacherManagementView = () => import('../views/admin/teacherManagement/teacherManagement.vue')
+const UserManagementView = () => import('../views/admin/userManagement/userManagement.vue')
 
 const CourseScoreView = () => import('../views/eduAdmin/courseScore/courseScore.vue')
 const CoursePoolView = () => import('../views/eduAdmin/coursePool/coursePool.vue')
@@ -79,17 +78,9 @@ export const asyncRoutes = [
     }
   },
   {
-    path: '/studentManagement',
-    name: 'studentManagement',
-    component: StudentManagementView,
-    meta: {
-      roles: ['admin']
-    }
-  },
-  {
-    path: '/teacherManagement',
-    name: 'teacherManagement',
-    component: TeacherManagementView,
+    path: '/userManagement',
+    name: 'userManagement',
+    component: UserManagementView,
     meta: {
       roles: ['admin']
     }

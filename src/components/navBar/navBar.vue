@@ -125,24 +125,18 @@ const admin = [
   main_page,
   {
     key: "2",
-    title: "学生管理",
+    title: "用户管理",
     icon: "TeamOutlined",
-    route: "studentManagement"
+    route: "userManagement"
   },
   {
     key: "3",
-    title: "教师管理",
-    icon: "SolutionOutlined",
-    route: "teacherManagement"
-  },
-  {
-    key: "4",
     title: "专业管理",
     icon: "ProfileOutlined",
     route: "majorManagement"
   },
   {
-    key: "5",
+    key: "4",
     title: "校区管理",
     icon: "ApartmentOutlined",
     route: "campusManagement"

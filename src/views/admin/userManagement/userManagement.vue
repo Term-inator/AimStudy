@@ -1,9 +1,9 @@
 <template>
   <admin-management 
-    :title="'教师管理'" 
+    :title="'用户管理'" 
     :search_form="search_form"
     :columns="columns"
-    :data_source="teachers"
+    :data_source="users"
     :pagination="pagination"
     :loading="loading"
     @change="handleTableChange"
@@ -22,6 +22,7 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import AdminManagement from '@/components/adminManagement/adminManagement.vue'
 import { listUser, addUser, updateUser, deleteUser } from '@/api/admin-user-controller'
+import { roles_select, getRoleNameById } from '@/utils/constant'
 
 const columns = [
   {
@@ -31,7 +32,7 @@ const columns = [
     width: '10%',
   },
   {
-    title: '工号',
+    title: '学工号',
     dataIndex: 'id',
     key: 'userId',
     width: '20%'
@@ -49,7 +50,7 @@ const columns = [
     width: '20%'
   },
   {
-    title: '入职年份',
+    title: '入学年份',
     dataIndex: 'enrollmentYear',
     key: 'enrollmentYear',
     width: '10%'
@@ -61,6 +62,12 @@ const columns = [
     width: '20%'
   },
   {
+    title: '角色',
+    dataIndex: 'roleName',
+    key: 'roleName',
+    width: '10%'
+  },
+  {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
@@ -69,7 +76,7 @@ const columns = [
 ]
 
 export default defineComponent({
-  name: "TeacherManagementView",
+  name: "UserManagementView",
   components: {
     AdminManagement
   },
@@ -86,7 +93,7 @@ export default defineComponent({
         }
       },
       {
-        title: "工号",
+        title: "学号",
         key: "userId",
         type: "input",
         rules: {
@@ -103,9 +110,18 @@ export default defineComponent({
         }
       },
       {
-        title: "入职年份",
+        title: "入学年份",
         key: "enrollmentYear",
         type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "角色",
+        key: "role",
+        type: "select",
+        options: roles_select,
         rules: {
           required: false
         }
@@ -133,35 +149,39 @@ export default defineComponent({
         type: 'input'
       },
       {
-        title: '入职年份',
+        title: '入学年份',
         name: 'enrollmentYear',
         key: 'enrollmentYear',
         type: 'input'
+      },
+      {
+        title: '角色',
+        name: 'role',
+        key: 'role',
+        type: 'select',
+        options: roles_select
       }
     ])
 
     // 总页数
     const total = ref(0)
     const {
-      data: teachers,
+      data: users,
       run,
       loading,
       current,
       pageSize,
-      reload
     } = usePagination(listUser, {
-      defaultParams: [
-        {
-          role: 3,
-        },
-      ],
       formatResult: res => {
         total.value = res.total
-        res.data.map((item) => {
+        // 去除超级管理员
+        let result = res.data.filter((item) => item.role !== 1)
+        result.map((item) => {
           item.id = item.userId
           item.key = item.id
+          item.roleName = getRoleNameById(item.role)
         })
-        return res.data
+        return result
       },
       pagination: {
         currentKey: 'current',
@@ -175,24 +195,38 @@ export default defineComponent({
       pageSize: pageSize.value
     }))
 
+    // SearchForm 筛选条件
+    let filters_buffer = {}
     const handleTableChange = ({ pag, filters }) => {
+      // AdminManagement 组件的 handleTableChange 会触发该事件
+      // 所以当表格翻页时，该事件会被触发，并根据筛选条件重新 run 获取新的数据
+      // 由于此处的 filters 是从 Search Form 中获取的，没有使用 antd Table 的筛选功能，
+      // 所以这里的 filters 不是 antd Table 提供的 filters
+      // 每次 AdminManagement 的 handleTableChange 触发时，都会将其暂存的 filters 传递给该事件
+      // 然而，antd Table 的 onSelectChange 似乎也是 handleTableChange 的一部分
+      // 在删除操作的选择步骤时，该事件也会被触发，由于此时没有把上面提到的暂存的 filters 传递给该事件，
+      // 所以这里的 filters 是 antd Table 的 filters，为 undefined，因此要进行判断
+      if(filters) {
+        filters_buffer = filters
+      }
       if(pag) {
         run({
           pageSize: pag.pageSize,
           current: pag.current,
           total: pag.total,
-          role: 3,
           ...filters
         })
       }
     }
 
     const add = (data) => {
-      addUser({
-        ...data,
-        role: 3
-      }).then(() => {
-        reload()
+      addUser(data).then(() => {
+        run({
+          pageSize: pageSize.value,
+          current: current.value,
+          total: total.value,
+          ...filters_buffer
+        })
       })
     }
 
@@ -203,7 +237,12 @@ export default defineComponent({
         })
         resolve()
       }).then(() => {
-        reload()
+        run({
+          pageSize: pageSize.value,
+          current: current.value,
+          total: total.value,
+          ...filters_buffer
+        })
       })
     }
 
@@ -212,19 +251,19 @@ export default defineComponent({
     }
 
     const search = (formState) => {
+      filters_buffer = formState
       run({
         pageSize: pageSize.value,
         current: current.value,
         total: total.value,
-        role: 3,
         ...formState
       })
     }
-    
+
     return {
       search_form,
       columns,
-      teachers,
+      users,
       pagination,
       loading,
       handleTableChange,
