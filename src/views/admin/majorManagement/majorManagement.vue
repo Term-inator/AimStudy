@@ -78,8 +78,7 @@ export default defineComponent({
       run,
       loading,
       current,
-      pageSize,
-      reload
+      pageSize
     } = usePagination(listDepartment, {
       formatResult: res => {
         total.value = res.total
@@ -100,7 +99,12 @@ export default defineComponent({
       pageSize: pageSize.value
     }))
 
-    const handleTableChange = ({ pag }) => {
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = ({ pag, filters }) => {
+      if (filters) {
+        filters_buffer = filters
+      }
       if(pag) {
         run({
           pageSize: pag.pageSize,
@@ -112,7 +116,12 @@ export default defineComponent({
 
     const add = (data) => {
       addDepartment(data).then(() => {
-        reload()
+        run({
+          pageSize: pageSize.value,
+          current: current.value,
+          total: total.value,
+          ...filters_buffer
+        })
         // 重新获取专业列表
         store.dispatch('constant/queryDepartment')
       })
@@ -125,7 +134,12 @@ export default defineComponent({
         })
         resolve()
       }).then(() => {
-        reload()
+        run({
+          pageSize: pageSize.value,
+          current: current.value,
+          total: total.value,
+          ...filters_buffer
+        })
         // 重新获取专业列表
         store.dispatch('constant/queryDepartment')
       })
@@ -138,6 +152,7 @@ export default defineComponent({
     }
 
     const search = (formState) => {
+      filters_buffer = formState
       run({
         pageSize: pageSize.value,
         current: current.value,
