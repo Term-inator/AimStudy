@@ -7,7 +7,11 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     id: '',
-    department: '',
+    departmentName: '',
+    departmentId: '',
+    enrollmentYear: '',
+    email: '',
+    phone: '',
     roles: []
   }
 }
@@ -28,17 +32,23 @@ const mutations = {
   SET_ID: (state, id) => {
     state.id = id
   },
-  SET_DEPARTMENT: (state, department) => {
-    state.department = department
+  SET_DEPARTMENT_ID: (state, departmentId) => {
+    state.departmentId = departmentId
+  },
+  SET_DEPARTMENT_NAME: (state, departmentName) => {
+    state.departmentName = departmentName
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   },
-  setUser: (state, user) => {
-    state.name = user.name
-    state.id = user.id
-    state.department = user.department
-    state.roles = user.roles
+  SET_ENROLLMENT_YEAR: (state, enrollmentYear) => {
+    state.enrollmentYear = enrollmentYear
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_PHONE: (state, phone) => {
+    state.phone = phone
   }
 }
 
@@ -75,7 +85,12 @@ const actions = {
           return reject('验证失败，请重新登录')
         }
 
-        const { realName, userId, departmentName, role } = response
+        const { 
+          realName, userId, 
+          departmentId, departmentName, 
+          enrollmentYear, 
+          email, phone,
+          role } = response
         let roles = []
         switch (role) {
           case 1:
@@ -104,7 +119,11 @@ const actions = {
         commit('SET_ROLES', roles)
         commit('SET_NAME', realName)
         commit('SET_ID', userId)
-        commit('SET_DEPARTMENT', departmentName)
+        commit('SET_DEPARTMENT_ID', departmentId)
+        commit('SET_DEPARTMENT_NAME', departmentName)
+        commit('SET_ENROLLMENT_YEAR', enrollmentYear)
+        commit('SET_EMAIL', email)
+        commit('SET_PHONE', phone)
 
         // 适配接口返回的数据
         response.roles = roles

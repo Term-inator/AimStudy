@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1> {{ $store.state.user.department }} 学生信息</h1>
+    <h1> {{ $store.state.user.departmentName }} 学生信息</h1>
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
@@ -23,6 +23,7 @@
 <script>
 import { usePagination } from 'vue-request'
 import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { listUser } from '@/api/admin-user-controller'
 
@@ -79,6 +80,12 @@ export default defineComponent({
     SearchForm
   },
   setup() {
+    const store = useStore()
+    const defaultParams = {
+      role: 4,
+      departmentId: store.state.user.departmentId
+    }
+
     // 总页数
     const total = ref(0)
     const {
@@ -88,6 +95,7 @@ export default defineComponent({
       current,
       pageSize,
     } = usePagination(listUser, {
+      defaultParams: [defaultParams],
       formatResult: res => {
         total.value = res.total
         return res.data
@@ -113,8 +121,8 @@ export default defineComponent({
           size: pag.pageSize,
           current: pag.current,
           total: pag.total,
+          ...defaultParams,
           ...filters_buffer,
-          role: 4
         })
       }
     }
@@ -123,8 +131,8 @@ export default defineComponent({
       run({
         size: pageSize.value,
         total: total.value,
-        ...formState,
-        role: 4
+        ...defaultParams,
+        ...formState
       })
     }
 

@@ -6,7 +6,7 @@
     <a-col :span="5">本科生教学管理系统</a-col>
     <a-col :span="5"> {{ date }} </a-col>
     <a-col :span="5"> {{ $store.state.user.name }} {{ $store.state.user.id }} </a-col>
-    <a-col :span="5"> {{ $store.state.user.department }} </a-col>
+    <a-col :span="5"> {{ $store.state.user.departmentName }} </a-col>
     <a-col :span="2">
       <a-button type="link" @click="logout">注销</a-button>
     </a-col>

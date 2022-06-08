@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1> {{ $store.state.user.department }} 教师信息</h1>
+    <h1> {{ $store.state.user.departmentName }} 教师信息</h1>
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
