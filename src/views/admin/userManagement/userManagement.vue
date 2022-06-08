@@ -85,16 +85,16 @@ export default defineComponent({
 
     const search_form = ref([
       {
-        title: "姓名",
-        key: "realName",
+        title: "学工号",
+        key: "userId",
         type: "input",
         rules: {
           required: false
         }
       },
       {
-        title: "学号",
-        key: "userId",
+        title: "姓名",
+        key: "realName",
         type: "input",
         rules: {
           required: false
