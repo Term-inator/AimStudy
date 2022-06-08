@@ -30,7 +30,7 @@ import { listUser } from '@/api/admin-user-controller'
 const search_form = [
   {
     title: '学号',
-    key: 'UserID',
+    key: 'userID',
     type: 'input',
     rules: {
       required: false
@@ -38,7 +38,7 @@ const search_form = [
   },
   {
     title: '姓名',
-    key: 'RealName',
+    key: 'realName',
     type: 'input',
     rules: {
       required: false

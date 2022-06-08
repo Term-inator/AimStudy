@@ -4,17 +4,33 @@
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="columns" :data-source="teachers" size="small" bordered></a-table>
+    <a-table 
+      :columns="columns" 
+      :data-source="teachers"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      size="small" bordered>
+      <template #bodyCell="{ column, index }">
+        <template v-if="column.dataIndex === 'key'">
+          {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+        </template>
+      </template>
+    </a-table>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
+import { listUser } from '@/api/admin-user-controller'
 
 const search_form = [
   {
     title: '工号',
+    key: 'userId',
     type: 'input',
     rules: {
       required: false
@@ -22,6 +38,7 @@ const search_form = [
   },
   {
     title: '姓名',
+    key: 'realName',
     type: 'input',
     rules: {
       required: false
@@ -38,14 +55,14 @@ const columns = [
   },
   {
     title: '工号',
-    dataIndex: 'student_id',
-    key: 'student_id',
+    dataIndex: 'userId',
+    key: 'userId',
     width: 120
   },
   {
     title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 100
   },
   {
@@ -63,20 +80,76 @@ export default defineComponent({
     SearchForm
   },
   setup() {
-    const teachers = ref(
-      [...Array(100)].map((_, i) => ({
-        key: i,
-        name: `教师${i}`,
-        student_id: `学号${i}`,
-        phone: `电话${i}`
-        }
-      )))
+    const store = useStore()
+    const defaultParams = {
+      role: 3,
+      departmentId: store.state.user.departmentId
+    }
+    
+    // 总页数
+    const total = ref(0)
+    const {
+      data: teachers,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(listUser, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          total: pag.total,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      run({
+        size: pageSize.value,
+        total: total.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
 
     return {
       search_form,
       columns,
+      teachers,
+      pagination,
+      loading,
+      handleTableChange,
 
-      teachers
+      getConditions
     }
   },
 })
