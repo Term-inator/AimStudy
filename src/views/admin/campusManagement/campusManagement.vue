@@ -84,13 +84,14 @@ export default defineComponent({
     const pagination = computed(() => ({
       total: total.value,
       current: current.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      showSizeChanger: true
     }))
 
     const handleTableChange = ({ pag }) => {
       if(pag) {
         run({
-          pageSize: pag.pageSize,
+          size: pag.pageSize,
           current: pag.current,
           total: pag.total
         })

@@ -96,7 +96,8 @@ export default defineComponent({
     const pagination = computed(() => ({
       total: total.value,
       current: current.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      showSizeChanger: true
     }))
 
     // SearchForm 筛选条件
@@ -107,7 +108,7 @@ export default defineComponent({
       }
       if(pag) {
         run({
-          pageSize: pag.pageSize,
+          size: pag.pageSize,
           current: pag.current,
           total: pag.total
         })
@@ -117,7 +118,7 @@ export default defineComponent({
     const add = (data) => {
       addDepartment(data).then(() => {
         run({
-          pageSize: pageSize.value,
+          size: pageSize.value,
           current: current.value,
           total: total.value,
           ...filters_buffer
@@ -135,7 +136,7 @@ export default defineComponent({
         resolve()
       }).then(() => {
         run({
-          pageSize: pageSize.value,
+          size: pageSize.value,
           current: current.value,
           total: total.value,
           ...filters_buffer
@@ -154,8 +155,7 @@ export default defineComponent({
     const search = (formState) => {
       filters_buffer = formState
       run({
-        pageSize: pageSize.value,
-        current: current.value,
+        size: pageSize.value,
         total: total.value,
         ...formState
       })
