@@ -1,5 +1,5 @@
 import { listDepartment } from '@/api/department-controller'
-import { listCampusLocation } from '@/api/admin-campus-location-controller'
+import { listCampusLocation } from '@/api/campus-location-controller'
 
 const getDefaultState = () => {
   return {

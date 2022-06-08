@@ -4,6 +4,7 @@ import axios from '@/utils/axios.js'
  * listUser
  */
 export function listUser(data){
+  console.log(data)
   return axios({
     url: '/api/admin/user',
     method: 'get',
