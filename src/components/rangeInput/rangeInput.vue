@@ -15,26 +15,37 @@ import { defineComponent, reactive, toRefs, watch } from 'vue'
 
 export default defineComponent({
   props: {
-    value: {
-      type: Object,
-      default: () => ({left: '', right: ''}),
+    left_value: {
+      type: Number,
+      required: true
+    },
+    right_value: {
+      type: Number,
       required: true
     }
   },
   setup(props, { emit }) {
-    const state = reactive(props.value)
+    const state = reactive({
+      left: props.left_value,
+      right: props.right_value
+    })
 
-    watch(() => props.value, () => {
-      state.left = props.value.left
-      state.right = props.value.right
+    watch(() => props.left_value, () => {
+      state.left = props.left_value
+    })
+
+    watch(() => props.right_value, () => {
+      state.right = props.right_value
     })
 
     const leftValChange = (val) => {
-      emit('update:value', {left: val, right: state.right})
+      state.left = val
+      emit('update:left_value', state.left)
     }
 
     const rightValChange = (val) => {
-      emit('update:value', {left: state.left, right: val})
+      state.right = val
+      emit('update:right_value', state.right)
     }
 
     return {

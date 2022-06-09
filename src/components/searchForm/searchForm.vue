@@ -9,7 +9,11 @@
             <a-select v-else-if="item.type === 'select'" :options="item.options" v-model:value="formState[`${item.key}`]" size="small" style="width: 100%"></a-select>
             <a-cascader v-else-if="item.type === 'cascade select'" :options="item.options" v-model:value="formState[`${item.key}`]" size="small" style="width: 100%" changeOnSelect></a-cascader>
             <nullable-input v-else-if="item.type === 'nullable input'" ref="nullable_input" v-model:value="formState[`${item.key}`]"></nullable-input>
-            <range-input v-else-if="item.type === 'range input'" v-model:value="formState[`${item.key}`]"></range-input>
+            <range-input v-else-if="item.type === 'range input'" 
+              v-model:left_value="formState[`${item.key[0]}`]"
+              v-model:right_value="formState[`${item.key[1]}`]"
+            >
+            </range-input>
           </a-col>
         </a-row>
       </a-col>

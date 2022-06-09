@@ -147,7 +147,7 @@ export default defineComponent({
       },
       {
         title: "课程名称",
-        key: 'courseName',
+        key: 'name',
         type: "input",
         rules: {
           required: false
