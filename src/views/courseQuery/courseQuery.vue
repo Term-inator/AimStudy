@@ -4,8 +4,17 @@
     <div class="search">
       <search-form :items="search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="columns" :data-source="courses" size="small" bordered>
-      <template #bodyCell="{ column, record }">
+    <a-table 
+      :columns="columns" 
+      :data-source="courses"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      size="small" bordered>
+      <template #bodyCell="{ column, record, text }">
+        <template v-if="column.dataIndex === 'courseType'">
+          {{ getCourseTypeByNumber(text) }}
+        </template>
         <template v-if="column.dataIndex === 'syllabus'">
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
         </template>
@@ -15,153 +24,59 @@
 </template>
 
 <script>
-import { defineComponent, ref, toRefs } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
-
-const search_form = [
-  {
-    title: "学年学期",
-    type: "cascade select",
-    options: [
-      {
-        value: (2021, 2022),
-        label: "2021-2022学年",
-        children: [
-          {
-            value: 1,
-            label: "第一学期"
-          },
-          {
-            value: 2,
-            label: "第二学期"
-          }
-        ]
-      }
-    ],
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程序号",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程名称",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程类别",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "开课院系",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "教师", // 教师可以为空，表示查询未指定教师的课程
-    type: "nullable input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "年级",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "周数",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "起止周",
-    type: "range input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "星期",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "小节",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "校区",
-    type: "select",
-    rules: {
-      required: false
-    }
-  }
-]
+import { queryCourse } from '@/api/course-controller'
+import { year_select, 
+  semester_select, getSemesterByNumber,
+  day_select, getDayByNumber,
+  section_select,
+  course_type_select, getCourseTypeByNumber,
+} from '@/utils/constant'
 
 const columns = [
   {
     title: '学年学期',
-    dataIndex: 'semester',
-    key: 'semester',
+    dataIndex: 'year_semester',
+    key: 'year_semester',
     width: 100
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
     title: '开课院系',
-    dataIndex: 'department',
-    key: 'department',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
     width: 100
   },
   {
     title: '教师',
-    dataIndex: 'teacher',
-    key: 'teacher',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 80
   },
   {
     title: '年级',
-    dataIndex: 'grade',
-    key: 'grade',
+    dataIndex: 'openFor',
+    key: 'openFor',
     width: 65
   },
   {
@@ -172,8 +87,8 @@ const columns = [
   },
   {
     title: '实际上课人数',
-    dataIndex: 'actual_num',
-    key: 'actual_num',
+    dataIndex: 'currentStudentAmount',
+    key: 'currentStudentAmount',
     width: 80
   },
   {
@@ -184,8 +99,8 @@ const columns = [
   },
   {
     title: '校区',
-    dataIndex: 'campus',
-    key: 'campus',
+    dataIndex: 'campusLocationName',
+    key: 'campusLocationName',
     width: 80
   },
   {
@@ -201,42 +116,194 @@ export default defineComponent({
     SearchForm
   },
   setup() {
-    const courses = ref(
-      [...Array(100)].map((_, i) => ({
-        key: i,
-        semester: '2021-2022学年第2学期',
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        department: '计算机学院',
-        teacher: '张三',
-        grade: '2019',
-        arrangement: '星期一 1-2[1-16] 一教101',
-        actual_num: '20',
-        credit: '3.0',
-        campus: '中山北路校区',
+    const store = useStore()
+
+    const search_form = ref([
+      {
+        title: "学年",
+        key: 'year',
+        type: "select",
+        options: year_select,
+        rules: {
+          required: false
         }
-      )))
+      },
+      {
+        title: "学期",
+        key: 'semester',
+        type: "select",
+        options: semester_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程序号",
+        key: 'courseId',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程名称",
+        key: 'courseName',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程类别",
+        key: 'type',
+        type: "select",
+        options: course_type_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "开课院系",
+        key: 'departmentName',
+        type: "select",
+        options: store.state.constant.departments_name_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "教师", // 教师可以为空，表示查询未指定教师的课程
+        key: 'realName',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "年级",
+        key: 'openFor',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "起止周",
+        key: ['startWeek', 'endWeek'],
+        type: "range input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "星期",
+        key: 'day',
+        type: "select",
+        options: day_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "小节",
+        type: "select",
+        key: 'time',
+        options: section_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "校区",
+        key: 'campusLocationName',
+        type: "select",
+        options: store.state.constant.campus_locations_name_select,
+        rules: {
+          required: false
+        }
+      }
+    ])
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(queryCourse, {
+      formatResult: res => {
+        total.value = res.total
+        res.data.map(item => {
+          item.year_semester = `
+            ${item.year}学年
+            ${getSemesterByNumber(item.semester)}
+          `
+          item.arrangement = `
+            ${getDayByNumber(item.day)} ${item.startTime}-${item.endTime}
+            [${item.startWeek}-${item.endWeek}]
+            ${item.roomNumber}
+          `
+        })
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        size: pageSize.value,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+
+      filters_buffer = formState
+      search(formState)
+    }
 
     const download = (key) => {
       // TODO 下载大纲
       console.log(key)
     }
 
-    const getConditions = (data) => {
-      for(let key in toRefs(data)) {
-        console.log(key, toRefs(data)[key].value)
-      }
-      // TODO 查询
-    }    
-
     return {
       search_form,
-      getConditions,
-
       columns,
       courses,
-      download
+      pagination,
+      loading,
+      handleTableChange,
+
+      getConditions,
+      download,
+
+      getCourseTypeByNumber,
     }
   },
 })

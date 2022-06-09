@@ -50,8 +50,8 @@ export function publishCourse(data){
 export function queryCourse(data){
   return axios({
     url: '/api/course/query',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: data
   })
 }
 
