@@ -15,42 +15,25 @@ const getValueByKey = (map) => {
   }
 }
 
-// const getKeyByValue = (map) => {
-//   return (value) => {
-//     for(let key in map) {
-//       if(map[key] === value) {
-//         return key
-//       }
-//     }
-//   }
-// }
-
-// 角色
-const roles = {
-  '教务': 2,
-  '教师': 3,
-  '学生': 4
-}
-
-const roles_select = []
-for(let role in roles) {
-  roles_select.push({
-    value: roles[role],
-    label: role
-  })
-}
-
-const getRoleIdByName = (name) => {
-  return roles[name]
-}
-
-const getRoleNameById = (id) => {
-  for(let role in roles) {
-    if(roles[role] === id) {
-      return role
+const getKeyByValue = (map) => {
+  return (value) => {
+    for(let key in map) {
+      if(map[key] === value) {
+        return key
+      }
     }
   }
 }
+
+// 角色
+const roles = {
+  2: '教务',
+  3: '教师',
+  4: '学生'
+}
+const roles_select = getSelectFromMap(roles)
+const getRoleNameById = getValueByKey(roles)
+const getRoleIdByName = getKeyByValue(roles)
 
 // 学年
 const year_select = []
