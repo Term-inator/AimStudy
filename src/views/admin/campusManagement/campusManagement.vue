@@ -65,8 +65,7 @@ export default defineComponent({
       run,
       loading,
       current,
-      pageSize,
-      reload
+      pageSize
     } = usePagination(listCampusLocation, {
       formatResult: res => {
         total.value = res.total
@@ -92,15 +91,17 @@ export default defineComponent({
       if(pag) {
         run({
           size: pag.pageSize,
-          current: pag.current,
-          total: pag.total
+          current: pag.current
         })
       }
     }
 
     const add = (data) => {
       addCampusLocation(data).then(() => {
-        reload()
+        run({
+          size: pageSize.value,
+          current: current.value
+        })
         // 重新获取校区列表
         store.dispatch('constant/queryCampusLocation')
       })
@@ -113,7 +114,10 @@ export default defineComponent({
         })
         resolve()
       }).then(() => {
-        reload()
+        run({
+          size: pageSize.value,
+          current: current.value
+        })
         // 重新获取专业列表
         store.dispatch('constant/queryCampusLocation')
       })

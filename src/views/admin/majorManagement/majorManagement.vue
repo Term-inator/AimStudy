@@ -110,7 +110,6 @@ export default defineComponent({
         run({
           size: pag.pageSize,
           current: pag.current,
-          total: pag.total
         })
       }
     }
@@ -120,7 +119,6 @@ export default defineComponent({
         run({
           size: pageSize.value,
           current: current.value,
-          total: total.value,
           ...filters_buffer
         })
         // 重新获取专业列表
@@ -138,7 +136,6 @@ export default defineComponent({
         run({
           size: pageSize.value,
           current: current.value,
-          total: total.value,
           ...filters_buffer
         })
         // 重新获取专业列表
@@ -156,7 +153,6 @@ export default defineComponent({
       filters_buffer = formState
       run({
         size: pageSize.value,
-        total: total.value,
         ...formState
       })
     }

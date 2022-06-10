@@ -214,7 +214,6 @@ export default defineComponent({
         run({
           size: pag.pageSize,
           current: pag.current,
-          total: pag.total,
           ...filters
         })
       }
@@ -225,7 +224,6 @@ export default defineComponent({
         run({
           size: pageSize.value,
           current: current.value,
-          total: total.value,
           ...filters_buffer
         })
       })
@@ -241,7 +239,6 @@ export default defineComponent({
         run({
           size: pageSize.value,
           current: current.value,
-          total: total.value,
           ...filters_buffer
         })
       })
@@ -256,7 +253,6 @@ export default defineComponent({
       // search 结果从第一页开始
       run({
         size: pageSize.value,
-        total: total.value,
         ...formState
       })
     }
