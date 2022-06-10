@@ -17,6 +17,7 @@
 import { defineComponent, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { getDayByNumber } from '@/utils/constant'
 
 export default defineComponent({
   name: "topBar",
@@ -25,17 +26,8 @@ export default defineComponent({
     const store = useStore()
 
     let today = new Date()
-    const dayMap = {
-      "1": "一",
-      "2": "二",
-      "3": "三",
-      "4": "四",
-      "5": "五",
-      "6": "六",
-      "7": "日"
-    }
     const state = reactive({
-      date: `${today.getFullYear()}年${today.getMonth()}月${today.getDate()}日 星期${dayMap[today.getDay()]}`
+      date: `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日 ${getDayByNumber(today.getDay())}`
     })
 
     const logout = () => {
