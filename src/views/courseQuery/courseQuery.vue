@@ -224,6 +224,8 @@ export default defineComponent({
       }
     ])
 
+    const defaultParams = {}
+
     // 总页数
     const total = ref(0)
     const {
@@ -233,6 +235,7 @@ export default defineComponent({
       current,
       pageSize,
     } = usePagination(queryCourse, {
+      defaultParams: [defaultParams],
       formatResult: res => {
         total.value = res.total
         res.data.map(item => {
@@ -268,6 +271,7 @@ export default defineComponent({
         run({
           size: pag.pageSize,
           current: pag.current,
+          ...defaultParams,
           ...filters_buffer,
         })
       }
@@ -277,12 +281,12 @@ export default defineComponent({
       console.log(formState)
       run({
         size: pageSize.value,
+        ...defaultParams,
         ...formState
       })
     }
 
     const getConditions = (formState) => {
-
       filters_buffer = formState
       search(formState)
     }

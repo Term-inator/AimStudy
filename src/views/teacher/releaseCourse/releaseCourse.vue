@@ -93,13 +93,6 @@ const search_form = [
     rules: {
       required: false
     }
-  },
-  {
-    title: "开课院系",
-    type: "select",
-    rules: {
-      required: false
-    }
   }
 ]
 
@@ -129,12 +122,6 @@ const columns = [
     width: 100
   },
   {
-    title: '开课院系',
-    dataIndex: 'department',
-    key: 'department',
-    width: 100
-  },
-  {
     title: '学分',
     dataIndex: 'credit',
     key: 'credit',
@@ -161,7 +148,6 @@ export default defineComponent({
         index: '1',
         name: `计算机网络${i}`,
         type: '专业必修',
-        department: '计算机学院',
         credit: '3.0'
         }
       )))

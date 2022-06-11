@@ -14,7 +14,7 @@
       </a-table>
     </div>
     <div class="course-pool">
-      <h1>发布课程</h1>
+      <h1>开设课程</h1>
       <div class="search">
         <search-form :items="pool_search_form" @conditions="getConditions"></search-form>
       </div>
@@ -123,15 +123,9 @@ const opened_search_form = [
     }
   },
   {
-    title: "周数",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
     title: "起止周",
     type: "range input",
+    key: ['startTime', 'endTime'],
     rules: {
       required: false
     }
@@ -249,13 +243,6 @@ const pool_search_form = [
     rules: {
       required: false
     }
-  },
-  {
-    title: "开课院系",
-    type: "select",
-    rules: {
-      required: false
-    }
   }
 ]
 
@@ -276,12 +263,6 @@ const pool_columns = [
     title: '课程类型',
     dataIndex: 'type',
     key: 'type',
-    width: 100
-  },
-  {
-    title: '开课院系',
-    dataIndex: 'department',
-    key: 'department',
     width: 100
   },
   {

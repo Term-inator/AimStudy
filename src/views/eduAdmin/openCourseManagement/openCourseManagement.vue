@@ -53,7 +53,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import SearchForm from '@/components/searchForm/searchForm.vue'
-
+// TODO id name type year semester teacher
 // TODO 批量通过和退回
 const columns = [
   {
@@ -175,8 +175,8 @@ const passed_search_form = [
     }
   },
   {
-    title: "教师", // 教师可以为空，表示查询未指定教师的课程
-    type: "nullable input",
+    title: "教师",
+    type: "input",
     rules: {
       required: false
     }
@@ -189,14 +189,8 @@ const passed_search_form = [
     }
   },
   {
-    title: "周数",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
     title: "起止周",
+    key: ['start_week', 'end_week'],
     type: "range input",
     rules: {
       required: false

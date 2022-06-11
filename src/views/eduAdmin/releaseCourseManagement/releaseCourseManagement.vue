@@ -26,7 +26,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-
+// TODO id name type
 // TODO 批量通过和退回
 const columns = [
   {

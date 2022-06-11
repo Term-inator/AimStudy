@@ -1,8 +1,5 @@
 <template>
   <div class="main">
-    <div class="search">
-      <search-form :items="search_form" :col_num="3"></search-form>
-    </div>
     <div class="course-list">
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
         <template #bodyCell="{ column, record }">
@@ -17,33 +14,6 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import SearchForm from '@/components/searchForm/searchForm.vue'
-
-const search_form = [
-  {
-    title: "学年学期",
-    type: "cascade select",
-    options: [
-      {
-        value: (2021, 2022),
-        label: "2021-2022学年",
-        children: [
-          {
-            value: 1,
-            label: "第一学期"
-          },
-          {
-            value: 2,
-            label: "第二学期"
-          }
-        ]
-      }
-    ],
-    rules: {
-      required: false
-    }
-  }
-]
 
 const columns = [
   {
@@ -98,9 +68,6 @@ const columns = [
 
 export default defineComponent({
   name: "DropCourseView",
-  components: {
-    SearchForm
-  },
   setup() {
     const courses = ref(
       [...Array(15)].map((_, i) => ({
@@ -120,7 +87,6 @@ export default defineComponent({
     }
 
     return {
-      search_form,
       columns,
       courses,
       drop

@@ -162,50 +162,8 @@ const search_form = [
     }
   },
   {
-    title: "教师", // 教师可以为空，表示查询未指定教师的课程
-    type: "nullable input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "年级",
+    title: "教师",
     type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "周数",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "起止周",
-    type: "range input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "星期",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "小节",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "校区",
-    type: "select",
     rules: {
       required: false
     }

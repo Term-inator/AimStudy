@@ -21,6 +21,7 @@
 import { defineComponent, ref } from 'vue'
 import CourseTable from '@/components/courseTable/courseTable.vue'
 
+// TODO 已选 未选
 const columns = [
   {
     title: '序号',

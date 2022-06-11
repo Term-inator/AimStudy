@@ -18,7 +18,9 @@
 import { defineComponent, ref } from 'vue'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 
-// TODO 本地保存 一键提交 
+// TODO 本地保存 一键提交 保存，提交按钮
+// 学号 平时 期末 的列表
+// TODO 今年代表学年 7-1 3-6
 const search_form = [
   {
     title: "课程名称",

@@ -105,18 +105,19 @@ export function verifyStartCourse(data){
 export function viewCoursePool(data){
   return axios({
     url: '/api/course/viewCoursePool',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: data
   })
 }
 
 /**
+ * @deprecated
  * 教务查看本学院课程
  */
 export function viewDepartmentCourse(data){
   return axios({
     url: '/api/course/viewDepartmentCourse',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: data
   })
 }

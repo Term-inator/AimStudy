@@ -4,7 +4,12 @@
     <div class="search">
       <search-form :items="pool_search_form" @conditions="getConditions"></search-form>
     </div>
-    <a-table :columns="pool_columns" :data-source="pool_courses" size="small" bordered>
+    <a-table :columns="pool_columns" 
+      :data-source="pool_courses" 
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      size="small" bordered>
       <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'name'">
           <div>
@@ -24,11 +29,7 @@
               v-if="editableData[record.key]"
               v-model:value="editableData[record.key][column.dataIndex]"
               size="small"
-            >
-              <a-select-option value="compulsory">专业必修</a-select-option>
-              <a-select-option value="optional">专业选修</a-select-option>
-              <a-select-option value="general">通识</a-select-option>
-            </a-select>
+            ></a-select>
             <template v-else>
               {{ text }}
             </template>
@@ -54,17 +55,17 @@
         </template>
         <template v-else-if="column.dataIndex === 'action'">
           <span v-if="editableData[record.key]">
-            <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.key)">
+            <a-popconfirm title="确认保存?" okText="确认" cancelText="取消" @confirm="save(record.courseId)">
               <a-button type="link" size="small">保存</a-button>
             </a-popconfirm>
-            <a-button type="link" @click="cancel(record.key)" size="small">取消</a-button>
+            <a-button type="link" @click="cancel(record.courseId)" size="small">取消</a-button>
           </span>
           <span v-else>
-            <a-button type="link" @click="edit(record.key)" size="small">修改</a-button>
+            <a-button type="link" @click="edit(record.courseId)" size="small">修改</a-button>
           </span>
 
           <span>
-            <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="remove(record.key)">
+            <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="remove(record.courseId)">
               <a-button type="link" size="small">删除</a-button>
             </a-popconfirm>
           </span>
@@ -75,15 +76,20 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash-es'
+import { viewCoursePool } from '@/api/course-controller'
+import { course_type_select } from '@/utils/constant'
 
 // TODO course description
 const pool_search_form = [
   {
     title: "课程序号",
     type: "input",
+    key: 'courseId',
     rules: {
       required: false
     }
@@ -91,13 +97,16 @@ const pool_search_form = [
   {
     title: "课程名称",
     type: "input",
+    key: 'name',
     rules: {
       required: false
     }
   },
   {
     title: "课程类别",
+    key: 'type',
     type: "select",
+    options: course_type_select,
     rules: {
       required: false
     }
@@ -107,20 +116,20 @@ const pool_search_form = [
 const pool_columns = [
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
@@ -149,15 +158,71 @@ export default defineComponent({
     SearchForm
   },
   setup() {
-    const pool_courses = ref(
-      [...Array(50)].map((_, i) => ({
-        key: i,
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        credit: '3.0',
-        }
-      )))
+    const store = useStore()
+    const debug = true
+    const defaultParams = {
+      departmentId: !debug ? store.state.user.departmentId : 1
+    }
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: pool_courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(viewCoursePool, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        console.log(res)
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        size: pageSize.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
+
+    const download = (key) => {
+      // TODO 下载大纲
+      console.log(key)
+    }
 
     const editableData = reactive({})
 
@@ -183,13 +248,19 @@ export default defineComponent({
       pool_search_form,
       pool_columns,
       pool_courses,
+      pagination,
+      loading,
+      handleTableChange,
 
-      editing_key: '',
       editableData,
       edit,
       save,
       cancel,
-      remove
+      remove,
+
+      download,
+
+      getConditions
     }
   },
 })
