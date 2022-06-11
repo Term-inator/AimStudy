@@ -2,8 +2,17 @@
   <div class="main">
     <div>
       <h1>开设课程审核</h1>
-      <a-table :columns="columns" :data-source="courses" size="small" bordered>
-        <template #bodyCell="{ column, record }">
+      <div v-if="search_form" class="search">
+        <search-form :items="search_form" @conditions="getConditions"></search-form>
+      </div>
+      <a-table 
+        :columns="columns" 
+        :data-source="courses" 
+        size="small" bordered>
+        <template #bodyCell="{ column, record, index }">
+          <template v-if="column.dataIndex === 'key'">
+            {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+          </template>
           <template v-if="column.dataIndex === 'syllabus'">
             <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
           </template>
@@ -26,34 +35,77 @@
     <div class="passed-course">
       <h1>过审课程</h1>
       <div class="search">
-        <search-form :items="passed_search_form" @conditions="getConditions"></search-form>
+        <search-form :items="passed_search_form" @conditions="passed_getConditions"></search-form>
       </div>
-      <a-table :columns="passed_columns" :data-source="passed_courses" :scroll="{ x: 1000 }" size="small" bordered>
-        <template #bodyCell="{ column, record }">
+      <a-table 
+        :columns="passed_columns" 
+        :data-source="passed_courses" 
+        :scroll="{ x: 1000 }" 
+        :pagination="passed_pagination"
+        :loading="passed_loading"
+        @change="passed_handleTableChange"
+        size="small" bordered>
+        <template #bodyCell="{ column, record, index }">
+          <template v-if="column.dataIndex === 'key'">
+            {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+          </template>
           <template v-if="column.dataIndex === 'syllabus'">
             <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-button type="link" size="small">修改</a-button>
+              <a-button type="link" size="small" @click="passed_edit">修改</a-button>
             </span>
 
             <span>
-              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="fail(record.key)">
+              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="passed_cancel(record.key)">
                 <a-button type="link" size="small">删除</a-button>
               </a-popconfirm>
             </span>
           </template>
         </template>
       </a-table>
+      <!--修改-->
+      <a-modal v-model:visible="edit_visible" title="修改课程" @ok="editOkHandle" centered>
+        <template #footer>
+          <a-button key="cancel" @click="editCancelHandle">取消</a-button>
+          <a-button key="submit" type="primary" :loading="edit_loading" @click="editOkHandle">提交</a-button>
+        </template>
+        <a-form ref="edit_modal_ref" :model="passed_editableData" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
+          <a-form-item v-for="(item, index) in passed_edit_modal" :key="index" :label="item.title" :name="item.name">
+            <a-input v-if="item.type === 'input'" v-model:value="passed_editableData[item.key]" size="small" />
+            <a-select v-else-if="item.type === 'select'" 
+              :options="item.options" 
+              v-model:value="passed_editableData[item.key]" 
+              size="small">
+            </a-select>
+          </a-form-item>
+        </a-form>
+      </a-modal>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
-// TODO id name type year semester teacher
+import { cloneDeep } from 'lodash-es'
+import { 
+  viewStartCourse, verifyStartCourse, 
+  queryCourse,
+  modifyPublishSection, deletePublishSection,
+} from '@/api/course-controller'
+import {
+  year_select,
+  semester_select, getSemesterByNumber,
+  day_select, getDayByNumber,
+  section_select,
+  course_type_select, getCourseTypeByNumber,
+  PASS, FAIL
+} from '@/utils/constant'
+
 // TODO 批量通过和退回
 const columns = [
   {
@@ -64,20 +116,20 @@ const columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 100
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
@@ -94,128 +146,38 @@ const columns = [
   },
   {
     title: '学年学期',
-    dataIndex: 'semester',
-    key: 'semester',
+    dataIndex: 'year_semester',
+    key: 'year_semester',
     width: 100
   },
   {
     title: '教师',
-    dataIndex: 'teacher',
-    key: 'teacher',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 100
   },
   {
     title: '年级',
-    dataIndex: 'grade',
-    key: 'grade',
+    dataIndex: 'openFor',
+    key: 'openFor',
     width: 100
   },
   {
     title: '人数',
-    dataIndex: 'amount',
-    key: 'amount',
+    dataIndex: 'studentLimit',
+    key: 'studentLimit',
     width: 100
   },
   {
     title: '期末占比',
-    dataIndex: 'final_score_ratio',
-    key: 'final_score_ratio',
+    dataIndex: 'finalScoreRatio',
+    key: 'finalScoreRatio',
     width: 100
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action'
-  }
-]
-
-const passed_search_form = [
-  {
-    title: "学年学期",
-    type: "cascade select",
-    options: [
-      {
-        value: (2021, 2022),
-        label: "2021-2022学年",
-        children: [
-          {
-            value: 1,
-            label: "第一学期"
-          },
-          {
-            value: 2,
-            label: "第二学期"
-          }
-        ]
-      }
-    ],
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程序号",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程名称",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "课程类型",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "教师",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "年级",
-    type: "input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "起止周",
-    key: ['start_week', 'end_week'],
-    type: "range input",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "星期",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "小节",
-    type: "select",
-    rules: {
-      required: false
-    }
-  },
-  {
-    title: "校区",
-    type: "select",
-    rules: {
-      required: false
-    }
   }
 ]
 
@@ -228,20 +190,20 @@ const passed_columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 100
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 80
   },
   {
@@ -258,32 +220,32 @@ const passed_columns = [
   },
   {
     title: '学年学期',
-    dataIndex: 'semester',
-    key: 'semester',
+    dataIndex: 'year_semester',
+    key: 'year_semester',
     width: 100
   },
   {
     title: '教师',
-    dataIndex: 'teacher',
-    key: 'teacher',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 50
   },
   {
     title: '年级',
-    dataIndex: 'grade',
-    key: 'grade',
+    dataIndex: 'openFor',
+    key: 'openFor',
     width: 50
   },
   {
     title: '人数',
-    dataIndex: 'amount',
-    key: 'amount',
+    dataIndex: 'studentLimit',
+    key: 'studentLimit',
     width: 50
   },
   {
     title: '期末占比',
-    dataIndex: 'final_score_ratio',
-    key: 'final_score_ratio',
+    dataIndex: 'finalScoreRatio',
+    key: 'finalScoreRatio',
     width: 50
   },
   {
@@ -294,8 +256,8 @@ const passed_columns = [
   },
   {
     title: '校区',
-    dataIndex: 'campus',
-    key: 'campus',
+    dataIndex: 'campusLocationName',
+    key: 'campusLocationName',
     width: 50
   },
   {
@@ -312,45 +274,447 @@ export default defineComponent({
     SearchForm
   },
   setup() {
-    const courses = ref(
-      [...Array(50)].map((_, i) => ({
-        key: i,
-        semester: '2019-2020-1',
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        teacher: '张三',
-        grade: '2019',
-        credit: '3.0',
-        amount: '60',
-        final_score_ratio: '60%'
+    const store = useStore()
+    // 未通过课程的列表
+    const search_form = [
+      {
+        title: '学年',
+        key: 'year',
+        type: 'select',
+        options: year_select,
+        rules: {
+          required: false
         }
-      )))
+      },
+      {
+        title: '学期',
+        key: 'semester',
+        type: 'select',
+        options: semester_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '课程序号',
+        key: 'courseId',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '课程名称',
+        key: 'name',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '课程类型',
+        key: 'type',
+        type: 'select',
+        options: course_type_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "教师",
+        key: 'realName',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+    ]
 
-    const passed_courses = ref(
-      [...Array(50)].map((_, i) => ({
-        key: i,
-        semester: '2019-2020-1',
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        teacher: '张三',
-        grade: '2019',
-        credit: '3.0',
-        amount: '60',
-        final_score_ratio: '60%',
-        arrangement: '周一 1-2[1-18] 一教306',
-        campus: '闵行'
+    const defaultParams = {
+      departmentId: store.state.user.departmentId,
+    }
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(viewStartCourse, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        size: pageSize.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
+
+    const pass = (key) => {
+      verifyStartCourse({
+        courseId: key,
+        courseStatus: PASS
+      }).then(() => {
+        run({
+          size: pageSize.value,
+          ...defaultParams,
+          ...filters_buffer
+          })
+      })
+    }
+
+    const fail = (key) => {
+      verifyStartCourse({
+        courseId: key,
+        courseStatus: FAIL
+      }).then(() => {
+        run({
+          size: pageSize.value,
+          ...defaultParams,
+          ...filters_buffer
+        })
+      })
+    }
+
+    // ----------已通过课程的列表----------
+    const passed_search_form = [
+      {
+        title: "学年",
+        key: 'year',
+        type: "select",
+        options: year_select,
+        rules: {
+          required: false
         }
-      )))
+      },
+      {
+        title: "学期",
+        key: 'semester',
+        type: "select",
+        options: semester_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程序号",
+        key: 'courseId',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程名称",
+        key: 'name',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "课程类型",
+        key: 'type',
+        type: "select",
+        options: course_type_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "教师",
+        key: 'realName',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "年级",
+        key: 'openForm',
+        type: "input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "起止周",
+        key: ['start_week', 'end_week'],
+        type: "range input",
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "星期",
+        key: 'day',
+        type: "select",
+        options: day_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "小节",
+        key: 'time',
+        type: "select",
+        options: section_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: "校区",
+        key: 'campusLocationName',
+        type: "select",
+        options: store.state.constant.campus_locations_name_select,
+        rules: {
+          required: false
+        }
+      }
+    ]
+
+    const passed_defaultParams = {
+      // departmentName: store.state.user.departmentName,
+    }
+
+    // 总页数
+    const passed_total = ref(0)
+    const {
+      data: passed_courses,
+      run: passed_run,
+      loading: passed_loading,
+      current: passed_current,
+      pageSize: passed_pageSize,
+    } = usePagination(queryCourse, {
+      defaultParams: [passed_defaultParams],
+      formatResult: res => {
+        passed_total.value = res.total
+        res.data.map(item => {
+          item.year_semester = `
+            ${item.year}学年
+            ${getSemesterByNumber(item.semester)}
+          `
+          item.arrangement = `
+            ${getDayByNumber(item.day)} ${item.startTime}-${item.endTime}
+            [${item.startWeek}-${item.endWeek}]
+            ${item.roomNumber}
+          `
+        })
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const passed_pagination = computed(() => ({
+      total: passed_total.value,
+      current: passed_current.value,
+      pageSize: passed_pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let passed_filters_buffer = {}
+    const passed_handleTableChange = (pag) => {
+      if(pag) {
+        passed_run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...passed_defaultParams,
+          ...passed_filters_buffer,
+        })
+      }
+    }
+
+    const passed_search = (formState) => {
+      passed_run({
+        size: passed_pageSize.value,
+        ...passed_defaultParams,
+        ...formState
+      })
+    }
+
+    const passed_getConditions = (formState) => {
+      passed_filters_buffer = formState
+      passed_search(formState)
+    }
+
+    const passed_state = reactive({
+      selectedRowKeys: []
+    })
+
+    const passed_remove = () => {
+      new Promise(resolve => {
+        passed_state.selectedRowKeys.forEach(key => {
+          deletePublishSection(key)
+        })
+        resolve()
+      }).then(() => {
+        passed_run({
+          size: passed_pageSize.value,
+          current: passed_current.value,
+          ...passed_filters_buffer
+        })
+      })
+    }
+
+    // edit modal
+    const passed_edit_modal = [
+      {
+        title: '面向年级',
+        key: 'openFor',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '人数上限',
+        key: 'studentLimit',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '期末占比',
+        key: 'finalScoreRatio',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '星期',
+        key: 'day',
+        type: 'select',
+        options: day_select,
+        rules: {
+          required: false
+        }
+      },
+      // TODO
+    ]
+
+    const edit_modal_ref = ref()
+    let passed_editableData = reactive({})
+    const clear = () => {
+      Object.keys(passed_editableData).map(key => {
+        delete passed_editableData[key]
+      })
+    }
+
+    const edit_visible = ref(false)
+    const edit_loading = ref(false)
+
+    const editOkHandle = () => {
+      edit_loading.value = true
+      edit_modal_ref.value.validateFields(values => {
+        const formData = {}
+        for(const prop in passed_editableData) {
+          formData[prop] = values[prop]
+        }
+        modifyPublishSection(formData).then(() => {
+          edit_loading.value = false
+          edit_visible.value = false
+          edit_modal_ref.value.resetFields()
+          passed_run({
+            size: passed_pageSize.value,
+            current: passed_current.value,
+            ...passed_filters_buffer
+          })
+        })
+      })
+    }
+
+    const passed_edit = key => {
+      passed_editableData = cloneDeep(passed_courses.value.filter(item => key === item.key)[0])
+      edit_visible.value = true
+    }
+
+    const editCancelHandle = () => {
+      edit_visible.value = false
+      clear()
+    }
+
+    const download = (key) => {
+      console.log(key)
+      // TODO 下载大纲
+    }
 
     return {
+      search_form,
       columns,
       courses,
+      pagination,
+      loading,
+      handleTableChange,
+
+      getConditions,
+      pass, fail,
 
       passed_search_form,
       passed_columns,
-      passed_courses
+      passed_courses,
+      passed_pagination,
+      passed_loading,
+      passed_handleTableChange,
+
+      passed_getConditions,
+
+      passed_edit_modal,
+      edit_modal_ref,
+      passed_editableData,
+      edit_visible,
+      edit_loading,
+      passed_edit, 
+      editOkHandle, editCancelHandle,
+
+      passed_remove,
+
+      getCourseTypeByNumber,
+      download
     }
   },
 })
@@ -382,6 +746,7 @@ export default defineComponent({
 
   .passed-course {
     width: 100%;
+    margin: 15px 0 0 0;
     overflow: hidden;
   }
 </style>

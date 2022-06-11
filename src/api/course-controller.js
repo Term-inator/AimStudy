@@ -1,6 +1,17 @@
 import axios from '@/utils/axios.js'
 
 /**
+ * 学生选课列表
+ */
+export function listChoose(data) {
+  return axios({
+    url: '/api/course/choose',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
  * 学生选课
  */
 export function chooseSection(data){
@@ -12,6 +23,7 @@ export function chooseSection(data){
 }
 
 /**
+ * @deprecated
  * 教务删除课程
  */
 export function deleteSection(data){
@@ -23,6 +35,29 @@ export function deleteSection(data){
 }
 
 /**
+ * 教师/教务删除 course
+ */
+export function deletePublishCourse(data){
+  return axios({
+    url: '/api/course/deletePublish',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 教师/教务删除 section
+ */
+export function deletePublishSection(data){
+  return axios({
+    url: '/api/course/deleteStart',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * @deprecated
  * 教务修改课程
  */
 export function modifyCourse(data){
@@ -34,7 +69,29 @@ export function modifyCourse(data){
 }
 
 /**
- * 教师发布课程
+ * 教师/教务修改 course
+ */
+export function modifyPublishCourse(data){
+  return axios({
+    url: '/api/course/modifyPublish',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 教师/教务修改 section
+ */
+export function modifyPublishSection(data){
+  return axios({
+    url: '/api/course/modifyStart',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 教师发布 course
  */
 export function publishCourse(data){
   return axios({
@@ -78,7 +135,18 @@ export function startCourse(data){
 }
 
 /**
- * 教务查看待审核 course 列表
+ * 系统决定上课学生
+ */
+export function systemCheck(data){
+  return axios({
+    url: '/api/course/systemCheck',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 教务查看待审核的 course 列表
  */
 export function viewPublishCourse(data){
   return axios({
@@ -89,7 +157,7 @@ export function viewPublishCourse(data){
 }
 
 /**
- * 教务审核发布课程
+ * 教务审核 course
  */
 export function verifyPublishCourse(data){
   return axios({
@@ -100,7 +168,18 @@ export function verifyPublishCourse(data){
 }
 
 /**
- * 教务审核开设课程
+ * 教务查看待审核的 section 列表
+ */
+export function viewStartCourse(data){
+  return axios({
+    url: '/api/course/viewStart',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 教务审核 section
  */
 export function verifyStartCourse(data){
   return axios({
@@ -111,7 +190,7 @@ export function verifyStartCourse(data){
 }
 
 /**
- * 教师/教务查看课程池
+ * 教师/教务查看课程池 course
  */
 export function viewCoursePool(data){
   return axios({

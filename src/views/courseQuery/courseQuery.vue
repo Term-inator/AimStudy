@@ -29,7 +29,8 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { queryCourse } from '@/api/course-controller'
-import { year_select, 
+import { 
+  year_select, 
   semester_select, getSemesterByNumber,
   day_select, getDayByNumber,
   section_select,
@@ -172,7 +173,7 @@ export default defineComponent({
         }
       },
       {
-        title: "教师", // 教师可以为空，表示查询未指定教师的课程
+        title: "教师",
         key: 'realName',
         type: "input",
         rules: {
@@ -206,8 +207,8 @@ export default defineComponent({
       },
       {
         title: "小节",
-        type: "select",
         key: 'time',
+        type: "select",
         options: section_select,
         rules: {
           required: false
