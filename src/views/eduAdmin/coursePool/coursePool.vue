@@ -85,6 +85,7 @@ import { viewCoursePool } from '@/api/course-controller'
 import { course_type_select } from '@/utils/constant'
 
 // TODO course description
+// TODO 尚未返回课程
 const pool_search_form = [
   {
     title: "课程序号",
@@ -159,9 +160,8 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    const debug = true
     const defaultParams = {
-      departmentId: !debug ? store.state.user.departmentId : 1
+      departmentId: store.state.user.departmentId
     }
 
     // 总页数

@@ -100,7 +100,7 @@ export function verifyStartCourse(data){
 }
 
 /**
- * 教师查看课程池
+ * 教师/教务查看课程池
  */
 export function viewCoursePool(data){
   return axios({
