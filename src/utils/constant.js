@@ -94,6 +94,19 @@ const courseTypeMap = {
 const course_type_select = getSelectFromMap(courseTypeMap)
 const getCourseTypeByNumber = getValueByKey(courseTypeMap)
 
+// 审核状态
+const UNAUDITED = 1
+const PASS = 2
+const FAIL = 3
+const DELETED = 4
+const statusMap = {
+  UNAUDITED: '待审核',
+  PASS: '审核通过',
+  FAIL: '审核未通过',
+  DELETED: '已删除'
+}
+const getStatusByNumber = getValueByKey(statusMap)
+
 export {
   roles,
   roles_select,
@@ -105,5 +118,8 @@ export {
   day_select, getDayByNumber,
   section_select, getSectionByNumber,
 
-  course_type_select, getCourseTypeByNumber
+  course_type_select, getCourseTypeByNumber,
+
+  UNAUDITED, PASS, FAIL, DELETED,
+  getStatusByNumber
 }

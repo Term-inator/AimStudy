@@ -1,9 +1,21 @@
 <template>
   <div class="main">
     <h1>发布课程审核</h1>
-    <a-table :columns="columns" :data-source="courses" size="small" bordered>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'syllabus'">
+    <div v-if="search_form" class="search">
+      <search-form :items="search_form" @conditions="getConditions"></search-form>
+    </div>
+    <a-table 
+      :columns="columns" 
+      :data-source="courses"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      size="small" bordered>
+      <template #bodyCell="{ column, record, index }">
+        <template v-if="column.dataIndex === 'key'">
+          {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+        </template>
+        <template v-else-if="column.dataIndex === 'syllabus'">
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
         </template>
         <template v-else-if="column.dataIndex === 'action'">
@@ -25,9 +37,18 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-// TODO id name type
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import SearchForm from '@/components/searchForm/searchForm.vue'
+import { viewPublishCourse, verifyPublishCourse } from '@/api/course-controller'
+import { 
+  course_type_select, getCourseTypeByNumber,
+  PASS, FAIL
+} from '@/utils/constant'
+
 // TODO 批量通过和退回
+// TODO 尚未返回数据
 const columns = [
   {
     title: '序号',
@@ -37,20 +58,20 @@ const columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 50
   },
   {
@@ -75,20 +96,136 @@ const columns = [
 
 export default defineComponent({
   name: "ReleaseCourseManagementView",
+  components: {
+    SearchForm
+  },
   setup() {
-    const courses = ref(
-      [...Array(50)].map((_, i) => ({
-        key: i,
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        credit: '3.0',
+    const store = useStore()
+
+    const search_form = [
+      {
+        title: '课程序号',
+        key: 'courseId',
+        type: 'input',
+        rules: {
+          required: false
         }
-      )))
+      },
+      {
+        title: '课程名称',
+        key: 'name',
+        type: 'input',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '课程类型',
+        key: 'type',
+        type: 'select',
+        options: course_type_select,
+        rules: {
+          required: false
+        }
+      }
+    ]
+
+    const defaultParams = {
+      departmentId: store.state.user.departmentId,
+    }
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(viewPublishCourse, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        size: pageSize.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
+
+    const pass = (key) => {
+      verifyPublishCourse({
+        courseId: key,
+        courseStatus: PASS
+      }).then(() => {
+        run({
+          size: pageSize.value,
+          ...defaultParams,
+          ...filters_buffer
+          })
+      })
+    }
+
+    const fail = (key) => {
+      verifyPublishCourse({
+        courseId: key,
+        courseStatus: FAIL
+      }).then(() => {
+        run({
+          size: pageSize.value,
+          ...defaultParams,
+          ...filters_buffer
+        })
+      })
+    }
 
     return {
+      search_form,
       columns,
-      courses
+      courses,
+      pagination,
+      loading,
+      handleTableChange,
+
+      getConditions,
+      pass, fail,
+
+      getCourseTypeByNumber
     }
   },
 })

@@ -85,7 +85,7 @@ import { viewCoursePool } from '@/api/course-controller'
 import { course_type_select } from '@/utils/constant'
 
 // TODO course description
-// TODO 尚未返回课程
+// TODO 尚未返回数据
 const pool_search_form = [
   {
     title: "课程序号",

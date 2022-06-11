@@ -78,6 +78,17 @@ export function startCourse(data){
 }
 
 /**
+ * 教务查看待审核 course 列表
+ */
+export function viewPublishCourse(data){
+  return axios({
+    url: '/api/course/viewPublish',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
  * 教务审核发布课程
  */
 export function verifyPublishCourse(data){
