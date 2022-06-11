@@ -117,20 +117,20 @@ const pool_search_form = [
 const pool_columns = [
   {
     title: '课程序号',
-    dataIndex: 'courseId',
-    key: 'courseId',
+    dataIndex: 'id',
+    key: 'id',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'courseName',
-    key: 'courseName',
+    dataIndex: 'name',
+    key: 'name',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'courseType',
-    key: 'courseType',
+    dataIndex: 'type',
+    key: 'type',
     width: 100
   },
   {

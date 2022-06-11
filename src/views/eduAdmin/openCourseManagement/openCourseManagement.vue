@@ -14,17 +14,17 @@
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
           <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="download(record.courseId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.key)">
+              <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.courseId)">
                 <a-button type="link" size="small">通过</a-button>
               </a-popconfirm>
             </span>
 
             <span>
-              <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.key)">
+              <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.courseId)">
                 <a-button type="link" size="small">退回</a-button>
               </a-popconfirm>
             </span>
@@ -50,15 +50,15 @@
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
           <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="download(record.courseId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-button type="link" size="small" @click="passed_edit">修改</a-button>
+              <a-button type="link" size="small" @click="passed_edit(record.courseId)">修改</a-button>
             </span>
 
             <span>
-              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="passed_cancel(record.key)">
+              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="passed_cancel(record.courseId)">
                 <a-button type="link" size="small">删除</a-button>
               </a-popconfirm>
             </span>
@@ -66,22 +66,12 @@
         </template>
       </a-table>
       <!--修改-->
-      <a-modal v-model:visible="edit_visible" title="修改课程" @ok="editOkHandle" centered>
-        <template #footer>
-          <a-button key="cancel" @click="editCancelHandle">取消</a-button>
-          <a-button key="submit" type="primary" :loading="edit_loading" @click="editOkHandle">提交</a-button>
-        </template>
-        <a-form ref="edit_modal_ref" :model="passed_editableData" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
-          <a-form-item v-for="(item, index) in passed_edit_modal" :key="index" :label="item.title" :name="item.name">
-            <a-input v-if="item.type === 'input'" v-model:value="passed_editableData[item.key]" size="small" />
-            <a-select v-else-if="item.type === 'select'" 
-              :options="item.options" 
-              v-model:value="passed_editableData[item.key]" 
-              size="small">
-            </a-select>
-          </a-form-item>
-        </a-form>
-      </a-modal>
+      <cu-modal
+        ref="edit_modal"
+        :modal="passed_edit_modal"
+        @ok="passed_edit_ok"
+      >
+      </cu-modal>
     </div>
   </div>
 </template>
@@ -90,8 +80,9 @@
 import { usePagination } from 'vue-request'
 import { defineComponent, ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
-import SearchForm from '@/components/searchForm/searchForm.vue'
 import { cloneDeep } from 'lodash-es'
+import SearchForm from '@/components/searchForm/searchForm.vue'
+import CuModal from '@/components/cuModal/cuModal.vue'
 import { 
   viewStartCourse, verifyStartCourse, 
   queryCourse,
@@ -271,7 +262,8 @@ const passed_columns = [
 export default defineComponent({
   name: "OpenCourseManagementView",
   components: {
-    SearchForm
+    SearchForm,
+    CuModal,
   },
   setup() {
     const store = useStore()
@@ -637,45 +629,23 @@ export default defineComponent({
       // TODO
     ]
 
-    const edit_modal_ref = ref()
-    let passed_editableData = reactive({})
-    const clear = () => {
-      Object.keys(passed_editableData).map(key => {
-        delete passed_editableData[key]
-      })
+    const edit_modal = ref(null)
+    let edit_form = reactive({})
+    const passed_edit = key => {
+      edit_form = cloneDeep(passed_courses.value.filter(item => item.courseId === key)[0])  
+      edit_modal.value.assignValue(edit_form)
+      edit_modal.value.show()
     }
 
-    const edit_visible = ref(false)
-    const edit_loading = ref(false)
-
-    const editOkHandle = () => {
-      edit_loading.value = true
-      edit_modal_ref.value.validateFields(values => {
-        const formData = {}
-        for(const prop in passed_editableData) {
-          formData[prop] = values[prop]
-        }
-        modifyPublishSection(formData).then(() => {
-          edit_loading.value = false
-          edit_visible.value = false
-          edit_modal_ref.value.resetFields()
-          passed_run({
-            size: passed_pageSize.value,
-            current: passed_current.value,
-            ...passed_filters_buffer
-          })
+    const passed_edit_okHandler = formData => {
+      edit_form = Object.assign(edit_form, formData)
+      modifyPublishSection(edit_form).then(() => {
+        passed_run({
+          size: passed_pageSize.value,
+          current: passed_current.value,
+          ...passed_filters_buffer
         })
       })
-    }
-
-    const passed_edit = key => {
-      passed_editableData = cloneDeep(passed_courses.value.filter(item => key === item.key)[0])
-      edit_visible.value = true
-    }
-
-    const editCancelHandle = () => {
-      edit_visible.value = false
-      clear()
     }
 
     const download = (key) => {
@@ -704,12 +674,9 @@ export default defineComponent({
       passed_getConditions,
 
       passed_edit_modal,
-      edit_modal_ref,
-      passed_editableData,
-      edit_visible,
-      edit_loading,
+      edit_modal,
       passed_edit, 
-      editOkHandle, editCancelHandle,
+      passed_edit_okHandler,
 
       passed_remove,
 
