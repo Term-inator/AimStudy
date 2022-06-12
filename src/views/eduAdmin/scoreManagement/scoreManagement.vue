@@ -5,7 +5,13 @@
       <div class="search">
         <search-form :items="search_form" @conditions="getConditions"></search-form>
       </div>
-      <a-table :columns="columns" :data-source="courses" size="small" bordered>
+      <a-table 
+        :columns="columns" 
+        :data-source="courses"
+        :pagination="pagination"
+        :loading="loading"
+        @change="handleTableChange"
+        size="small" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'action'">
             <a-button type="link" size="small" @click="scoreInfo(record)">查看</a-button>
@@ -18,10 +24,18 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { Icon } from "@/components/icon"
+import { viewVerifyScoreSection } from '@/api/score-controller'
+import {
+  year_select,
+  semester_select
+} from '@/utils/constant'
 
+// TODO 尚未有数据
 const show_score_info = ref(false)
 
 const CourseScore = {
@@ -118,30 +132,26 @@ const CourseScore = {
 
 const search_form = [
   {
-    title: "学年学期",
-    type: "cascade select",
-    options: [
-      {
-        value: (2021, 2022),
-        label: "2021-2022学年",
-        children: [
-          {
-            value: 1,
-            label: "第一学期"
-          },
-          {
-            value: 2,
-            label: "第二学期"
-          }
-        ]
-      }
-    ],
+    title: "学年",
+    key: "year",
+    type: "select",
+    options: year_select,
+    rules: {
+      required: false
+    }
+  },
+  {
+    title: "学期",
+    key: "semester",
+    type: "select",
+    options: semester_select,
     rules: {
       required: false
     }
   },
   {
     title: "课程序号",
+    key: "courseId",
     type: "input",
     rules: {
       required: false
@@ -149,6 +159,7 @@ const search_form = [
   },
   {
     title: "课程名称",
+    key: "courseName",
     type: "input",
     rules: {
       required: false
@@ -156,6 +167,7 @@ const search_form = [
   },
   {
     title: "课程类别",
+    key: "courseType",
     type: "select",
     rules: {
       required: false
@@ -163,6 +175,7 @@ const search_form = [
   },
   {
     title: "教师",
+    key: "realName",
     type: "input",
     rules: {
       required: false
@@ -173,38 +186,38 @@ const search_form = [
 const columns = [
   {
     title: '学年学期',
-    dataIndex: 'semester',
-    key: 'semester',
+    dataIndex: 'year_semester',
+    key: 'year_semester',
     width: 100
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
     title: '教师',
-    dataIndex: 'teacher',
-    key: 'teacher',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 80
   },
   {
     title: '年级',
-    dataIndex: 'grade',
-    key: 'grade',
+    dataIndex: 'openFor',
+    key: 'openFor',
     width: 65
   },
   {
@@ -221,8 +234,8 @@ const columns = [
   },
   {
     title: '校区',
-    dataIndex: 'campus',
-    key: 'campus',
+    dataIndex: 'campusLocationName',
+    key: 'campusLocationName',
     width: 80
   },
   {
@@ -240,20 +253,66 @@ export default defineComponent({
     "course-score": CourseScore
   },
   setup() {
-    const courses = ref(
-      [...Array(100)].map((_, i) => ({
-        key: i,
-        semester: '2021-2022学年第2学期',
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        teacher: '张三',
-        grade: '2019',
-        arrangement: '星期一 1-2[1-16] 一教101',
-        credit: '3.0',
-        campus: '中山北路校区',
-        }
-      )))
+    const store = useStore()
+    const defaultParams = {
+      role: 4,
+      departmentId: store.state.user.departmentId
+    }
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(viewVerifyScoreSection, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          total: pag.total,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      run({
+        size: pageSize.value,
+        total: total.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
 
     const course_chosen = ref(null)
     const scoreInfo = (record) => {
@@ -265,6 +324,11 @@ export default defineComponent({
       search_form,
       columns,
       courses,
+      pagination,
+      loading,
+      handleTableChange,
+
+      getConditions,
 
       show_score_info,
       scoreInfo,
