@@ -6,12 +6,19 @@
     </template>
     <a-form ref="formRef" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
       <a-form-item v-for="(item, index) in modal" :key="index" :label="item.title" :name="item.name">
-        <a-input v-if="item.type === 'input'" v-model:value="formState[item.key]" size="small" />
+        <a-input v-if="item.type === 'input'" 
+          v-model:value="formState[item.key]" 
+          size="small" />
         <a-select v-else-if="item.type === 'select'" 
           :options="item.options" 
           v-model:value="formState[item.key]" 
           size="small">
         </a-select>
+        <a-slider v-else-if="item.type === 'slider'"
+          v-model:value="formState[item.key]" 
+          :min="item.min" :max="item.max" :step="item.step" 
+          size="small">
+        </a-slider>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -46,22 +53,24 @@ export default defineComponent({
     }
 
     const assignValue = (form) => {
-      formState = form
+      for(const prop in form) {
+        formState[prop] = form[prop]
+      }
     }
 
     const okHandle = () => {
       loading.value = true
-      formRef.value.validate(valid => {
-        new Promise(resolve => {
-          if (valid) {
-            emit('ok', formState)
+      formRef.value.validateFields().then(valid => {
+        if (valid) {
+          const formData = {}
+          for(const prop in formState) {
+            formData[prop] = formState[prop]
           }
-          resolve()
-        }).then(() => {
-          loading.value = false
-          visible.value = false
-          clear()
-        })
+          emit('ok', formData)
+        }
+        loading.value = false
+        visible.value = false
+        clear()
       })
     }
 

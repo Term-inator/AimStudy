@@ -9,22 +9,25 @@
         :columns="columns" 
         :data-source="courses" 
         size="small" bordered>
-        <template #bodyCell="{ column, record, index }">
+        <template #bodyCell="{ column, record, text, index }">
           <template v-if="column.dataIndex === 'key'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
-          <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.courseId)">下载</a-button>
+          <template v-else-if="column.dataIndex === 'courseType'">
+            {{ getCourseTypeByNumber(text) }}
+          </template>
+          <template v-else-if="column.dataIndex === 'syllabus'">
+            <a-button type="link" size="small" @click="download(record.sectionId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.courseId)">
+              <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.sectionId)">
                 <a-button type="link" size="small">通过</a-button>
               </a-popconfirm>
             </span>
 
             <span>
-              <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.courseId)">
+              <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.sectionId)">
                 <a-button type="link" size="small">退回</a-button>
               </a-popconfirm>
             </span>
@@ -45,20 +48,23 @@
         :loading="passed_loading"
         @change="passed_handleTableChange"
         size="small" bordered>
-        <template #bodyCell="{ column, record, index }">
+        <template #bodyCell="{ column, record, text, index }">
           <template v-if="column.dataIndex === 'key'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
-          <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.courseId)">下载</a-button>
+          <template v-else-if="column.dataIndex === 'courseType'">
+            {{ getCourseTypeByNumber(text) }}
+          </template>
+          <template v-else-if="column.dataIndex === 'syllabus'">
+            <a-button type="link" size="small" @click="download(record.sectionId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-button type="link" size="small" @click="passed_edit(record.courseId)">修改</a-button>
+              <a-button type="link" size="small" @click="passed_edit(record.sectionId)">修改</a-button>
             </span>
 
             <span>
-              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="passed_cancel(record.courseId)">
+              <a-popconfirm title="确认删除?" okText="确认" cancelText="取消" @confirm="passed_cancel(record.sectionId)">
                 <a-button type="link" size="small">删除</a-button>
               </a-popconfirm>
             </span>
@@ -69,7 +75,7 @@
       <cu-modal
         ref="edit_modal"
         :modal="passed_edit_modal"
-        @ok="passed_edit_ok"
+        @ok="passed_edit_okHandler"
       >
       </cu-modal>
     </div>
@@ -505,7 +511,7 @@ export default defineComponent({
     ]
 
     const passed_defaultParams = {
-      // departmentName: store.state.user.departmentName,
+      departmentName: store.state.user.departmentName,
     }
 
     // 总页数
@@ -612,27 +618,26 @@ export default defineComponent({
       {
         title: '期末占比',
         key: 'finalScoreRatio',
-        type: 'input',
+        type: 'slider',
+        min: 0.4,
+        max: 0.7,
+        step: 0.1,
         rules: {
           required: false
         }
-      },
-      {
-        title: '星期',
-        key: 'day',
-        type: 'select',
-        options: day_select,
-        rules: {
-          required: false
-        }
-      },
-      // TODO
+      }
+      // TODO 修改 timeslot ?
     ]
 
     const edit_modal = ref(null)
     let edit_form = reactive({})
     const passed_edit = key => {
-      edit_form = cloneDeep(passed_courses.value.filter(item => item.courseId === key)[0])  
+      console.log(key)
+      edit_form = cloneDeep(passed_courses.value.filter(item => item.sectionId === key)[0])  
+      console.log(edit_form)
+      if(Object.hasOwnProperty.call(edit_form, 'day')) {
+        edit_form.day = getDayByNumber(edit_form.day)
+      }
       edit_modal.value.assignValue(edit_form)
       edit_modal.value.show()
     }
