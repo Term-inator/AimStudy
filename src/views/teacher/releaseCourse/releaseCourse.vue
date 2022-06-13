@@ -7,15 +7,31 @@
     <div class="tool-bar">
       <a-button type="primary" @click="add" size="small" style="width: 100px;">新建</a-button>
     </div>
-    <a-table :columns="columns" :data-source="courses" size="small" bordered>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'syllabus'">
+    <a-table 
+      :columns="columns" 
+      :data-source="courses" 
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      size="small" bordered>
+      <template #bodyCell="{ column, record, index }">
+        <template v-if="column.dataIndex === 'key'">
+          {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+        </template>
+        <template v-else-if="column.dataIndex === 'syllabus'">
           <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
         </template>
       </template>
     </a-table>
     <!--新建-->
-    <a-modal v-model:visible="add_visible" title="新建课程" @ok="addOkHandle" centered>
+    <cu-modal
+      ref="add_modal_ref"
+      :title="开设课程"
+      :modal="add_modal"
+      @ok="add_okHandler"
+    >
+    </cu-modal>
+    <!-- <a-modal v-model:visible="add_visible" title="新建课程" @ok="addOkHandle" centered>
       <template #footer>
         <a-button key="cancel" @click="addCancelHandle">取消</a-button>
         <a-button key="submit" type="primary" :loading="add_loading" @click="addOkHandle">提交</a-button>
@@ -63,14 +79,20 @@
           </a-upload-dragger>
         </a-form-item>
       </a-form>
-    </a-modal>
+    </a-modal> -->
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, toRaw } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
-import { Icon } from '@/components/icon'
+import CuModal from '@/components/cuModal/cuModal.vue'
+import { viewPublishCourse, publishCourse } from '@/api/course-controller'
+import {
+  course_type_select, getCourseTypeByNumber
+} from '@/utils/constant'
 
 const search_form = [
   {
@@ -90,6 +112,7 @@ const search_form = [
   {
     title: "课程类别",
     type: "select",
+    options: course_type_select,
     rules: {
       required: false
     }
@@ -139,18 +162,68 @@ export default defineComponent({
   name: "ReleaseCourseView",
   components: {
     SearchForm,
-    Icon
+    CuModal
   },
   setup() {
-    const courses = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        credit: '3.0'
-        }
-      )))
+    const store = useStore()
+
+    const defaultParams = {
+      departmentId: store.state.user.departmentId,
+    }
+
+    // 总页数
+    const total = ref(0)
+    const {
+      data: courses,
+      run,
+      loading,
+      current,
+      pageSize,
+    } = usePagination(viewPublishCourse, {
+      defaultParams: [defaultParams],
+      formatResult: res => {
+        total.value = res.total
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const pagination = computed(() => ({
+      total: total.value,
+      current: current.value,
+      pageSize: pageSize.value,
+      showSizeChanger: true
+    }))
+
+    // SearchForm 筛选条件
+    let filters_buffer = {}
+    const handleTableChange = (pag) => {
+      if(pag) {
+        run({
+          size: pag.pageSize,
+          current: pag.current,
+          ...defaultParams,
+          ...filters_buffer,
+        })
+      }
+    }
+
+    const search = (formState) => {
+      console.log(formState)
+      run({
+        size: pageSize.value,
+        ...defaultParams,
+        ...formState
+      })
+    }
+
+    const getConditions = (formState) => {
+      filters_buffer = formState
+      search(formState)
+    }
 
     const download = (key) => {
       // TODO 下载大纲
@@ -158,78 +231,88 @@ export default defineComponent({
     }
 
     // Modal add
-    const formRef = ref()
-    const formState = reactive({
-      name: '',
-      type: '',
-      department: '',
-      credit: '',
-      description: '',
-      syllabus: []
-    })
-
-    const add_visible = ref(false)
-    const add_loading = ref(false)
-
-    const beforeUpload = file => {
-      formState.syllabus = [...formState.syllabus, file];
-      return false;
-    }
-
-    const addOkHandle = () => {
-      add_loading.value = true
-      setTimeout(() => {
-        formRef.value.validateFields().then(values => {
-          console.log('Received values of form: ', values)
-          console.log('formState: ', toRaw(formState))
-
-          const formData = new FormData()
-          for(const prop in formState) {
-            if(prop === 'syllabus') {
-              formData.append(prop, formState[prop][0])
-            }
-            else {
-              formData.append(prop, formState[prop])
-            }
-          }
-
-          // TODO 提交 api
-
-          add_loading.value = false
-          add_visible.value = false
-          formRef.value.resetFields()
-          console.log('reset formState: ', toRaw(formState))
-        }).catch(info => {
-          console.log('Validate Failed:', info)
-        });
-      }, 2000)
-    }
-
-    const addCancelHandle = () => {
-      add_visible.value = false
-    }
-
+    const add_modal = [
+      {
+        title: '课程名称',
+        key: 'name',
+        type: 'input',
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '课程类型',
+        key: 'type',
+        type: 'select',
+        options: course_type_select,
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '课程描述',
+        key: 'description',
+        type: 'textarea',
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '学分',
+        key: 'credit',
+        type: 'input number',
+        min: 0.5,
+        step: 0.5,
+        change: (val) => {
+          return Math.floor(val * 2) / 2
+        },
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '课程大纲',
+        key: 'syllabus',
+        type: 'upload dragger',
+        rules: {
+          required: false
+        }
+      }
+    ]
+    const add_modal_ref = ref()
     const add = () => {
-      // TODO 新建课程
-      add_visible.value = true
+      add_modal_ref.value.show()
+    }
+
+    const add_okHandler = formData => {
+      console.log(formData)
+      publishCourse({}).then(() => {
+        run({
+          size: pageSize.value,
+          ...defaultParams,
+          ...filters_buffer
+        })
+        add_modal_ref.value.hide()
+      })
     }
 
     return {
       search_form,
-
       columns,
       courses,
+      pagination,
+      loading,
+      handleTableChange,
+
+      getConditions,
       download,
       add,
 
-      formRef,
-      formState,
-      beforeUpload,
+      add_modal_ref,
+      add_modal,
+      add_okHandler,
 
-      add_visible,
-      add_loading,
-      addOkHandle,
-      addCancelHandle
+      getCourseTypeByNumber
     }
   },
 })

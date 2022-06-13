@@ -74,6 +74,7 @@
       <!--修改-->
       <cu-modal
         ref="edit_modal"
+        :title="修改课程"
         :modal="passed_edit_modal"
         @ok="passed_edit_okHandler"
       >
@@ -650,6 +651,7 @@ export default defineComponent({
           current: passed_current.value,
           ...passed_filters_buffer
         })
+        edit_modal.value.hide()
       })
     }
 
