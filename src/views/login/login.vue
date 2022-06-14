@@ -33,7 +33,7 @@
         >
           <a-input v-model:value="formState.captcha" />
         </a-form-item>
-        <my-captcha :identifyCode="captcha" @click="nextCaptcha" style="margin: 0 0 0 32%; cursor: pointer;"></my-captcha>
+        <img :src="captcha" @click="nextCaptcha" style="margin: 0 0 15px 32%; cursor: pointer;" />
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button type="primary" html-type="submit">登录</a-button>
@@ -47,32 +47,37 @@
 import { defineComponent, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import MyCaptcha from '@/components/captcha/captcha.vue'
+import { getCaptcha } from '@/api/captcha-controller'
 
 export default defineComponent({
   // TODO 忘记密码
   name: "LoginView",
-  components: {
-    MyCaptcha
-  },
   setup() {
     const store = useStore()
     const router = useRouter()
 
+    const captcha = ref(0)
+    const uuid = ref(0)
+    getCaptcha().then(res => {
+      captcha.value = res.entity
+      uuid.value = res.uuid
+    })
+
     const formState = reactive({
       username: '',
       password: '',
-      captcha: '1234'
+      captcha: ''
     })
 
-    const captcha = ref('1234')
     const nextCaptcha = () => {
-      const rand_num = Math.random()
-      captcha.value = parseInt(rand_num * 9000 + 1000).toString()
+      getCaptcha().then(res => {
+        captcha.value = res.entity
+        uuid.value = res.uuid
+      })
     }
 
     const onFinish = values => {
-      store.dispatch('user/login', values)
+      store.dispatch('user/login', {...values, uuid: uuid.value})
       .then(() => {
         store.dispatch('constant/queryConstant')
         router.push('main')

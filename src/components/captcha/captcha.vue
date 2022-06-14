@@ -5,6 +5,7 @@
 </template>
  
 <script>
+// @deprecated
 import { defineComponent, ref, watch } from 'vue'
 import { onMounted } from '@vue/runtime-core'
 
