@@ -29,7 +29,7 @@
     <!--新建-->
     <cu-modal
       ref="add_modal_ref"
-      :title="开设课程"
+      :title="'发布课程'"
       :modal="add_modal"
       @ok="add_okHandler"
     >

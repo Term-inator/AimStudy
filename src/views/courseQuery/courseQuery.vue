@@ -280,7 +280,6 @@ export default defineComponent({
     }
 
     const search = (formState) => {
-      console.log(formState)
       run({
         size: pageSize.value,
         ...defaultParams,

@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="visible" title="title" @ok="okHandle" centered>
+  <a-modal v-model:visible="visible" :title="title" @ok="okHandle" centered>
     <template #footer>
       <a-button key="cancel" @click="cancelHandle">取消</a-button>
       <a-button key="submit" type="primary" :loading="loading" @click="okHandle">提交</a-button>
@@ -14,7 +14,9 @@
           :min="item.min" :step="item.step"
           size="small" string-mode
           @change="(val) => {
-            formState[item.key] = item.change(val)
+            if(item.change) {
+              formState[item.key] = item.change(val)
+            }
           }" />
         <a-textarea v-if="item.type === 'textarea'"
           v-model:value="formState[item.key]"

@@ -1,3 +1,19 @@
+const year_semester = (() => {
+  let year = new Date().getFullYear()
+  let month = new Date().getMonth() + 1
+  if(month >= 2 && month <= 7) {
+    return {
+      year: year - 1,
+      semester: 2
+    }
+  }
+  return {
+    year: year,
+    semester: 1
+  }
+})()
+
+
 const getSelectFromMap = (map) => {
   let select = []
   for(let key in map) {
@@ -25,6 +41,27 @@ const getKeyByValue = (map) => {
   }
 }
 
+/**
+ * 年份选择
+ * @param {Number} left 左 left 年
+ * @param {Number} right 右 right 年
+ */
+const yearSelectGen = (left, right) => {
+  let tmp = []
+  for(let i = left; i <= right; ++i) {
+    tmp.push(i)
+  }
+  let res = []
+  let year = new Date().getFullYear()
+  for(let i = 0; i < right - left + 1; ++i) {
+    res.push({
+      value: year + tmp[i],
+      label: year + tmp[i]
+    })
+  }
+  return res
+}
+
 // 角色
 const roles = {
   2: '教务',
@@ -36,14 +73,7 @@ const getRoleNameById = getValueByKey(roles)
 const getRoleIdByName = getKeyByValue(roles)
 
 // 学年
-const year_select = []
-let year = new Date().getFullYear()
-for(let i = 0; i < 6; i++) {
-  year_select.push({
-    value: year - i,
-    label: year - i
-  })
-}
+const year_select = yearSelectGen(-5, 0)
 
 // 学期
 const semesterMap = {
@@ -107,13 +137,22 @@ const statusMap = {
 }
 const getStatusByNumber = getValueByKey(statusMap)
 
+// 开课学年
+const open_year_select = yearSelectGen(0, 2)
+
+// 面向年级
+const open_for_select = yearSelectGen(-3, 1)
+
 export {
+  year_semester,
+
   roles,
   roles_select,
   getRoleIdByName,
   getRoleNameById,
 
-  year_select,
+  year_select, 
+  open_year_select, open_for_select,
   semester_select, getSemesterByNumber,
   day_select, getDayByNumber,
   section_select, getSectionByNumber,
