@@ -31,12 +31,10 @@
           size="small">
         </a-slider>
         <a-upload-dragger v-if="item.type === 'upload dragger'"
-            v-model:fileList="uploadedFileList"
             name="file"
             :multiple="false"
             :maxCount="1"
-            action="https://aimstudy.neptu.cn/api/file"
-            :headers="{'x-auth-token': $store.state.user.token}"
+            :customRequest="customRequest"
             @change="handleChange"
             @drop="handleDrop"
           >
@@ -53,7 +51,7 @@
 <script>
 import { defineComponent, ref, reactive } from 'vue'
 import { Icon } from '@/components/icon'
-import { deleteFile } from '@/api/file-controller'
+import { uploadFile, deleteFile } from '@/api/file-controller'
 
 export default defineComponent({
   name: 'CUModal',
@@ -73,7 +71,6 @@ export default defineComponent({
   setup(props, { emit }) {
     const formRef = ref()
     let formState = reactive({})
-    const uploadedFileList = ref([])
 
     const clear = () => {
       Object.keys(formState).map(key => {
@@ -85,7 +82,7 @@ export default defineComponent({
     const loading = ref(false)
 
     const show = () => {
-      deleteFile("2022/06/12/1655015959574-大纲测试.docx").then(res => {
+      deleteFile("2022/06/15/1655261991963-大纲测试.docx").then(res => {
         console.log(res)
       })
       visible.value = true
@@ -102,16 +99,32 @@ export default defineComponent({
         formState[prop] = form[prop]
       }
     }
+    
+    const url = ref(0)
+    const customRequest = (file) => {
+      const formData = new FormData()
+      formData.append('file', file.file)
+      uploadFile(formData).then(res => {
+        if(url.value !== 0) {
+          deleteFile(url.value).then(() => {
+            url.value = res
+          })
+        }
+        else {
+          url.value = res
+        }
+      }) 
+    }
 
     const okHandle = () => {
       loading.value = true
-      console.log(uploadedFileList.value)
       formRef.value.validateFields().then(valid => {
         if (valid) {
           const formData = {}
           for(const prop in formState) {
             formData[prop] = formState[prop]
           }
+          formData['syllabusPath'] = url.value
           emit('ok', formData)
         }
       })
@@ -128,13 +141,12 @@ export default defineComponent({
       loading,
       formRef,
       formState,
+      customRequest,
       okHandle,
       cancelHandle,
 
       show, hide,
-      assignValue,
-      
-      uploadedFileList
+      assignValue
     }
   },
 })

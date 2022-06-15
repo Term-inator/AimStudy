@@ -285,8 +285,10 @@ export default defineComponent({
     }
 
     const add_okHandler = formData => {
-      console.log(formData)
-      publishCourse({}).then(() => {
+      publishCourse({
+        departmentId: store.state.user.departmentId,
+        ...formData, 
+      }).then(() => {
         run({
           size: pageSize.value,
           ...defaultParams,
