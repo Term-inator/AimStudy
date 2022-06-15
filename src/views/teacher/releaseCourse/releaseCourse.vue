@@ -19,7 +19,7 @@
           {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
         <template v-else-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+          <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
         </template>
       </template>
     </a-table>
@@ -90,6 +90,7 @@ import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import CuModal from '@/components/cuModal/cuModal.vue'
 import { viewPublishCourse, publishCourse } from '@/api/course-controller'
+import { downloadFile } from '@/api/file-controller'
 import {
   course_type_select, getCourseTypeByNumber
 } from '@/utils/constant'
@@ -225,11 +226,6 @@ export default defineComponent({
       search(formState)
     }
 
-    const download = (key) => {
-      // TODO 下载大纲
-      console.log(key)
-    }
-
     // Modal add
     const add_modal = [
       {
@@ -307,7 +303,7 @@ export default defineComponent({
       handleTableChange,
 
       getConditions,
-      download,
+      downloadFile,
       add,
 
       add_modal_ref,

@@ -15,8 +15,11 @@
         <template v-if="column.dataIndex === 'key'">
           {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
+        <template v-else-if="column.dataIndex === 'type'">
+          {{ getCourseTypeByNumber(record.type) }}
+        </template>
         <template v-else-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+          <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
         </template>
         <template v-else-if="column.dataIndex === 'action'">
           <span>
@@ -42,13 +45,14 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { viewPublishCourse, verifyPublishCourse } from '@/api/course-controller'
+import { downloadFile } from '@/api/file-controller'
 import { 
   course_type_select, getCourseTypeByNumber,
   PASS, FAIL
 } from '@/utils/constant'
 
 // TODO 批量通过和退回
-// TODO 尚未返回数据
+// TODO 不输入筛选条件不反悔数据
 const columns = [
   {
     title: '序号',
@@ -58,20 +62,20 @@ const columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'courseId',
-    key: 'courseId',
+    dataIndex: 'id',
+    key: 'id',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'courseName',
-    key: 'courseName',
+    dataIndex: 'name',
+    key: 'name',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'courseType',
-    key: 'courseType',
+    dataIndex: 'type',
+    key: 'type',
     width: 50
   },
   {
@@ -222,6 +226,7 @@ export default defineComponent({
       loading,
       handleTableChange,
 
+      downloadFile,
       getConditions,
       pass, fail,
 

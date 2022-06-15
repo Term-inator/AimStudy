@@ -9,7 +9,7 @@
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
           </template>
         </template>
       </a-table>
@@ -20,6 +20,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import CourseTable from '@/components/courseTable/courseTable.vue'
+import { downloadFile } from '@/api/file-controller'
 
 // TODO 已选 未选
 const columns = [
@@ -206,17 +207,12 @@ export default defineComponent({
         }
       )))
 
-    const download = (key) => {
-      // TODO 下载大纲
-      console.log(key)
-    }
-
     return {
       course_table,
 
       columns,
       courses,
-      download
+      downloadFile
     }
   },
 })

@@ -17,7 +17,7 @@
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-else-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.sectionId)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.sectionId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
@@ -56,7 +56,7 @@
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-else-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.sectionId)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.sectionId)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
@@ -95,6 +95,7 @@ import {
   queryCourse,
   modifyPublishSection, deletePublishSection,
 } from '@/api/course-controller'
+import { downloadFile } from '@/api/file-controller'
 import {
   year_select,
   semester_select, getSemesterByNumber,
@@ -655,11 +656,6 @@ export default defineComponent({
       })
     }
 
-    const download = (key) => {
-      console.log(key)
-      // TODO 下载大纲
-    }
-
     return {
       search_form,
       columns,
@@ -688,7 +684,7 @@ export default defineComponent({
       passed_remove,
 
       getCourseTypeByNumber,
-      download
+      downloadFile
     }
   },
 })

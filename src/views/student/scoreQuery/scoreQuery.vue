@@ -8,7 +8,7 @@
       <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'action'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
           </template>
         </template>
       </a-table>

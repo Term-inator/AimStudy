@@ -51,7 +51,7 @@
           </div>
         </template>
         <template v-else-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+          <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
         </template>
         <template v-else-if="column.dataIndex === 'action'">
           <span v-if="editableData[record.key]">
@@ -82,6 +82,7 @@ import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { cloneDeep } from 'lodash-es'
 import { viewCoursePool } from '@/api/course-controller'
+import { downloadFile } from '@/api/file-controller'
 import { course_type_select } from '@/utils/constant'
 
 // TODO course description
@@ -219,11 +220,6 @@ export default defineComponent({
       search(formState)
     }
 
-    const download = (key) => {
-      // TODO 下载大纲
-      console.log(key)
-    }
-
     const editableData = reactive({})
 
     const edit = key => {
@@ -258,7 +254,7 @@ export default defineComponent({
       cancel,
       remove,
 
-      download,
+      downloadFile,
 
       getConditions
     }
