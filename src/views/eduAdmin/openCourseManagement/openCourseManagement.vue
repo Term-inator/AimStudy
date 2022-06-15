@@ -13,17 +13,15 @@
           <template v-if="column.dataIndex === 'key'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
-          <template v-else-if="column.dataIndex === 'courseType'">
+          <template v-else-if="column.dataIndex === 'type'">
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-else-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="downloadFile(record.sectionId)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.sectionId)">
-                <a-button type="link" size="small">通过</a-button>
-              </a-popconfirm>
+              <a-button type="link" size="small">通过</a-button>
             </span>
 
             <span>
@@ -56,7 +54,7 @@
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-else-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="downloadFile(record.sectionId)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
@@ -74,7 +72,7 @@
       <!--修改-->
       <cu-modal
         ref="edit_modal"
-        :title="修改课程"
+        :title="'修改课程'"
         :modal="passed_edit_modal"
         @ok="passed_edit_okHandler"
       >
@@ -346,6 +344,12 @@ export default defineComponent({
       defaultParams: [defaultParams],
       formatResult: res => {
         total.value = res.total
+        res.data.map(item => {
+          item.year_semester = `
+            ${item.year}学年
+            ${getSemesterByNumber(item.semester)}
+          `
+        })
         return res.data
       },
       pagination: {

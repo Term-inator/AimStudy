@@ -28,10 +28,11 @@
             <a-select
               v-if="editableData[record.key]"
               v-model:value="editableData[record.key][column.dataIndex]"
-              size="small"
+              :options="course_type_select"
+              size="small" style="width: 90%;"
             ></a-select>
             <template v-else>
-              {{ text }}
+              {{ getCourseTypeByNumber(text) }}
             </template>
           </div>
         </template>
@@ -81,12 +82,11 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { cloneDeep } from 'lodash-es'
-import { viewCoursePool } from '@/api/course-controller'
+import { viewCoursePool, modifyPublishCourse } from '@/api/course-controller'
 import { downloadFile } from '@/api/file-controller'
-import { course_type_select } from '@/utils/constant'
+import { course_type_select, getCourseTypeByNumber, getNumberByCourseType } from '@/utils/constant'
 
 // TODO course description
-// TODO 尚未返回数据
 const pool_search_form = [
   {
     title: "课程序号",
@@ -224,11 +224,18 @@ export default defineComponent({
 
     const edit = key => {
       editableData[key] = cloneDeep(pool_courses.value.filter(item => key === item.key)[0])
+      editableData[key]['type'] = getCourseTypeByNumber(editableData[key]['type'])
     }
 
     const save = key => {
+      if(typeof editableData[key]['type'] === 'string') {
+        editableData[key]['type'] = getNumberByCourseType(editableData[key]['type'])
+      }
+      editableData[key]['courseId'] = editableData[key]['id']
       Object.assign(pool_courses.value.filter(item => key === item.key)[0], editableData[key])
-      delete editableData[key]
+      modifyPublishCourse(editableData[key]).then(() => {
+        delete editableData[key]
+      })
     }
 
     const cancel = key => {
@@ -255,8 +262,10 @@ export default defineComponent({
       remove,
 
       downloadFile,
+      getConditions,
 
-      getConditions
+      course_type_select,
+      getCourseTypeByNumber
     }
   },
 })

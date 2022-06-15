@@ -18,7 +18,7 @@ const getSelectFromMap = (map) => {
   let select = []
   for(let key in map) {
     select.push({
-      value: key,
+      value: parseInt(key),
       label: map[key]
     })
   }
@@ -123,6 +123,7 @@ const courseTypeMap = {
 }
 const course_type_select = getSelectFromMap(courseTypeMap)
 const getCourseTypeByNumber = getValueByKey(courseTypeMap)
+const getNumberByCourseType = getKeyByValue(courseTypeMap)
 
 // 审核状态
 const UNAUDITED = 1
@@ -157,7 +158,7 @@ export {
   day_select, getDayByNumber,
   section_select, getSectionByNumber,
 
-  course_type_select, getCourseTypeByNumber,
+  course_type_select, getCourseTypeByNumber, getNumberByCourseType,
 
   UNAUDITED, PASS, FAIL, DELETED,
   getStatusByNumber
