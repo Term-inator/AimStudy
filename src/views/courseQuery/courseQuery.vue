@@ -16,7 +16,7 @@
           {{ getCourseTypeByNumber(text) }}
         </template>
         <template v-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+          <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
         </template>
       </template>
     </a-table>
@@ -29,6 +29,7 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import { queryCourse } from '@/api/course-controller'
+import { downloadFile } from '@/api/file-controller'
 import { 
   year_select, 
   semester_select, getSemesterByNumber,
@@ -292,11 +293,6 @@ export default defineComponent({
       search(formState)
     }
 
-    const download = (key) => {
-      // TODO 下载大纲
-      console.log(key)
-    }
-
     return {
       search_form,
       columns,
@@ -306,7 +302,7 @@ export default defineComponent({
       handleTableChange,
 
       getConditions,
-      download,
+      downloadFile,
 
       getCourseTypeByNumber,
     }

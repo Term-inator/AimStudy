@@ -8,7 +8,7 @@
       <a-table :columns="opened_columns" :data-source="opened_courses" size="small" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
           </template>
         </template>
       </a-table>
@@ -21,7 +21,7 @@
       <a-table :columns="pool_columns" :data-source="pool_courses" size="small" bordered>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'syllabus'">
-            <a-button type="link" size="small" @click="download(record.key)">下载</a-button>
+            <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <a-button type="link" size="small" @click="openCourse(record)">开课</a-button>
