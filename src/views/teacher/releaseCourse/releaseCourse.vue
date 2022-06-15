@@ -14,12 +14,15 @@
       :loading="loading"
       @change="handleTableChange"
       size="small" bordered>
-      <template #bodyCell="{ column, record, index }">
+      <template #bodyCell="{ column, record, text, index }">
         <template v-if="column.dataIndex === 'key'">
           {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
+        <template v-else-if="column.dataIndex === 'type'">
+          {{ getCourseTypeByNumber(text) }}
+        </template>
         <template v-else-if="column.dataIndex === 'syllabus'">
-          <a-button type="link" size="small" @click="downloadFile(record.key)">下载</a-button>
+          <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
         </template>
       </template>
     </a-table>
@@ -31,55 +34,6 @@
       @ok="add_okHandler"
     >
     </cu-modal>
-    <!-- <a-modal v-model:visible="add_visible" title="新建课程" @ok="addOkHandle" centered>
-      <template #footer>
-        <a-button key="cancel" @click="addCancelHandle">取消</a-button>
-        <a-button key="submit" type="primary" :loading="add_loading" @click="addOkHandle">提交</a-button>
-      </template>
-      <a-form ref="formRef" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
-        <a-form-item label="课程名称" name="name">
-          <a-input v-model:value="formState.name" size="small" />
-        </a-form-item>
-        <a-form-item label="课程类型" name="type">
-          <a-select v-model:value="formState.type" size="small">
-            <a-select-option value="compulsory">专业必修</a-select-option>
-            <a-select-option value="optional">专业选修</a-select-option>
-            <a-select-option value="general">通识</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="课程描述" name="description">
-          <a-textarea v-model:value="formState.description" size="small"></a-textarea>
-        </a-form-item>
-        <a-form-item label="开课院系" name="department">
-          <a-select v-model:value="formState.department" size="small"></a-select>
-        </a-form-item>
-        <a-form-item label="学分" name="credit">
-          <a-input-number
-            v-model:value="formState.credit"
-            :min="0.5" :step="0.5" size="small" string-mode
-            @change="(val) => {
-              editableData[record.key][column.dataIndex] = Math.floor(val * 2) / 2
-            }"
-          />
-        </a-form-item>
-        <a-form-item label="课程大纲" name="syllabus">
-          <a-upload-dragger
-            v-model:fileList="formState.syllabus"
-            name="file"
-            :multiple="false"
-            :maxCount="1"
-            :before-upload="beforeUpload"
-            @change="handleChange"
-            @drop="handleDrop"
-          >
-            <p class="ant-upload-drag-icon">
-              <Icon :icon="'InboxOutlined'"></Icon>
-            </p>
-            <p class="ant-upload-text">点击或拖入文件上传</p>
-          </a-upload-dragger>
-        </a-form-item>
-      </a-form>
-    </a-modal> -->
   </div>
 </template>
 
@@ -89,7 +43,7 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import CuModal from '@/components/cuModal/cuModal.vue'
-import { viewPublishCourse, publishCourse } from '@/api/course-controller'
+import { viewCoursePool, publishCourse } from '@/api/course-controller'
 import { downloadFile } from '@/api/file-controller'
 import {
   course_type_select, getCourseTypeByNumber
@@ -98,6 +52,7 @@ import {
 const search_form = [
   {
     title: "课程序号",
+    key: 'courseId',
     type: "input",
     rules: {
       required: false
@@ -105,6 +60,7 @@ const search_form = [
   },
   {
     title: "课程名称",
+    key: 'name',
     type: "input",
     rules: {
       required: false
@@ -112,6 +68,7 @@ const search_form = [
   },
   {
     title: "课程类别",
+    key: 'type',
     type: "select",
     options: course_type_select,
     rules: {
@@ -129,8 +86,8 @@ const columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'id',
+    key: 'id',
     width: 100
   },
   {
@@ -180,7 +137,7 @@ export default defineComponent({
       loading,
       current,
       pageSize,
-    } = usePagination(viewPublishCourse, {
+    } = usePagination(viewCoursePool, {
       defaultParams: [defaultParams],
       formatResult: res => {
         total.value = res.total

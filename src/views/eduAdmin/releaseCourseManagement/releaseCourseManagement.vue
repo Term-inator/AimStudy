@@ -23,13 +23,13 @@
         </template>
         <template v-else-if="column.dataIndex === 'action'">
           <span>
-            <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.key)">
+            <a-popconfirm title="确认通过?" okText="确认" cancelText="取消" @confirm="pass(record.id)">
               <a-button type="link" size="small">通过</a-button>
             </a-popconfirm>
           </span>
 
           <span>
-            <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.key)">
+            <a-popconfirm title="确认退回?" okText="确认" cancelText="取消" @confirm="fail(record.id)">
               <a-button type="link" size="small">退回</a-button>
             </a-popconfirm>
           </span>
