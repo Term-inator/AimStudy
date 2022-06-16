@@ -395,7 +395,7 @@ export default defineComponent({
     const chose_defaultParams = {
       year: year_semester.semester === 1 ? year_semester.year : year_semester.year + 1,
       semester: year_semester.semester % 2 + 1,
-      realName: store.state.user.realName,
+      studentId: store.state.user.id,
       departmentName: store.state.user.departmentName,
     }
 

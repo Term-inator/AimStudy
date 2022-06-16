@@ -112,7 +112,7 @@ export default defineComponent({
       loading.value = true
       listChoose({
         ...year_semester,
-        realName: store.state.user.realName,
+        studentId: store.state.user.id,
       departmentName: store.state.user.departmentName
       }).then(res => {
         scores.value = res.data
@@ -121,11 +121,11 @@ export default defineComponent({
             studentId: store.state.user.id,
             sectionId: item.sectionId,
             ...filters_buffer
-          }).then(res => {
-            item.midtermScore = res.data[0].midtermScore
-            item.finalScore = res.data[0].finalScore
-            item.totalScore = res.data[0].totalScore
-            item.gpa = res.data[0].gpa
+          }).then(res2 => {
+            item.midtermScore = res2.data[0].midtermScore
+            item.finalScore = res2.data[0].finalScore
+            item.totalScore = res2.data[0].totalScore
+            item.gpa = res2.data[0].gpa
           })
         })
         loading.value = false
