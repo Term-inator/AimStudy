@@ -10,3 +10,15 @@ export function listChoose(data) {
     params: data
   })
 }
+
+export function listStudents(data) {
+  console.log(data)
+  return new Promise((resolve) => {
+    resolve({data: [
+      {
+        realName: 'student',
+        studentId: '10202216001'
+      }
+    ]})
+  })
+}

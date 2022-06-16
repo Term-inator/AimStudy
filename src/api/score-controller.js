@@ -13,10 +13,11 @@ export function modifyScore(sectionId){
 /**
  * 教师发表成绩
  */
-export function publishScore(sectionId){
+export function publishScore(sectionId, data){
   return axios({
     url: `/api/score/publish/${sectionId}`,
-    method: 'post'
+    method: 'post',
+    data: data
   })
 }
 

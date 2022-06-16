@@ -211,8 +211,8 @@ export default defineComponent({
     ]
 
     const defaultParams = {
-      year: year_semester.semester === 1 ? year_semester.year : year_semester.year + 1,
-      semester: year_semester.semester % 2 + 1
+      year: year_semester.year, // year_semester.semester === 1 ? year_semester.year : year_semester.year + 1,
+      semester: year_semester.semester // year_semester.semester % 2 + 1
     }
 
     // 总页数

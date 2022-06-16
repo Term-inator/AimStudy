@@ -550,6 +550,11 @@ export default defineComponent({
               ...defaultParams,
               ...filters_buffer
               })
+            passed_run({
+              size: passed_pageSize.value,
+              current: passed_current.value,
+              ...passed_filters_buffer
+            })
           })
         }
       }).finally(() => {
