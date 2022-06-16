@@ -70,13 +70,103 @@
         </template>
       </a-table>
       <!--通过-->
-      <cu-modal
-        ref="pass_modal_ref"
-        :title="'通过'"
-        :modal="pass_modal"
-        @ok="pass_okHandler"
-      >
-      </cu-modal>
+      <a-modal v-model:visible="pass_visible" title="通过" @ok="pass_okHandle" @cancel="pass_cancelHandle" centered>
+        <template #footer>
+          <a-button key="cancel" @click="pass_cancelHandle">取消</a-button>
+          <a-button key="submit" type="primary" :loading="pass_loading" @click="pass_okHandle">提交</a-button>
+        </template>
+        <a-form ref="pass_formRef" :model="pass_formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
+          <template
+            v-for="(time_slot, index) in pass_formState.timeSlotList"
+            :key="time_slot.id"
+          >
+            <a-row>
+              <a-col span="23">
+                <a-form-item
+                  :name="['timeSlotList', index, 'week']"
+                  label="起止周"
+                >
+                  <range-input 
+                    v-model:left_value="time_slot.startWeek"
+                    v-model:right_value="time_slot.endWeek">
+                  </range-input>
+                </a-form-item>
+              </a-col>
+              <a-col span="1">
+                <Icon :icon="'MinusCircleOutlined'" @click="removeTimeSlot(time_slot)"></Icon>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col span="23">
+                <a-form-item
+                  :name="['timeSlotList', index, 'day']"
+                  label="星期"
+                >
+                  <a-select
+                    v-model:value="time_slot.day"
+                    :options="day_select" size="small"
+                  >
+                  ></a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col span="23">
+                <a-form-item
+                  :name="['timeSlotList', index, 'section']"
+                  label="小节"
+                >
+                  <range-input 
+                    v-model:left_value="time_slot.startTime"
+                    v-model:right_value="time_slot.endTime">
+                  </range-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col span="23">
+                <a-form-item
+                  :name="['timeSlotList', index, 'campusLocation']"
+                  label="校区"
+                >
+                  <a-select
+                    v-model:value="time_slot.campusLocationId"
+                    :options="$store.state.constant.campus_locations_select"
+                    size="small"
+                  ></a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col span="23">
+                <a-form-item
+                  :name="['timeSlotList', index, 'roomNumber']"
+                  label="教室"
+                >
+                  <a-select
+                    v-model:value="time_slot.roomNumber"
+                    :options="building_classroom_select"
+                    show-search
+                    :default-active-first-option="false"
+                    :show-arrow="false"
+                    :not-found-content="null"
+                    size="small"
+                  ></a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-divider />
+          </template>
+          <a-form-item>
+            <a-button type="dashed" block @click="addTimeSlot"
+              style="margin: 0 0 0 20%;"
+            >
+              <Icon :icon="'PlusOutlined'"></Icon>
+              增加时间段
+            </a-button>
+          </a-form-item>
+        </a-form>
+      </a-modal>
       <!--修改-->
       <cu-modal
         ref="edit_modal"
@@ -95,6 +185,8 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import { cloneDeep } from 'lodash-es'
 import SearchForm from '@/components/searchForm/searchForm.vue'
+import RangeInput from '@/components/rangeInput/rangeInput.vue'
+import { Icon } from '@/components/icon'
 import CuModal from '@/components/cuModal/cuModal.vue'
 import { 
   viewStartCourse, verifyStartCourse, 
@@ -102,6 +194,7 @@ import {
   modifyPublishSection, deletePublishSection,
 } from '@/api/course-controller'
 import { downloadFile } from '@/api/file-controller'
+import { useState } from '@/composable/state'
 import {
   year_select, open_year_select,
   semester_select, getSemesterByNumber,
@@ -278,7 +371,9 @@ export default defineComponent({
   name: "OpenCourseManagementView",
   components: {
     SearchForm,
-    CuModal
+    CuModal,
+    RangeInput,
+    Icon
   },
   setup() {
     const store = useStore()
@@ -402,79 +497,70 @@ export default defineComponent({
     }
 
     // ----------通过课程的 modal----------
-    const pass_modal_ref = ref()
-    const pass_modal = [
-      {
-        title: '起止周',
-        key: ['startWeek', 'endWeek'],
-        type: 'range input',
-        rules: {
-          required: true
-        }
-      },
-      {
-        title: '星期',
-        key: 'day',
-        type: 'select',
-        options: day_select,
-        rules: {
-          required: true
-        }
-      },
-      {
-        title: '小节',
-        key: ['startTime', 'endTime'],
-        type: 'range input',
-        rules: {
-          required: true
-        }
-      },
-      {
-        title: '校区',
-        key: 'campusLocationId',
-        type: 'select',
-        options: store.state.constant.campus_locations_select,
-        rules: {
-          required: true
-        }
-      },
-      {
-        title: '教室',
-        key: 'roomNumber',
-        type: 'search select',
-        options: building_classroom_select,
-        rules: {
-          required: true
-        }
-      }
-    ]
+    const pass_formRef = ref()
+    const [pass_visible, setPassVisible] = useState(false)
+    const [pass_loading, setPassLoading] = useState(false)
+    const pass_formState = reactive({
+      timeSlotList: []
+    })
 
     let pass_form = reactive({})
     const pass = key => {
       console.log(key)
-      pass_form = cloneDeep(courses.value.filter(item => item.sectionId === key)[0])  
-      pass_modal_ref.value.assignValue(pass_form)
-      pass_modal_ref.value.show()
+      pass_form = cloneDeep(courses.value.filter(item => item.sectionId === key)[0])
+      setPassVisible(true)
     }
 
-    // TODO time slot list
-    const pass_okHandler = formData => {
-      pass_form = Object.assign(pass_form, formData)
-      console.log(pass_form)
-      verifyStartCourse({
-        ...formData,
-        sectionStatus: PASS,
-        teachesStatus: PASS
-      }).then(() => {
-        run({
-          size: pageSize.value,
-          current: current.value,
-          ...defaultParams,
-          ...filters_buffer
-          })
-      }).finally(() => {
-        pass_modal_ref.value.hide()
+    const removeTimeSlot = (item) => {
+      let index = pass_formState.timeSlotList.indexOf(item)
+
+      if(index !== -1) {
+        pass_formState.timeSlotList.splice(index, 1)
+      }
+    }
+
+    const addTimeSlot = () => {
+      pass_formState.timeSlotList.push({
+        startWeek: '',
+        endWeek: '',
+        day: '',
+        startTime: '',
+        endTime: '',
+        campusLocationId: '',
+        roomNumber: ''
       })
+    }
+
+    const pass_okHandle = () => {
+      setPassLoading(true)
+      pass_formRef.value.validateFields().then(valid => {
+        if(valid) {
+          verifyStartCourse({
+            sectionId: pass_form.sectionId,
+            instructorId: pass_form.instructorId,
+            courseId: pass_form.courseId,
+            timeSlotList: pass_formState.timeSlotList,
+            sectionStatus: PASS,
+            teachesStatus: PASS
+          }).then(() => {
+            run({
+              size: pageSize.value,
+              current: current.value,
+              ...defaultParams,
+              ...filters_buffer
+              })
+          })
+        }
+      }).finally(() => {
+        setPassLoading(false)
+        setPassVisible(false)
+        pass_formState.timeSlotList = []
+      })
+    }
+
+    const pass_cancelHandle = () => {
+      setPassVisible(false)
+      pass_formState.timeSlotList = []
     }
 
     const fail = (key) => {
@@ -813,11 +899,15 @@ export default defineComponent({
       handleTableChange,
 
       getConditions,
-      pass_modal_ref,
-      pass_modal,
-      pass_form,
+      pass_formRef,
+      pass_formState,
       pass,
-      pass_okHandler,
+      pass_visible,
+      pass_loading,
+      addTimeSlot,
+      removeTimeSlot,
+      pass_okHandle,
+      pass_cancelHandle,
       fail,
 
       passed_search_form,
@@ -837,7 +927,10 @@ export default defineComponent({
       passed_remove,
 
       getCourseTypeByNumber,
-      downloadFile
+      downloadFile,
+
+      day_select,
+      building_classroom_select
     }
   },
 })

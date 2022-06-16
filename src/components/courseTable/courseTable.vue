@@ -45,8 +45,11 @@
                 :loading="loading"
                 @change="handleTableChange"
                 size="small" bordered>
-                <template #bodyCell="{ column, record }">
-                  <template v-if="column.dataIndex === 'action'">
+                <template #bodyCell="{ column, record, index }">
+                  <template v-if="column.dataIndex === 'key'">
+                    {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
+                  </template>
+                  <template v-else-if="column.dataIndex === 'action'">
                     <a-button type="link" size="small" @click="select(record)">选课</a-button>
                   </template>
                 </template>

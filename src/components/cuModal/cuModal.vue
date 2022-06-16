@@ -120,6 +120,10 @@ export default defineComponent({
         formState[prop] = form[prop]
       }
     }
+
+    const assignListValue = (form) => {
+      console.log(form)
+    }
     
     const url = ref(0)
     const customRequest = (file) => {
@@ -167,7 +171,8 @@ export default defineComponent({
       cancelHandle,
 
       show, hide,
-      assignValue
+      assignValue,
+      assignListValue
     }
   },
 })
