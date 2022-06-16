@@ -103,7 +103,7 @@ import {
 } from '@/api/course-controller'
 import { downloadFile } from '@/api/file-controller'
 import {
-  year_select,
+  year_select, open_year_select,
   semester_select, getSemesterByNumber,
   day_select, getDayByNumber, getNumberByDay,
   section_select,
@@ -700,6 +700,24 @@ export default defineComponent({
         min: 0.4,
         max: 0.7,
         step: 0.1,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '学年',
+        key: 'year',
+        type: 'select',
+        options: open_year_select,
+        rules: {
+          required: false
+        }
+      },
+      {
+        title: '学期',
+        key: 'semester',
+        type: 'select',
+        options: semester_select,
         rules: {
           required: false
         }

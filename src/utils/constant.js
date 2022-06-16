@@ -140,7 +140,7 @@ const statusMap = {
 const getStatusByNumber = getValueByKey(statusMap)
 
 // 开课学年
-const open_year_select = yearSelectGen(0, 2)
+const open_year_select = yearSelectGen(-1, 2)
 
 // 面向年级
 const open_for_select = yearSelectGen(-3, 1)
@@ -168,6 +168,29 @@ for(let b in building) {
   }
 }
 
+const weekMap = {
+  1: '第一周',
+  2: '第二周',
+  3: '第三周',
+  4: '第四周',
+  5: '第五周',
+  6: '第六周',
+  7: '第七周',
+  8: '第八周',
+  9: '第九周',
+  10: '第十周',
+  11: '第十一周',
+  12: '第十二周',
+  13: '第十三周',
+  14: '第十四周',
+  15: '第十五周',
+  16: '第十六周',
+  17: '第十七周',
+  18: '第十八周'
+}
+const week_select = getSelectFromMap(weekMap)
+const getWeekByNumber = getValueByKey(weekMap)
+
 export {
   year_semester,
 
@@ -184,6 +207,8 @@ export {
 
   course_type_select, getCourseTypeByNumber, getNumberByCourseType,
   building_classroom_select,
+
+  week_select, getWeekByNumber,
 
   UNAUDITED, PASS, FAIL, DELETED,
   getStatusByNumber

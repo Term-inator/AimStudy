@@ -28,6 +28,7 @@
               >
               {{ `${sections[course_table_pre[day][sec-1]].teacher} 
               ${sections[course_table_pre[day][sec-1]].course_name} 
+              [${sections[course_table_pre[day][sec-1]].start_week}-${sections[course_table_pre[day][sec-1]].end_week}]
               ${sections[course_table_pre[day][sec-1]].room}` }}
             </td>
           </template>
