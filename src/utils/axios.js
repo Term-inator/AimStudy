@@ -5,8 +5,8 @@ import { getToken, setToken } from '@/utils/auth'
 const TOKEN_HEADER = 'x-auth-token'
 
 const _axios = axios.create({
-  // baseURL: 'https://aimstudy.neptu.cn',
-  baseURL: 'http://localhost:23333',
+  baseURL: 'https://aimstudy.neptu.cn',
+  // baseURL: 'http://localhost:23333',
   headers: {
     'Content-Type': 'application/json'
   },

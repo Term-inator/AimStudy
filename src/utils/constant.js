@@ -95,6 +95,7 @@ const dayMap = {
 }
 const day_select = getSelectFromMap(dayMap)
 const getDayByNumber = getValueByKey(dayMap)
+const getNumberByDay = getKeyByValue(dayMap)
 
 // 小节
 const sectionMap = {
@@ -144,6 +145,29 @@ const open_year_select = yearSelectGen(0, 2)
 // 面向年级
 const open_for_select = yearSelectGen(-3, 1)
 
+// 教学楼
+const building = ['一教', '二教', '三教', '四教']
+
+// 教室
+const classroom = []
+for(let i = 1; i <= 5; ++i) {
+  for(let j = 1; j <= 2; ++j) {
+    for(let k = 0; k <= 9; ++k) {
+      classroom.push(`${i}${j}${k}`)
+    }
+  }
+}
+
+const building_classroom_select = []
+for(let b in building) {
+  for(let c in classroom) {
+    building_classroom_select.push({
+      value: `${building[b]}${classroom[c]}`,
+      label: `${building[b]}${classroom[c]}`
+    })
+  }
+}
+
 export {
   year_semester,
 
@@ -155,10 +179,11 @@ export {
   year_select, 
   open_year_select, open_for_select,
   semester_select, getSemesterByNumber,
-  day_select, getDayByNumber,
+  day_select, getDayByNumber, getNumberByDay,
   section_select, getSectionByNumber,
 
   course_type_select, getCourseTypeByNumber, getNumberByCourseType,
+  building_classroom_select,
 
   UNAUDITED, PASS, FAIL, DELETED,
   getStatusByNumber

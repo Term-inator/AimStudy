@@ -48,32 +48,6 @@
       </a-table>
     </div>
   </div>
-  <!-- <a-modal v-model:visible="add_visible" title="新建课程" @ok="addOkHandle" centered>
-    <template #footer>
-      <a-button key="cancel" @click="addCancelHandle">取消</a-button>
-      <a-button key="submit" type="primary" :loading="add_loading" @click="addOkHandle">提交</a-button>
-    </template>
-    <a-form ref="formRef" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
-      <a-form-item label="学年" name="year">
-        <a-select v-model:value="formState.year" size="small"></a-select>
-      </a-form-item>
-      <a-form-item label="学期" name="semester">
-        <a-select v-model:value="formState.semester" size="small">
-          <a-select-option value="1">第一学期</a-select-option>
-          <a-select-option value="2">第二学期</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="面向年级" name="grade">
-        <a-select v-model:value="formState.grade" size="small"></a-select>
-      </a-form-item>
-      <a-form-item label="人数限制" name="amount">
-        <a-input-number v-model:value="formState.amount" :min="10" :max="120" size="small" />
-      </a-form-item>
-      <a-form-item label="期末占比" name="final_score_ratio">
-        <a-slider v-model:value="formState.final_score_ratio" :min="40" :max="70" :step="10" size="small"></a-slider>
-      </a-form-item>
-    </a-form> -->
-  <!-- </a-modal> -->
   <cu-modal
     ref="add_modal_ref"
     :title="'开设课程'"

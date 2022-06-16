@@ -32,7 +32,7 @@ export function downloadFile(syllabusPath) {
   // 魔法值 25 当前文件格式决定了该值的大小
   const filename = syllabusPath.substring(25)
   original_axios.request({
-    url: `http://127.0.0.1:23333/file/${syllabusPath}`,
+    url: `https://aimstudy.neptu.cn/file/${syllabusPath}`,
     headers: { 'x-auth-token': store.state.user.token },
     responseType: 'blob'
   }).then(res => {

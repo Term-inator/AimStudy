@@ -13,7 +13,7 @@
           <template v-if="column.dataIndex === 'key'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
-          <template v-else-if="column.dataIndex === 'type'">
+          <template v-else-if="column.dataIndex === 'courseType'">
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-else-if="column.dataIndex === 'syllabus'">
@@ -21,7 +21,7 @@
           </template>
           <template v-else-if="column.dataIndex === 'action'">
             <span>
-              <a-button type="link" size="small">通过</a-button>
+              <a-button type="link" size="small" @click="pass(record.sectionId)">通过</a-button>
             </span>
 
             <span>
@@ -69,6 +69,14 @@
           </template>
         </template>
       </a-table>
+      <!--通过-->
+      <cu-modal
+        ref="pass_modal_ref"
+        :title="'通过'"
+        :modal="pass_modal"
+        @ok="pass_okHandler"
+      >
+      </cu-modal>
       <!--修改-->
       <cu-modal
         ref="edit_modal"
@@ -97,9 +105,10 @@ import { downloadFile } from '@/api/file-controller'
 import {
   year_select,
   semester_select, getSemesterByNumber,
-  day_select, getDayByNumber,
+  day_select, getDayByNumber, getNumberByDay,
   section_select,
   course_type_select, getCourseTypeByNumber,
+  building_classroom_select,
   PASS, FAIL
 } from '@/utils/constant'
 
@@ -269,7 +278,7 @@ export default defineComponent({
   name: "OpenCourseManagementView",
   components: {
     SearchForm,
-    CuModal,
+    CuModal
   },
   setup() {
     const store = useStore()
@@ -392,16 +401,79 @@ export default defineComponent({
       search(formState)
     }
 
-    const pass = (key) => {
+    // ----------通过课程的 modal----------
+    const pass_modal_ref = ref()
+    const pass_modal = [
+      {
+        title: '起止周',
+        key: ['startWeek', 'endWeek'],
+        type: 'range input',
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '星期',
+        key: 'day',
+        type: 'select',
+        options: day_select,
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '小节',
+        key: ['startTime', 'endTime'],
+        type: 'range input',
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '校区',
+        key: 'campusLocationId',
+        type: 'select',
+        options: store.state.constant.campus_locations_select,
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '教室',
+        key: 'roomNumber',
+        type: 'search select',
+        options: building_classroom_select,
+        rules: {
+          required: true
+        }
+      }
+    ]
+
+    let pass_form = reactive({})
+    const pass = key => {
+      console.log(key)
+      pass_form = cloneDeep(courses.value.filter(item => item.sectionId === key)[0])  
+      pass_modal_ref.value.assignValue(pass_form)
+      pass_modal_ref.value.show()
+    }
+
+    // TODO instructorId
+    const pass_okHandler = formData => {
+      pass_form = Object.assign(pass_form, formData)
+      console.log(pass_form)
       verifyStartCourse({
-        courseId: key,
-        courseStatus: PASS
+        // ...formData,
+        sectionStatus: PASS,
+        teachesStatus: PASS
       }).then(() => {
         run({
           size: pageSize.value,
+          current: current.value,
           ...defaultParams,
           ...filters_buffer
           })
+      }).finally(() => {
+        pass_modal_ref.value.hide()
       })
     }
 
@@ -631,31 +703,85 @@ export default defineComponent({
         rules: {
           required: false
         }
+      },
+      {
+        title: '起止周',
+        key: ['startWeek', 'endWeek'],
+        type: 'range input',
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '星期',
+        key: 'day',
+        type: 'select',
+        options: day_select,
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '小节',
+        key: ['startTime', 'endTime'],
+        type: 'range input',
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '校区',
+        key: 'campusLocationName',
+        type: 'select',
+        options: store.state.constant.campus_locations_select,
+        rules: {
+          required: true
+        }
+      },
+      {
+        title: '教室',
+        key: 'roomNumber',
+        type: 'search select',
+        options: building_classroom_select,
+        rules: {
+          required: true
+        }
       }
-      // TODO 修改 timeslot ?
     ]
 
-    const edit_modal = ref(null)
+    const edit_modal = ref()
     let edit_form = reactive({})
     const passed_edit = key => {
       console.log(key)
       edit_form = cloneDeep(passed_courses.value.filter(item => item.sectionId === key)[0])  
       console.log(edit_form)
       if(Object.hasOwnProperty.call(edit_form, 'day')) {
-        edit_form.day = getDayByNumber(edit_form.day)
+        edit_form['day'] = getDayByNumber(edit_form['day'])
       }
       edit_modal.value.assignValue(edit_form)
       edit_modal.value.show()
     }
 
     const passed_edit_okHandler = formData => {
+      console.log(formData)
       edit_form = Object.assign(edit_form, formData)
+      if(typeof edit_form['day'] === 'string') {
+        edit_form['day'] = getNumberByDay(edit_form['day'])
+      }
+      if(typeof edit_form['campusLocationName'] === 'string') {
+        edit_form['campusLocationId'] = store.getters.getCampusLocationIdByName(edit_form['campusLocationName'])
+      }
+      else {
+        edit_form['campusLocationId'] = edit_form['campusLocationName']
+      }
+      console.log(edit_form)
       modifyPublishSection(edit_form).then(() => {
         passed_run({
           size: passed_pageSize.value,
           current: passed_current.value,
           ...passed_filters_buffer
         })
+      }).finally(() => {
         edit_modal.value.hide()
       })
     }
@@ -669,7 +795,12 @@ export default defineComponent({
       handleTableChange,
 
       getConditions,
-      pass, fail,
+      pass_modal_ref,
+      pass_modal,
+      pass_form,
+      pass,
+      pass_okHandler,
+      fail,
 
       passed_search_form,
       passed_columns,

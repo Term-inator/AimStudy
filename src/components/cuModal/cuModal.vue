@@ -5,7 +5,11 @@
       <a-button key="submit" type="primary" :loading="loading" @click="okHandle">提交</a-button>
     </template>
     <a-form ref="formRef" :model="formState" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }">
-      <a-form-item v-for="(item, index) in modal" :key="index" :label="item.title" :name="item.name">
+      <a-form-item v-for="(item, index) in modal" 
+        :key="index" 
+        :label="item.title" 
+        :name="item.name"
+      >
         <a-input v-if="item.type === 'input'" 
           v-model:value="formState[item.key]" 
           size="small" />
@@ -27,11 +31,25 @@
           v-model:value="formState[item.key]" 
           size="small">
         </a-select>
+        <a-select v-else-if="item.type === 'search select'"
+          show-search
+          :default-active-first-option="false"
+          :show-arrow="false"
+          :not-found-content="null"
+          :options="item.options"
+          v-model:value="formState[item.key]"
+          size="small">
+        </a-select>
         <a-slider v-else-if="item.type === 'slider'"
           v-model:value="formState[item.key]" 
           :min="item.min" :max="item.max" :step="item.step" 
           size="small">
         </a-slider>
+        <range-input v-else-if="item.type === 'range input'" 
+            v-model:left_value="formState[item.key[0]]"
+            v-model:right_value="formState[item.key[1]]"
+        >
+        </range-input>
         <a-upload-dragger v-if="item.type === 'upload dragger'"
             name="file"
             :multiple="false"
@@ -52,12 +70,15 @@
 
 <script>
 import { defineComponent, ref, reactive } from 'vue'
+import RangeInput from '@/components/rangeInput/rangeInput.vue'
 import { Icon } from '@/components/icon'
 import { uploadFile, deleteFile } from '@/api/file-controller'
 
+// TODO 上传文件加载问题
 export default defineComponent({
   name: 'CUModal',
   components: {
+    RangeInput,
     Icon
   },
   props: {
@@ -84,9 +105,6 @@ export default defineComponent({
     const loading = ref(false)
 
     const show = () => {
-      deleteFile("2022/06/15/1655261991963-大纲测试.docx").then(res => {
-        console.log(res)
-      })
       visible.value = true
     }
 
@@ -97,6 +115,7 @@ export default defineComponent({
     }
 
     const assignValue = (form) => {
+      console.log(form)
       for(const prop in form) {
         formState[prop] = form[prop]
       }
