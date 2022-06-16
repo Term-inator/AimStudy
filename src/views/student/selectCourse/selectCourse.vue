@@ -106,9 +106,27 @@ const columns = [
     width: 80
   },
   {
+    title: '年级',
+    dataIndex: 'openFor',
+    key: 'openFor',
+    width: 65
+  },
+  {
+    title: '排课安排(周几 节次[周次] 教室)',
+    dataIndex: 'arrangement',
+    key: 'arrangement',
+    width: 200
+  },
+  {
     title: '学分',
     dataIndex: 'credit',
     key: 'credit',
+    width: 80
+  },
+  {
+    title: '校区',
+    dataIndex: 'campusLocationName',
+    key: 'campusLocationName',
     width: 80
   },
   {

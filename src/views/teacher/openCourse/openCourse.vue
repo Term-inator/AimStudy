@@ -13,7 +13,7 @@
         @change="opened_handleTableChange"
         size="small" bordered>
         <template #bodyCell="{ column, record, text }">
-          <template v-if="column.dataIndex === 'type'">
+          <template v-if="column.dataIndex === 'courseType'">
             {{ getCourseTypeByNumber(text) }}
           </template>
           <template v-if="column.dataIndex === 'syllabus'">
@@ -76,38 +76,38 @@ import {
 const opened_columns = [
   {
     title: '学年学期',
-    dataIndex: 'semester',
-    key: 'semester',
+    dataIndex: 'year_semester',
+    key: 'year_semester',
     width: 100
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'courseId',
+    key: 'courseId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
     title: '开课院系',
-    dataIndex: 'department',
-    key: 'department',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
     width: 100
   },
   {
     title: '年级',
-    dataIndex: 'grade',
-    key: 'grade',
+    dataIndex: 'openFor',
+    key: 'openFor',
     width: 65
   },
   {
@@ -118,8 +118,8 @@ const opened_columns = [
   },
   {
     title: '实际上课人数',
-    dataIndex: 'actual_num',
-    key: 'actual_num',
+    dataIndex: 'currentStudentAmount',
+    key: 'currentStudentAmount',
     width: 80
   },
   {
@@ -130,8 +130,8 @@ const opened_columns = [
   },
   {
     title: '校区',
-    dataIndex: 'campus',
-    key: 'campus',
+    dataIndex: 'campusLocationName',
+    key: 'campusLocationName',
     width: 80
   },
   {

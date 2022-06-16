@@ -155,9 +155,13 @@ export default defineComponent({
     }
     initCourseTable()
 
-    const defaultParams = {
+    const defaultParams = store.state.user.roles[0] === 'teacher' ?  {
       ...year_semester,
       realName: store.state.user.realName,
+      departmentName: store.state.user.departmentName,
+    } : {
+      ...year_semester,
+      studentId: store.state.user.id,
       departmentName: store.state.user.departmentName,
     }
 
