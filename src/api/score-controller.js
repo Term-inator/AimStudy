@@ -27,8 +27,8 @@ export function publishScore(sectionId, data){
 export function queryScore(data){
   return axios({
     url: '/api/score/query',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: data
   })
 }
 
