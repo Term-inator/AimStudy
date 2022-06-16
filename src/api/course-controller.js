@@ -1,7 +1,8 @@
 import axios from '@/utils/axios.js'
 
 /**
- * 学生选课列表
+ * 学生可以选的课的列表
+ * @deprecated
  */
 export function listChoose(data) {
   return axios({
@@ -14,9 +15,9 @@ export function listChoose(data) {
 /**
  * 学生选课
  */
-export function chooseSection(data){
+export function chooseSection(sectionId, data){
   return axios({
-    url: '/api/course/choose',
+    url: `/api/course/choose/${sectionId}`,
     method: 'post',
     data: data
   })
@@ -115,9 +116,9 @@ export function queryCourse(data){
 /**
  * 学生退课
  */
-export function quitSection(data){
+export function quitSection(sectionId, data){
   return axios({
-    url: '/api/course/quit',
+    url: `/api/course/quit/${sectionId}`,
     method: 'post',
     data: data
   })

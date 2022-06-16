@@ -37,6 +37,7 @@ import { useStore } from 'vuex'
 import SearchForm from '@/components/searchForm/searchForm.vue'
 import CourseTable from '@/components/courseTable/courseTable.vue'
 import { queryCourse } from '@/api/course-controller'
+import { listChoose } from '@/api/takes-controller'
 import { downloadFile } from '@/api/file-controller'
 import { 
   year_semester,
@@ -137,6 +138,10 @@ export default defineComponent({
   setup() {
     const store = useStore()
 
+    const getCourses = 
+      store.state.user.roles[0] === 'teacher' ? 
+      queryCourse : listChoose
+
     const course_table = ref([])
     const initCourseTable = () => {
       course_table.value = []
@@ -148,6 +153,7 @@ export default defineComponent({
         course_table.value.push(tmp)
       }
     }
+    initCourseTable()
 
     const defaultParams = {
       ...year_semester,
@@ -163,7 +169,7 @@ export default defineComponent({
       loading,
       current,
       pageSize,
-    } = usePagination(queryCourse, {
+    } = usePagination(getCourses, {
       defaultParams: [defaultParams],
       formatResult: res => {
         total.value = res.total

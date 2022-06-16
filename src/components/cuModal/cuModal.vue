@@ -16,7 +16,7 @@
         <a-input-number v-if="item.type === 'input number'"
           v-model:value="formState[item.key]"
           :min="item.min" :step="item.step"
-          size="small" string-mode
+          size="small"
           @change="(val) => {
             if(item.change) {
               formState[item.key] = item.change(val)
