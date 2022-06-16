@@ -457,12 +457,12 @@ export default defineComponent({
       pass_modal_ref.value.show()
     }
 
-    // TODO instructorId
+    // TODO time slot list
     const pass_okHandler = formData => {
       pass_form = Object.assign(pass_form, formData)
       console.log(pass_form)
       verifyStartCourse({
-        // ...formData,
+        ...formData,
         sectionStatus: PASS,
         teachesStatus: PASS
       }).then(() => {

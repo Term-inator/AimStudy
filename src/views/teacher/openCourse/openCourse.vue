@@ -477,9 +477,9 @@ export default defineComponent({
         title: '期末占比',
         key: 'finalScoreRatio',
         type: 'slider',
-        min: 40,
-        max: 70,
-        step: 10,
+        min: 0.4,
+        max: 0.7,
+        step: 0.1,
         rules: {
           required: true
         }

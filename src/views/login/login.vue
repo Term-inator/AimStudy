@@ -104,7 +104,7 @@ export default defineComponent({
   .main {
     display: flex;
     height: 100vh;
-    background: url(@/assets/img/background3280x2160.png) no-repeat;
+    background: url(@/assets/img/background656x432.jpeg) no-repeat;
     background-size: 100% 100%;
     align-items: center;
     justify-content: center;
