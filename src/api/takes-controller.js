@@ -11,6 +11,9 @@ export function listChoose(data) {
   })
 }
 
+/**
+ * 选某门课的学生
+ */
 export function listStudents(data) {
   console.log(data)
   return new Promise((resolve) => {

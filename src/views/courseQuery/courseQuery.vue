@@ -15,7 +15,7 @@
         <template v-if="column.dataIndex === 'courseType'">
           {{ getCourseTypeByNumber(text) }}
         </template>
-        <template v-if="column.dataIndex === 'syllabus'">
+        <template v-else-if="column.dataIndex === 'syllabus'">
           <a-button type="link" size="small" @click="downloadFile(record.syllabusPath)">下载</a-button>
         </template>
       </template>

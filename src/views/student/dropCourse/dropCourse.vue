@@ -1,10 +1,21 @@
 <template>
   <div class="main">
     <div class="course-list">
-      <a-table :columns="columns" :data-source="courses" size="small" :pagination="false" bordered>
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'action'">
-            <a-button type="link" size="small" @click="drop(record.key)">退课</a-button>
+      <a-table :columns="columns" 
+      :data-source="chose_courses" 
+      :pagination="chose_pagination"
+      :loading="chose_loading"
+      @change="chose_handleTableChange"
+      size="small" bordered>
+        <template #bodyCell="{ column, record, text, index }">
+          <template v-if="column.dataIndex === 'key'">
+            {{ (chose_pagination.current - 1) * chose_pagination.pageSize + index + 1 }}
+          </template>
+          <template v-if="column.dataIndex === 'courseType'">
+            {{ getCourseTypeByNumber(text) }}
+          </template>
+          <template v-else-if="column.dataIndex === 'action'">
+            <a-button type="link" size="small" @click="quit(record.sectionId)">退课</a-button>
           </template>
         </template>
       </a-table>
@@ -13,7 +24,17 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { usePagination } from 'vue-request'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { quitSection } from '@/api/course-controller'
+import { listChoose } from '@/api/takes-controller'
+import { 
+  year_semester,
+  getSemesterByNumber,
+  getDayByNumber,
+  getCourseTypeByNumber
+} from '@/utils/constant'
 
 const columns = [
   {
@@ -24,32 +45,32 @@ const columns = [
   },
   {
     title: '课程序号',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'sectionId',
+    key: 'sectionId',
     width: 100
   },
   {
     title: '课程名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'courseName',
+    key: 'courseName',
     width: 120
   },
   {
     title: '课程类型',
-    dataIndex: 'type',
-    key: 'type',
+    dataIndex: 'courseType',
+    key: 'courseType',
     width: 100
   },
   {
     title: '开课院系',
-    dataIndex: 'department',
-    key: 'department',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
     width: 100
   },
   {
     title: '教师',
-    dataIndex: 'teacher',
-    key: 'teacher',
+    dataIndex: 'realName',
+    key: 'realName',
     width: 80
   },
   {
@@ -69,27 +90,85 @@ const columns = [
 export default defineComponent({
   name: "DropCourseView",
   setup() {
-    const courses = ref(
-      [...Array(15)].map((_, i) => ({
-        key: i,
-        index: '1',
-        name: `计算机网络${i}`,
-        type: '专业必修',
-        department: '计算机学院',
-        teacher: '张三',
-        credit: '3.0',
-        }
-      )))
+    const store = useStore()
 
-    const drop = (key) => {
-      // TODO 退课
-      console.log(key)
+    const chose_defaultParams = {
+      ...year_semester,
+      studentId: store.state.user.id,
+      departmentName: store.state.user.departmentName,
+    }
+
+    // 总页数
+    const chose_total = ref(0)
+    const {
+      data: chose_courses,
+      run: chose_run,
+      loading: chose_loading,
+      current: chose_current,
+      pageSize: chose_pageSize,
+    } = usePagination(listChoose, {
+      defaultParams: [chose_defaultParams],
+      formatResult: res => {
+        chose_total.value = res.total
+        res.data.map(item => {
+          item.year_semester = `
+            ${item.year}学年
+            ${getSemesterByNumber(item.semester)}
+          `
+          item.arrangement = `
+            ${getDayByNumber(item.day)} ${item.startTime}-${item.endTime}
+            [${item.startWeek}-${item.endWeek}]
+            ${item.roomNumber}
+          `
+        })
+        return res.data
+      },
+      pagination: {
+        currentKey: 'current',
+        pageSizeKey: 'size'
+      },
+    })
+    
+    const chose_pagination = computed(() => ({
+      total: chose_total.value,
+      current: chose_current.value,
+      pageSize: chose_pageSize.value,
+      showSizeChanger: true
+    }))
+
+    const chose_handleTableChange = (pag) => {
+      if(pag) {
+        chose_run({
+          size: pag.pageSize,
+          current: pag.current
+        })
+      }
+    }
+
+    const quit = (sectionId) => {
+      quitSection(sectionId, {
+        studentId: store.state.user.id
+      }).then(() => {
+        refresh()
+      })
+      // TODO message
+    }
+
+    const refresh = () => {
+      chose_run({
+        size: chose_pageSize.value,
+        ...chose_defaultParams,
+      })
     }
 
     return {
       columns,
-      courses,
-      drop
+      chose_courses,
+      chose_pagination,
+      chose_loading,
+      chose_handleTableChange,
+      quit,
+      getCourseTypeByNumber
     }
   },
 })
