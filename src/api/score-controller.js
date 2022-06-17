@@ -38,8 +38,8 @@ export function queryScore(data){
 export function viewVerifyScoreSection(data){
   return axios({
     url: '/api/score/verify',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: data
   })
 }
 

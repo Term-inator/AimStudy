@@ -6,6 +6,7 @@ const CourseQueryView = () => import('../views/courseQuery/courseQuery.vue')
 const CourseTableView = () => import('../views/courseTable/courseTable.vue')
 
 const CampusManagementView = () => import('../views/admin/campusManagement/campusManagement.vue')
+const EventManagementView = () => import('../views/admin/eventManagement/eventManagement.vue')
 const MajorManagementView = () => import('../views/admin/majorManagement/majorManagement.vue')
 const UserManagementView = () => import('../views/admin/userManagement/userManagement.vue')
 
@@ -68,6 +69,11 @@ export const asyncRoutes = [
     path: '/campusManagement',
     name: 'campusManagement',
     component: CampusManagementView,
+  },
+  {
+    path: '/eventManagement',
+    name: 'eventManagement',
+    component: EventManagementView
   },
   {
     path: '/majorManagement',

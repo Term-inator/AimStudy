@@ -3,7 +3,7 @@ import axios from '@/utils/axios.js'
 /**
  * 查询事件信息
  */
-export function listEvent(data){
+export function getEvent(data){
   return axios({
     url: '/api/event',
     method: 'get',
